@@ -15,10 +15,11 @@ User's machine
   +-- ~/.claude/commands/donna:*.md        <-- Skill prompt files (installed)
   |
   +-- [user-chosen-repo]/               <-- State repository
-       +-- config.md                    <-- Setup config (repo path, tools, prefs)
+       +-- config.md                    <-- Setup config (repo path, prefs)
        +-- role.md                      <-- Job role definition
        +-- role-research.md             <-- Research agent output
        +-- recurring.md                 <-- Recurring task definitions
+       +-- tools.md                     <-- Learned tool knowledge
        +-- people.md                    <-- People/relationship context
        +-- daily/
        |    +-- 2026-03-13.md           <-- Today's journal
@@ -31,9 +32,10 @@ User's machine
 
 | Component | Responsibility | Reads From | Writes To |
 |-----------|---------------|------------|-----------|
-| `donna:setup` | Bootstrap config: link storage repo, detect CLIs, set preferences | User input | `config.md` |
+| `donna:setup` | Bootstrap config: link storage repo, set preferences | User input | `config.md` |
 | `donna:set-role` | Define job role, spawn research agent, propose recurring tasks | User input, web search | `role.md`, `role-research.md`, `recurring.md` |
-| `donna:begin-the-day` | Morning routine: carry forward, surface recurring, pull external | `config.md`, `role.md`, `recurring.md`, `daily/{yesterday}.md`, Jira/GH CLIs | `daily/{today}.md` |
+| `donna:add-tool` | Declare a tool, Claude learns it, stores knowledge | User input, tool's `--help` output or training data | `tools.md` |
+| `donna:begin-the-day` | Morning routine: carry forward, surface recurring, spawn tool agents | `config.md`, `role.md`, `recurring.md`, `tools.md`, `daily/{yesterday}.md` | `daily/{today}.md` |
 | `donna:add-task` | Quick task capture with metadata | User input, `people.md` | `daily/{today}.md` |
 | `donna:log-meeting` | Post-meeting capture: attendees, decisions, follow-ups | User input, `people.md` | `daily/{today}.md`, `people.md` |
 | `donna:next` | Triage: what should I do right now? | `daily/{today}.md`, `recurring.md`, `role.md` | (read-mostly, may reprioritize `daily/{today}.md`) |
@@ -49,9 +51,12 @@ donna:setup --> config.md
 donna:set-role --> role.md + role-research.md + recurring.md
                 |              |                  |
                 v              v                  v
+donna:add-tool --> tools.md
+                |
+                v
 donna:begin-the-day ----reads all standing files---->  daily/{today}.md
                      + yesterday's journal              |
-                     + Jira/GH (if configured)          |
+                     + spawns tool agents (if any)      |
                                                         v
 donna:add-task  ---------------------------------------->  daily/{today}.md
 donna:log-meeting -------------------------------------->  daily/{today}.md + people.md
@@ -133,10 +138,6 @@ OR (simpler, following GSD's pattern of keeping everything in the commands direc
 ## Storage Repository
 path: /Users/patrick/workspace/donna-storage
 
-## Available Tools
-- [x] gh (GitHub CLI)
-- [ ] jira (Jira CLI)
-
 ## Preferences
 timezone: America/New_York
 workdays: Mon-Fri
@@ -157,20 +158,26 @@ This prevents confusing errors when skills run before setup.
 
 ## Storage Repository File Formats
 
-### config.md (in storage repo -- detailed config)
+### tools.md (in storage repo -- learned tool knowledge)
 
 ```markdown
-# Configuration
+# Tools
 
-## Tools
-| Tool | Available | Path/Command |
-|------|-----------|-------------|
-| gh | yes | gh |
-| jira | no | — |
+## gh (GitHub CLI)
+**Command:** gh
+**Version learned:** 2.74.0
+**Useful for:** Checking assigned PRs, open issues, review requests
+**Key commands for daily brief:**
+- `gh pr list --author @me --state open --json title,url,updatedAt`
+- `gh pr list --search "review-requested:@me" --json title,url`
+- `gh issue list --assignee @me --state open --json title,url,labels`
 
-## Integrations
-github_org: my-company
-jira_project: —
+## jira (Jira CLI)
+**Command:** jira
+**Version learned:** 1.4.0
+**Useful for:** Checking assigned tickets, sprint status
+**Key commands for daily brief:**
+- `jira issue list --assignee currentUser --status "In Progress" --plain`
 ```
 
 ### role.md
@@ -245,15 +252,20 @@ jira_project: —
 
 ### When to Spawn
 
-Only `donna:set-role` needs a research sub-agent. The pattern:
+Two skills spawn sub-agents:
+- `donna:set-role` — research agent for role discovery (see below)
+- `donna:begin-the-day` — tool agents for each relevant configured tool (see Tool Agent Pattern above)
+
+**Role research pattern:**
 
 1. User provides their job role title and context
 2. Main skill spawns a research agent with a focused prompt
-3. Agent searches the web for: "What does a [role] actually do day-to-day?"
-4. Agent writes findings to `role-research.md`
-5. Main skill reads `role-research.md`, extracts recurring task suggestions
-6. Main skill presents suggestions to user for approval
+3. Agent searches the web for: "What does a [role] actually do day-to-day?" and "What tools does a [role] commonly use?"
+4. Agent writes findings to `role-research.md` — including recurring task suggestions and commonly used tools
+5. Main skill reads `role-research.md`, extracts recurring task suggestions and tool suggestions
+6. Main skill presents suggestions to user for approval (recurring tasks and tools separately)
 7. Approved tasks written to `recurring.md`
+8. For approved tools: user is prompted to run `/donna:add-tool` for each one
 
 ### Agent Spawning Implementation
 
@@ -264,6 +276,7 @@ Spawn a research agent with the following instructions:
 - Search for "[role title] daily responsibilities"
 - Search for "[role title] recurring tasks weekly monthly"
 - Search for "[role title] common meetings"
+- Search for "[role title] common tools software"
 - Synthesize findings into structured output
 - Write to {storage_repo}/role-research.md
 ```
@@ -276,38 +289,49 @@ The sub-agent has its own system prompt embedded in the spawning instruction. It
 - Sub-agents do NOT commit to git (parent skill commits after reviewing)
 - Sub-agents do NOT interact with the user (parent skill handles all interaction)
 
-## External CLI Integration Pattern
+## Tool Agent Pattern
 
-### Graceful Degradation
+### How Tools Are Added
 
-Skills that use external CLIs (Jira, GitHub) must work without them:
+User runs `/donna:add-tool` and provides the tool name and CLI command. Claude learns the tool:
+1. If Claude knows the tool well from training data → synthesize knowledge directly
+2. Otherwise → run the tool's `--help` (and subcommand help) to learn capabilities
+3. Store learned knowledge in `tools.md`: command, version, what it's useful for, key commands for daily brief
+
+### How Tools Are Invoked (begin-the-day)
+
+`begin-the-day` reads `tools.md` and identifies which tools are relevant to the daily brief (based on what each tool is useful for). For each relevant tool, it spawns a parallel agent:
 
 ```
-1. Read config.md to check if tool is available
-2. If available: run CLI command, parse output, incorporate
-3. If unavailable: skip gracefully, note what was skipped
-4. Never fail because an optional tool is missing
+1. Read tools.md to get list of configured tools
+2. Identify which tools are relevant to the daily brief context
+3. For each relevant tool: spawn agent with that tool's section from tools.md
+4. Each agent runs relevant commands, parses output, returns normalized summary
+5. Main skill stitches tool summaries into the daily brief
+6. If no tools configured or none relevant: skip gracefully, no errors
 ```
 
-### CLI Interaction Examples
+### Agent Isolation
 
-**GitHub (via `gh`):**
-```bash
-gh pr list --author @me --state open --json title,url,updatedAt
-gh issue list --assignee @me --state open --json title,url,labels
-```
-
-**Jira (via `jira` CLI or API):**
-```bash
-jira issue list --assignee currentUser --status "In Progress" --plain
-```
+Each tool agent:
+- Receives only its tool's knowledge from `tools.md`
+- Runs CLI commands and parses output
+- Returns a normalized summary (not raw CLI output)
+- Does NOT write to files or commit (parent skill handles that)
+- If the tool's CLI fails, reports the failure cleanly
 
 ### Output Normalization
 
-External data should be normalized into the daily journal format. A GitHub PR becomes a task line:
+Tool agents normalize output into daily journal format:
 
 ```markdown
-- [ ] Review: "Fix auth timeout" (PR #423, updated 2h ago) [github]
+## From gh
+- [ ] Review: "Fix auth timeout" (PR #423, updated 2h ago)
+- [ ] Issue: "Login page 500 error" (#891, assigned yesterday)
+
+## From jira
+- [ ] PLAT-234: API rate limiting (In Progress)
+- [ ] PLAT-256: Dashboard metrics (To Do, sprint goal)
 ```
 
 ## Patterns to Follow
@@ -355,14 +379,14 @@ External data should be normalized into the daily journal format. A GitHub PR be
 **Instead:** Separate concerns into standing files (durable context) and daily files (ephemeral daily state).
 
 ### Anti-Pattern 4: Spawning Agents for Simple Tasks
-**What:** Using sub-agents for anything other than web research.
+**What:** Using sub-agents for tasks that don't benefit from parallelism or isolation.
 **Why bad:** Agent spawning adds latency and complexity. Most skills just need to read files, interact with the user, and write files.
-**Instead:** Only spawn agents when you need web search or parallel independent work. The only current use case is role research in `donna:set-role`.
+**Instead:** Only spawn agents when you need web search, parallel independent work, or isolated tool invocation. Current use cases: role research in `donna:set-role`, tool agents in `donna:begin-the-day`.
 
-### Anti-Pattern 5: Silent External CLI Failures
-**What:** Running `gh` or `jira` and swallowing errors without informing the user.
-**Why bad:** User does not know if their GitHub PRs were checked or not.
-**Instead:** When a CLI call fails or is skipped, note it visibly: "Skipped GitHub PR check (gh CLI not configured)."
+### Anti-Pattern 5: Silent Tool Failures
+**What:** Running a tool's CLI and swallowing errors without informing the user.
+**Why bad:** User does not know if a tool was checked or not.
+**Instead:** When a tool agent fails or is skipped, note it visibly in the daily brief: "Skipped gh (command not found)" or "gh: failed to list PRs (auth expired)".
 
 ## Build Order (Dependency Graph)
 
@@ -377,8 +401,8 @@ Phase 2: donna:set-role + donna:add-task
    |  (set-role includes the research agent, which is the most complex sub-component)
    v
 Phase 3: donna:begin-the-day
-   |  (needs role.md, recurring.md, config.md, and yesterday's daily file)
-   |  (this is where external CLI integration first appears)
+   |  (needs role.md, recurring.md, tools.md, config.md, and yesterday's daily file)
+   |  (this is where tool agents are spawned for relevant configured tools)
    v
 Phase 4: donna:log-meeting
    |  (needs people.md for context, writes to daily file and people.md)

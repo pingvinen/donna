@@ -19,8 +19,8 @@
 ### Role Definition
 
 - [ ] **ROLE-01**: User can run `/donna:set-role` to define their job role via interactive prompts
-- [ ] **ROLE-02**: When setting role, a research agent is spawned to find what that role typically does day-to-day (internet research), surfacing suggested recurring tasks
-- [ ] **ROLE-03**: Research findings and suggested recurring tasks are presented for the user to approve, reject, or modify before being saved
+- [ ] **ROLE-02**: When setting role, a research agent is spawned to find what that role typically does day-to-day and what tools are commonly used (internet research), surfacing suggested recurring tasks and tools
+- [ ] **ROLE-03**: Research findings, suggested recurring tasks, and suggested tools are presented for the user to approve, reject, or modify before being saved; approved tools prompt the user to run `/donna:add-tool`
 - [ ] **ROLE-04**: Role definition is stored in `role.md` and research stored in `role-research.md` in the storage repo
 
 ### Task Capture

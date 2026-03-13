@@ -16,16 +16,17 @@ Never forget an important task again — the assistant knows your role, surfaces
 
 ### Active
 
-- [ ] `/donna:setup` skill — first-time configuration: link git repo, declare available tools (Jira CLI, GitHub CLI, etc.)
-- [ ] `/donna:set-role` skill — define job role, trigger research agent to surface typical responsibilities, propose recurring tasks for approval, store research as reference
-- [ ] `/donna:begin-the-day` skill — morning routine: carry forward unfinished tasks from yesterday, surface recurring tasks due today, optionally pull from Jira/GitHub if configured
+- [ ] `/donna:setup` skill — first-time configuration: link git repo
+- [ ] `/donna:set-role` skill — define job role, trigger research agent to surface typical responsibilities and commonly used tools, propose recurring tasks and tools for approval, store research as reference
+- [ ] `/donna:add-tool` skill — declare available tools by name; Claude learns the tool (reads help output or uses training data) and stores knowledge in `tools.md`
+- [ ] `/donna:begin-the-day` skill — morning routine: carry forward unfinished tasks from yesterday, surface recurring tasks due today, spawn parallel agents to pull data from each configured tool
 - [ ] `/donna:add-task` skill — quickly capture a task, follow-up, or note
 - [ ] `/donna:log-meeting` skill — post-meeting capture: who was there, decisions made, follow-ups committed to
 - [ ] `/donna:next` skill — on-demand triage: given everything in the system, what should I do right now?
 - [ ] Recurring task engine — tasks with interval definitions (e.g. "refine backlog every Monday"), surfaced by `begin-the-day`
-- [ ] Hybrid storage structure — daily journal files (`daily/YYYY-MM-DD.md`) + standing files (`role.md`, `role-research.md`, `recurring.md`, `people.md`, `config.md`)
+- [ ] Hybrid storage structure — daily journal files (`daily/YYYY-MM-DD.md`) + standing files (`role.md`, `role-research.md`, `recurring.md`, `tools.md`, `people.md`, `config.md`)
 - [ ] Git-backed persistence — all state committed to user's chosen GitHub repo after each skill run
-- [ ] Optional external integrations — Jira and GitHub data pulled if CLI tools are configured, gracefully skipped if not
+- [ ] User-declared tools — user tells Donna which CLI tools are available; Donna learns them and invokes them as needed (no hardcoded integrations)
 
 ### Out of Scope
 
@@ -45,7 +46,7 @@ Never forget an important task again — the assistant knows your role, surfaces
 
 - **Platform**: Claude Code skills only — must work as slash commands in the CLI
 - **Storage**: Markdown files in git — no databases, no external services beyond what the user already has
-- **Dependencies**: No required external tools — integrations (Jira CLI, `gh`) are optional and gracefully degraded
+- **Dependencies**: No required external tools — user declares tools via `/donna:add-tool`, all are optional
 - **Style**: Follow GSD's aesthetic and structural patterns — banners, AskUserQuestion for interactive flows, agent spawning indicators, committed state at each step
 
 ## Key Decisions
@@ -55,7 +56,8 @@ Never forget an important task again — the assistant knows your role, surfaces
 | Skill prefix `donna:` | Namespaced like GSD's `gsd:` to avoid collisions and signal the suite | — Pending |
 | Hybrid storage (daily + standing files) | Daily files capture the running log; standing files capture durable context (role, recurring tasks, people) | — Pending |
 | Role research via web agent | User's role drives recurring task suggestions — research grounds them in reality rather than just user assumption | — Pending |
-| Optional external integrations | Jira/GitHub enrichment is valuable but the system must work without them | — Pending |
+| User-declared tools, not hardcoded integrations | Tools are taught by the user, not baked in — keeps the system generic and extensible | — Pending |
+| Parallel tool agents in begin-the-day | Each configured tool gets its own agent during daily brief — isolates tool logic and scales naturally | — Pending |
 
 ---
 *Last updated: 2026-03-13 after initialization*
