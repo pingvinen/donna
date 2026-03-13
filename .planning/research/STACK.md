@@ -1,134 +1,173 @@
 # Technology Stack
 
 **Project:** Donna
-**Researched:** 2026-03-13
+**Researched:** 2026-03-13 (revised)
 
 ## Recommended Stack
 
-This is not a traditional software project with runtime dependencies. The "stack" is Claude Code's skill system itself: markdown command files, built-in tools, CLI integrations, and file-based state. There is no build step, no package manager, no deployment pipeline.
+This is not a traditional software project with runtime dependencies. The "stack" is the AI coding assistant's skill system: YAML frontmatter stubs, XML-tagged workflow files, built-in tools, and file-based state. There is no build step, no package manager, no deployment pipeline.
 
 ### Core Platform
 
 | Technology | Version | Purpose | Why | Confidence |
 |------------|---------|---------|-----|------------|
-| Claude Code | Latest (CLI) | Runtime environment for all skills | Only platform that supports custom slash commands; the project is exclusively Claude Code skills | HIGH |
-| Custom Slash Commands (`.claude/commands/*.md`) | N/A | Skill definition format | Native mechanism for user-defined slash commands; filename = command name, content = prompt instructions | HIGH |
-| Markdown files in Git | N/A | All persistent state | Durable, version-controlled, human-readable, diff-friendly; no external database needed | HIGH |
-| Git (via Bash tool) | 2.x | State persistence and version history | Every skill run commits state changes, giving full audit trail and rollback capability | HIGH |
+| Claude Code | Latest (CLI) | Primary runtime environment | Best-documented custom command support; reference implementation target | HIGH |
+| OpenCode | Latest | Secondary provider | Growing adoption; similar command model | LOW (unverified) |
+| Gemini CLI | Latest | Secondary provider | Google ecosystem reach | LOW (unverified) |
+| Codex CLI | Latest | Secondary provider | OpenAI ecosystem reach | LOW (unverified) |
+| Markdown files in Git | N/A | All persistent state | Durable, version-controlled, human-readable, diff-friendly | HIGH |
+| Git (via Bash tool) | 2.x | State persistence and version history | Every skill run commits state; full audit trail and rollback | HIGH |
+
+**Multi-provider strategy:** Build and validate Claude Code first. The stub-workflow split makes adding providers mechanical — write stubs only, never touch workflows. Validate each provider's `@` reference resolution before declaring support.
 
 ### External CLI Integrations (Optional)
 
 | Technology | Version | Purpose | Why | Confidence |
 |------------|---------|---------|-----|------------|
-| `gh` (GitHub CLI) | 2.x | Pull GitHub issues, PRs, notifications | Already installed on most dev machines; rich JSON output via `gh api`; graceful skip if absent | HIGH |
-| `jira` (Jira CLI / go-jira) | 1.x | Pull Jira tickets assigned to user | Community standard CLI for Jira; `jira list` and `jira view` provide structured output | MEDIUM |
-| `atlassian` CLI tools | Varies | Confluence, Bitbucket integration | Less standardized than gh/jira; may need `curl` + Atlassian REST API instead of dedicated CLI | LOW |
+| `gh` (GitHub CLI) | 2.x | Pull GitHub issues, PRs, notifications | Rich JSON output via `gh api`; graceful skip if absent | HIGH |
+| `jira` (Jira CLI / go-jira) | 1.x | Pull Jira tickets assigned to user | Community standard CLI; `jira list` provides structured output | MEDIUM |
+| `atlassian` CLI tools | Varies | Confluence, Bitbucket integration | Less standardized; may need `curl` + REST API | LOW |
 
-### Built-in Claude Code Tools (Used by Skills)
+### Built-in AI Assistant Tools (Used by Skills)
 
 | Tool | Purpose | When to Use |
 |------|---------|-------------|
 | **Read** | Load markdown state files | Every skill run starts by reading current state |
-| **Write** | Create/overwrite markdown state files | When creating new daily files, updating standing files |
-| **Edit** | Surgically modify existing files | Appending tasks to lists, updating checkboxes, modifying sections |
-| **Bash** | Run git commands, invoke external CLIs | `git add/commit`, `gh issue list`, `jira list`, date calculations |
+| **Write** | Create/overwrite markdown state files | Creating new daily files, updating standing files |
+| **Edit** | Surgically modify existing files | Appending tasks, updating checkboxes, modifying sections |
+| **Bash** | Run git commands, invoke external CLIs | `git add/commit`, `gh issue list`, date calculations |
 | **Glob** | Find files by pattern | Locating daily files (`daily/2026-*.md`), listing standing files |
 | **Grep** | Search file contents | Finding tasks by keyword, locating mentions of a person |
 | **WebSearch** | Research the web | Used by `/donna:set-role` to research job responsibilities |
-| **WebFetch** | Fetch specific URLs | Pulling specific reference pages during role research |
-| **Task** (sub-agent) | Spawn independent agent threads | Role research, complex triage calculations, parallel information gathering |
+| **WebFetch** | Fetch specific URLs | Pulling reference pages during role research |
+| **Agent/Task** (sub-agent) | Spawn independent agent threads | Role research, parallel tool data gathering in begin-the-day |
 
-## Skill File Structure
+## Skill File Architecture: Stub-Workflow Split
 
-### How Custom Commands Work
+### Overview
 
-Each skill is a single markdown file in `.claude/commands/`:
+Skills use a two-layer architecture:
+1. **Stubs** — thin provider-specific files with YAML frontmatter + one `@` reference to a shared workflow
+2. **Workflows** — provider-agnostic logic files using XML tags for semantic structure
+
+This means logic is written once and installed for multiple providers.
+
+### Stub Format (Provider-Specific)
+
+Stubs live in provider command directories (e.g., `~/.claude/commands/donna/`).
+
+```yaml
+---
+name: donna:setup
+description: First-time configuration — link storage repo
+argument-hint: "[repo-path]"
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+---
+```
+
+```xml
+<objective>
+Configure Donna's storage repo and initialize file structure.
+</objective>
+
+<execution_context>
+@~/.donna/workflows/setup.md
+</execution_context>
+
+<process>
+Execute the setup workflow from @~/.donna/workflows/setup.md end-to-end.
+</process>
+```
+
+**YAML frontmatter fields:**
+
+| Field | Required | Purpose |
+|-------|----------|---------|
+| `name` | Yes | Skill display name |
+| `description` | Yes | One-line description shown in help |
+| `argument-hint` | No | Placeholder hint for arguments |
+| `allowed-tools` | No | Restrict which tools the skill can use |
+| `agent` | No | If true, runs as a sub-agent |
+
+### Workflow Format (Provider-Agnostic)
+
+Workflows live in `~/.donna/workflows/` and contain all skill logic using XML tags:
+
+```xml
+<purpose>
+First-time configuration: link git repo, initialize file structure.
+</purpose>
+
+<process>
+
+<step name="discover_repo">
+Ask the user for their storage repo path, or detect if $ARGUMENTS contains one.
+</step>
+
+<step name="initialize">
+Create the hybrid file structure in the repo...
+</step>
+
+</process>
+
+<success_criteria>
+- [ ] config.md created at ~/.config/donna/config.md
+- [ ] Storage repo initialized with standing files
+- [ ] First git commit made
+</success_criteria>
+```
+
+**Why XML tags over markdown headers:** Claude treats XML tags as clear semantic boundaries for instruction parsing. Markdown headers (`## Step 1`) blend with content; XML tags (`<step name="discover_repo">`) create unambiguous structure that the model follows more reliably.
+
+### Directory Layout
 
 ```
-.claude/commands/
-  donna:setup.md
-  donna:set-role.md
-  donna:begin-the-day.md
-  donna:add-task.md
-  donna:log-meeting.md
-  donna:next.md
+~/.donna/                          # Shared runtime (provider-agnostic)
+  workflows/
+    setup.md                       # Full logic for donna:setup
+    set-role.md                    # Full logic for donna:set-role
+    begin-the-day.md               # Full logic for donna:begin-the-day
+    add-task.md                    # Full logic for donna:add-task
+    add-tool.md                    # Full logic for donna:add-tool
+    log-meeting.md                 # Full logic for donna:log-meeting
+    next.md                        # Full logic for donna:next
+  templates/
+    daily-journal.md               # Template for daily files
+    role-research.md               # Template for research output
+  references/
+    commit-patterns.md             # Git commit conventions
+    file-formats.md                # State file format reference
+
+~/.claude/commands/donna/          # Claude Code stubs
+  setup.md                         # Thin stub → @~/.donna/workflows/setup.md
+  set-role.md
+  begin-the-day.md
+  add-task.md
+  ...
+
+~/.config/opencode/commands/donna/ # OpenCode stubs (same structure)
+  ...
+
+~/.config/donna/
+  config.md                        # Bootstrap config → points to state repo
 ```
 
-**File naming convention:** `donna:<skill-name>.md` becomes `/donna:<skill-name>` in Claude Code.
+### Bootstrap Config
 
-**File content is pure markdown prompt text.** There is no frontmatter, no YAML header, no structured metadata. The entire file is the system prompt that Claude Code executes when the user invokes the command.
-
-### Command Argument Handling
-
-The `$ARGUMENTS` placeholder in a command file captures everything the user types after the command name:
+`~/.config/donna/config.md` is at a well-known fixed path, solving the bootstrapping paradox: skills need to know the state repo path before they can read anything from it.
 
 ```markdown
-# /donna:add-task
+# Donna Configuration
 
-Add a task to today's daily file.
+## Storage
+repo: /Users/username/donna-data
 
-User input: $ARGUMENTS
-
-[... rest of instructions ...]
+## Providers
+- claude-code
+- opencode
 ```
 
-Invoked as: `/donna:add-task Follow up with Sarah about the API decision`
-
-`$ARGUMENTS` resolves to: `Follow up with Sarah about the API decision`
-
-### Skill Prompt Anatomy (Recommended Pattern)
-
-Based on the GSD skill suite pattern that this project models after:
-
-```markdown
-# Role / Identity Block
-You are a personal assistant skill that [does X].
-
-# Context Loading Instructions
-Read the following files to understand current state:
-- Read `{repo_path}/config.md` for user configuration
-- Read `{repo_path}/role.md` for the user's job role
-- Read `{repo_path}/daily/YYYY-MM-DD.md` for today's journal (if it exists)
-
-# Core Logic
-[Step-by-step instructions for what the skill does]
-
-# Output Format
-[How to structure the output shown to the user]
-
-# State Mutation Instructions
-[What files to create/update and how to commit them]
-
-# Error Handling
-[What to do if files are missing, CLIs unavailable, etc.]
-```
-
-### Key Patterns
-
-**1. State File Discovery via Bash (date calculations):**
-```markdown
-Use the Bash tool to get today's date: `date +%Y-%m-%d`
-Then read `{repo_path}/daily/{today}.md` if it exists.
-```
-
-**2. Graceful CLI Detection:**
-```markdown
-Check if `gh` is available: `which gh 2>/dev/null`
-If available, pull GitHub data. If not, skip gracefully and note it was skipped.
-```
-
-**3. Git Commit After State Changes:**
-```markdown
-After updating files, commit all changes:
-`git -C {repo_path} add -A && git -C {repo_path} commit -m "donna: [skill-name] - [summary of changes]"`
-```
-
-**4. Sub-Agent Spawning (Task Tool):**
-```markdown
-Use the Task tool to spawn a research agent with the following instructions:
-"Research what a [role title] typically does day-to-day. Search for common responsibilities,
-recurring tasks, and stakeholder interactions. Write findings to {repo_path}/role-research.md"
-```
+Every skill reads this file first to discover the state repo path, then operates on that repo using absolute paths.
 
 ## State Storage Architecture
 
@@ -136,10 +175,11 @@ recurring tasks, and stakeholder interactions. Write findings to {repo_path}/rol
 
 ```
 {user-chosen-repo}/
-  config.md          # Setup: repo path, available CLIs, preferences
+  config.md          # Preferences, available CLIs
   role.md            # User's job role definition and approved recurring tasks
   role-research.md   # Research output from /donna:set-role
   recurring.md       # Recurring task definitions with intervals
+  tools.md           # Declared tools and learned knowledge
   people.md          # People the user interacts with, context notes
   daily/
     2026-03-13.md    # Today's journal: tasks, meetings, notes
@@ -147,9 +187,9 @@ recurring tasks, and stakeholder interactions. Write findings to {repo_path}/rol
     ...
 ```
 
-### Markdown State File Format (Recommended)
+### Markdown State File Format
 
-Use simple, parseable markdown -- not complex structures. Skills need to reliably read/write these files using Read, Write, and Edit tools.
+Use simple, parseable markdown — not complex structures. Skills use Read/Edit tools which work on plain text.
 
 ```markdown
 # Daily Journal: 2026-03-13
@@ -177,98 +217,105 @@ Use simple, parseable markdown -- not complex structures. Skills need to reliabl
 - No custom syntax to learn or break
 - Git diffs are clean and readable
 
-## Sub-Agent Patterns
+## Key Patterns
 
-### When to Use the Task Tool
+**1. Date calculations (cross-platform):**
+```bash
+# macOS (BSD date)
+date -v-1d +%Y-%m-%d
 
-| Scenario | Use Task Tool? | Rationale |
-|----------|---------------|-----------|
-| Role research (web search + synthesis) | YES | Long-running, independent work; main thread stays responsive |
-| Complex triage ("what should I do next?") | MAYBE | Only if analyzing many files; simple triage can be inline |
-| Pulling data from multiple CLIs | NO | Sequential CLI calls are fine inline; no benefit from parallelism |
-| Reading/updating state files | NO | Core skill logic; must be in main thread to control flow |
+# Linux (GNU date)
+date -d yesterday +%Y-%m-%d
 
-### Task Tool Invocation Pattern
-
-Within a skill prompt, instruct Claude Code to use the Task tool:
-
-```markdown
-Spawn a sub-agent using the Task tool with these instructions:
-- Description: "Research typical responsibilities for a {role_title}"
-- Instructions: Search the web for "{role_title} daily responsibilities",
-  "{role_title} recurring tasks", "{role_title} stakeholder management".
-  Synthesize findings into a structured markdown document.
-  Write the output to {repo_path}/role-research.md using the Write tool.
+# Portable approach in skills:
+yesterday=$(date -v-1d +%Y-%m-%d 2>/dev/null || date -d yesterday +%Y-%m-%d)
 ```
 
-The Task tool creates an independent agent thread with its own tool access. The parent skill waits for it to complete, then continues.
+**2. Graceful CLI Detection:**
+```bash
+which gh 2>/dev/null && echo "available" || echo "not-installed"
+```
+
+**3. Git Commit After State Changes:**
+```bash
+git -C {repo_path} add -A && git -C {repo_path} commit -m "donna: [skill-name] - [summary]"
+```
+
+**4. Sub-Agent Spawning:**
+Skills instruct Claude to use the Agent/Task tool for independent work (role research, parallel tool data gathering). The parent skill waits for completion, then continues.
+
+## Installer Pattern
+
+```bash
+# npx-style one-liner
+npx donna-install
+
+# What the installer does:
+# 1. Copy workflows, templates, references to ~/.donna/
+# 2. Detect installed providers (Claude Code, OpenCode, etc.)
+# 3. Copy provider-specific stubs to each provider's commands directory
+# 4. Write ~/.donna/version.md for update tracking
+# 5. Prompt user to run /donna:setup in their preferred provider
+```
+
+Manual alternative:
+```bash
+git clone <donna-repo> /tmp/donna-install
+cp -r /tmp/donna-install/workflows ~/.donna/workflows
+cp -r /tmp/donna-install/templates ~/.donna/templates
+cp -r /tmp/donna-install/stubs/claude-code/* ~/.claude/commands/donna/
+```
+
+## Sub-Agent Patterns
+
+### When to Use Sub-Agents
+
+| Scenario | Use Sub-Agent? | Rationale |
+|----------|---------------|-----------|
+| Role research (web search + synthesis) | YES | Long-running, independent work |
+| Parallel tool data gathering (begin-the-day) | YES | Each tool gets its own agent, isolates failures |
+| Complex triage ("what should I do next?") | MAYBE | Only if analyzing many files |
+| Reading/updating state files | NO | Core skill logic; must be in main thread |
 
 ## Alternatives Considered
 
 | Category | Recommended | Alternative | Why Not |
 |----------|-------------|-------------|---------|
-| Command format | `.claude/commands/*.md` (pure markdown) | MCP server with custom tools | Massive overengineering; skills are prompts not code; MCP adds complexity with zero benefit for this use case |
-| State storage | Markdown files in git | SQLite / JSON files | Markdown is human-readable, diff-friendly, editable outside Claude Code; JSON is harder to read/edit by hand; SQLite is opaque |
-| State format | Simple markdown with checkboxes and headers | YAML frontmatter + markdown body | Frontmatter adds parsing complexity; skills use Read/Edit tools which work on plain text; no structured query needs that justify YAML |
-| External CLI integration | Bash tool calling `gh`/`jira` directly | MCP servers for GitHub/Jira | Direct CLI calls are simpler, more transparent, easier to debug; MCP servers add a dependency layer; `gh` and `jira` CLIs are already powerful |
-| Sub-agent spawning | Task tool (built-in) | Custom orchestration code | Task tool is purpose-built for this; no custom code needed |
-| Command location | Project `.claude/commands/` | User `~/.claude/commands/` | Project-level means skills travel with the repo; user-level means they work across repos. **Decision: use user-level (`~/.claude/commands/`) because these skills operate on an external repo, not the repo they live in** |
-
-## Critical Design Decision: Command Location
-
-**Recommendation: User-level commands in `~/.claude/commands/`**
-
-The personal assistant skills are invoked from ANY project the user is working in. They operate on the user's chosen personal-assistant repo, not the current working directory. This means:
-
-1. Skills must live in `~/.claude/commands/` (user-level), not `.claude/commands/` (project-level)
-2. The `config.md` file stores the path to the user's PA repo
-3. Every skill reads `config.md` first to discover the repo path
-4. All file operations use absolute paths to the PA repo
-
-This mirrors GSD's approach: GSD commands live in `~/.claude/commands/` and operate on whatever project is in the current directory. PA commands live in `~/.claude/commands/` and operate on the configured PA repo.
+| Skill architecture | Stub-workflow split | Single monolithic command files | Logic duplication across providers; can't update logic without updating every provider |
+| Command format | YAML frontmatter stubs + XML workflows | Pure markdown everything | YAML gives structured metadata; XML gives semantic instruction boundaries |
+| State storage | Markdown files in git | SQLite / JSON files | Markdown is human-readable, diff-friendly, editable outside AI assistants |
+| State format | Simple markdown with checkboxes | YAML frontmatter + body | Frontmatter adds parsing complexity; no structured query needs justify it |
+| External CLI integration | Bash tool calling `gh`/`jira` directly | MCP servers for GitHub/Jira | Direct CLI calls are simpler, more transparent, easier to debug |
+| Runtime location | `~/.donna/` (provider-agnostic) | Inside provider directories | Provider-agnostic location means one copy of logic, not N |
+| Bootstrap config | `~/.config/donna/config.md` | Environment variable | File is discoverable, editable, version-trackable |
 
 ## What NOT to Use
 
 | Anti-Pattern | Why Avoid |
 |--------------|-----------|
-| **MCP servers for state management** | Massive overengineering. Read/Write/Edit tools handle markdown files perfectly. MCP adds a server process, connection management, and failure modes for zero benefit. |
-| **JSON or YAML state files** | Humans need to read and occasionally hand-edit state. Markdown with checkboxes and headers is the most ergonomic format for a productivity tool. |
-| **Complex parsing logic in skill prompts** | Keep state files simple enough that "read the file and understand it" is sufficient. No regex parsing instructions, no custom delimiters. |
-| **Hardcoded paths in skill files** | Always read `config.md` for the repo path. Never assume `~/donna/` or any fixed location. |
-| **Interactive multi-turn flows within a single skill** | Each skill should do one thing and complete. If user input is needed mid-flow, use the AskUser pattern (Bash tool or direct question) but keep it to 0-1 questions per skill run. |
-| **npm/pip/any package dependencies** | There is no code to install. Skills are markdown files. The only "dependencies" are the CLIs the user already has (git, gh, jira). |
-| **Database of any kind** | Git + markdown IS the database. Version history IS the audit log. `git log` IS the query engine for historical state. |
-
-## Installation
-
-There is no installation in the traditional sense. Setup consists of:
-
-```bash
-# 1. Create a repo for PA state (one-time)
-mkdir ~/personal-assistant-data && cd ~/personal-assistant-data && git init
-
-# 2. Copy skill files to user-level commands (one-time)
-cp skills/*.md ~/.claude/commands/
-
-# 3. Run setup skill (one-time)
-# In Claude Code: /donna:setup
-# This creates config.md pointing to the data repo
-```
-
-Alternatively, skills could be distributed as a git repo that the user clones, with a setup script that symlinks `.md` files into `~/.claude/commands/`.
+| **YAML frontmatter in workflow files** | Only stubs use YAML frontmatter. Workflows use XML tags. Mixing formats creates confusion about which layer you're in. |
+| **MCP servers for state management** | Massive overengineering. Read/Write/Edit tools handle markdown files perfectly. |
+| **JSON or YAML state files** | Humans need to read and hand-edit state. Markdown with checkboxes is the most ergonomic format. |
+| **Amending git commits** | Always create new commits. Amending loses history and can cause conflicts if the repo is shared. |
+| **Sub-agents interacting with users** | Sub-agents write files and return results. Only the main skill thread interacts with the user. |
+| **Assuming GNU date on macOS** | Use portable date patterns or try BSD first with GNU fallback. |
+| **npm/pip/any runtime dependencies** | Skills are markdown files. The only "dependencies" are CLIs the user already has. |
+| **Hardcoded paths in skill files** | Always read bootstrap config for the repo path. Never assume a fixed location. |
+| **Complex parsing logic in skill prompts** | Keep state files simple enough that "read and understand" is sufficient. |
 
 ## Version Compatibility Notes
 
 | Component | Version Constraint | Notes |
 |-----------|-------------------|-------|
-| Claude Code | Any version supporting custom commands | Custom commands have been stable since early Claude Code releases |
+| Claude Code | Any with custom commands | Custom commands have been stable since early releases |
 | Git | 2.x | Standard; any modern git works |
-| `gh` CLI | 2.x | Optional; `gh issue list --json` and `gh api` are the key features used |
-| Jira CLI | go-jira 1.x or atlassian-cli | Optional; less standardized than gh; may need skill-level adaptation |
+| `gh` CLI | 2.x | Optional; `gh issue list --json` and `gh api` are key features |
+| Jira CLI | go-jira 1.x | Optional; less standardized than gh |
 
 ## Sources
 
-- Claude Code documentation on custom slash commands (training data, HIGH confidence)
-- GSD skill suite as reference implementation (referenced in PROJECT.md, HIGH confidence for patterns)
-- GitHub CLI documentation for `gh` command patterns (training data, HIGH confidence)
-- Jira CLI ecosystem is more fragmented -- go-jira, jira-cli, atlassian-cli all exist with varying maturity (MEDIUM confidence)
+- GSD skill suite as reference implementation (HIGH confidence — direct code inspection)
+- Claude Code custom command documentation (HIGH confidence)
+- GitHub CLI documentation (HIGH confidence)
+- Jira CLI ecosystem (MEDIUM confidence — fragmented)
+- OpenCode/Gemini/Codex command formats (LOW confidence — unverified)
