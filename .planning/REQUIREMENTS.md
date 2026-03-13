@@ -7,30 +7,30 @@
 
 ### Setup & Bootstrap
 
-- [ ] **SETUP-01**: User can run `/pa:setup` to configure the storage repo path, initialize the file structure, and declare which external tools are available
-- [ ] **SETUP-02**: System creates and maintains a well-known bootstrap config (`~/.config/personal-assistant/config.md`) pointing to the storage repo — all other skills read this first
+- [ ] **SETUP-01**: User can run `/donna:setup` to configure the storage repo path, initialize the file structure, and declare which external tools are available
+- [ ] **SETUP-02**: System creates and maintains a well-known bootstrap config (`~/.config/donna/config.md`) pointing to the storage repo — all other skills read this first
 
 ### Tools Registry
 
-- [ ] **TOOL-01**: User can run `/pa:add-tool` to declare a new tool via interactive prompts (name, CLI command, what tasks it helps with), after which Claude learns the tool by reading its help output and stores knowledge in `tools.md`
+- [ ] **TOOL-01**: User can run `/donna:add-tool` to declare a new tool via interactive prompts (name, CLI command, what tasks it helps with), after which Claude learns the tool by reading its help output and stores knowledge in `tools.md`
 - [ ] **TOOL-02**: When adding a tool Claude already knows well, the learning step is skipped and knowledge is synthesized from training data instead
-- [ ] **TOOL-03**: User can run `/pa:relearn-tools` to re-run the learning process for tools whose installed version has changed since last learned; tools at the same version are skipped
+- [ ] **TOOL-03**: User can run `/donna:relearn-tools` to re-run the learning process for tools whose installed version has changed since last learned; tools at the same version are skipped
 
 ### Role Definition
 
-- [ ] **ROLE-01**: User can run `/pa:set-role` to define their job role via interactive prompts
+- [ ] **ROLE-01**: User can run `/donna:set-role` to define their job role via interactive prompts
 - [ ] **ROLE-02**: When setting role, a research agent is spawned to find what that role typically does day-to-day (internet research), surfacing suggested recurring tasks
 - [ ] **ROLE-03**: Research findings and suggested recurring tasks are presented for the user to approve, reject, or modify before being saved
 - [ ] **ROLE-04**: Role definition is stored in `role.md` and research stored in `role-research.md` in the storage repo
 
 ### Task Capture
 
-- [ ] **TASK-01**: User can run `/pa:add-task <description>` to capture a task in a single command with no additional prompts — task is written to today's daily journal and committed immediately
+- [ ] **TASK-01**: User can run `/donna:add-task <description>` to capture a task in a single command with no additional prompts — task is written to today's daily journal and committed immediately
 - [ ] **TASK-02**: User can mark a task as complete (done inline or via a skill invocation), updating the daily journal and committing the change
 
 ### Daily Planning
 
-- [ ] **DAILY-01**: User can run `/pa:begin-the-day` to receive a daily brief that carries forward all open tasks from previous days
+- [ ] **DAILY-01**: User can run `/donna:begin-the-day` to receive a daily brief that carries forward all open tasks from previous days
 - [ ] **DAILY-02**: `begin-the-day` surfaces recurring tasks that are due (based on role and approved recurring task list)
 - [ ] **DAILY-03**: `begin-the-day` optionally pulls data from configured tools (e.g. assigned Jira tickets, GitHub PRs awaiting review) if the tool is declared and configured; gracefully skipped if not
 - [ ] **DAILY-04**: `begin-the-day` is idempotent — safe to run multiple times in a day without duplicating tasks
@@ -50,16 +50,16 @@
 
 ### Meeting Capture
 
-- **MEET-01**: User can run `/pa:log-meeting` to capture meeting participants, decisions made, and follow-ups committed to
+- **MEET-01**: User can run `/donna:log-meeting` to capture meeting participants, decisions made, and follow-ups committed to
 - **MEET-02**: Follow-ups from meetings are linked to people and stored in `people.md` for 1:1 follow-up tracking
 
 ### Triage
 
-- **TRIAGE-01**: User can run `/pa:next` to get an AI-reasoned recommendation of what to work on right now, given all open tasks, recurring tasks due, and configured tool data
+- **TRIAGE-01**: User can run `/donna:next` to get an AI-reasoned recommendation of what to work on right now, given all open tasks, recurring tasks due, and configured tool data
 
 ### Review
 
-- **REVIEW-01**: User can run `/pa:end-the-day` to close out the day, mark remaining tasks as carried forward, and add notes on blockers
+- **REVIEW-01**: User can run `/donna:end-the-day` to close out the day, mark remaining tasks as carried forward, and add notes on blockers
 
 ## Out of Scope
 
@@ -70,7 +70,7 @@
 | Natural language date parsing ("next Tuesday") | Adds complexity; explicit intervals are simpler and more reliable |
 | Replacing Jira / project management hierarchies | Complements ticketing systems, doesn't compete |
 | Real-time sync | Git commits are the sync mechanism; eventual consistency is fine |
-| Hardcoded tool integrations | All integrations go through the tools registry (`/pa:add-tool`) |
+| Hardcoded tool integrations | All integrations go through the tools registry (`/donna:add-tool`) |
 
 ## Traceability
 

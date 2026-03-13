@@ -23,8 +23,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Depends on**: Nothing (first phase)
 **Requirements**: SETUP-01, SETUP-02, TASK-01, TASK-02, STORE-01, STORE-02
 **Success Criteria** (what must be TRUE):
-  1. User can run `/pa:setup` from any directory and end up with a configured storage repo, initialized file structure, and a bootstrap config at the well-known path
-  2. User can run `/pa:add-task buy milk` and see it appear in today's daily journal file, committed to git, in under 10 seconds
+  1. User can run `/donna:setup` from any directory and end up with a configured storage repo, initialized file structure, and a bootstrap config at the well-known path
+  2. User can run `/donna:add-task buy milk` and see it appear in today's daily journal file, committed to git, in under 10 seconds
   3. User can mark a task as complete and see the change reflected in the daily journal and committed to git
   4. All state files follow the hybrid structure (daily journals + standing files) and every skill invocation results in a git commit
 **Plans**: TBD
@@ -38,10 +38,10 @@ Plans:
 **Depends on**: Phase 1
 **Requirements**: ROLE-01, ROLE-02, ROLE-03, ROLE-04, DAILY-01, DAILY-02, DAILY-04, STORE-03
 **Success Criteria** (what must be TRUE):
-  1. User can run `/pa:set-role` to define their job role and receive researched recurring task suggestions that they can approve, reject, or modify before anything is saved
+  1. User can run `/donna:set-role` to define their job role and receive researched recurring task suggestions that they can approve, reject, or modify before anything is saved
   2. Role definition persists in `role.md` and research findings persist in `role-research.md` in the storage repo
-  3. User can run `/pa:begin-the-day` and see a concise daily brief that includes all open tasks carried forward from previous days plus any recurring tasks due today
-  4. Running `/pa:begin-the-day` multiple times in the same day does not duplicate tasks or corrupt the daily journal
+  3. User can run `/donna:begin-the-day` and see a concise daily brief that includes all open tasks carried forward from previous days plus any recurring tasks due today
+  4. Running `/donna:begin-the-day` multiple times in the same day does not duplicate tasks or corrupt the daily journal
   5. Skills read only the files they need, not the full repo, so the system remains performant as daily files accumulate over weeks and months
 **Plans**: TBD
 
@@ -54,10 +54,10 @@ Plans:
 **Depends on**: Phase 2
 **Requirements**: TOOL-01, TOOL-02, TOOL-03, DAILY-03
 **Success Criteria** (what must be TRUE):
-  1. User can run `/pa:add-tool` to declare an external CLI tool, and Claude learns that tool's capabilities by reading its help output (or from training data for well-known tools), storing the knowledge in `tools.md`
-  2. User can run `/pa:relearn-tools` and only tools whose version has changed are re-learned; unchanged tools are skipped
-  3. When external tools are configured, `/pa:begin-the-day` pulls relevant data (e.g. assigned Jira tickets, GitHub PRs awaiting review) and includes it in the daily brief
-  4. When no external tools are configured, `/pa:begin-the-day` works exactly as before with no errors or degradation
+  1. User can run `/donna:add-tool` to declare an external CLI tool, and Claude learns that tool's capabilities by reading its help output (or from training data for well-known tools), storing the knowledge in `tools.md`
+  2. User can run `/donna:relearn-tools` and only tools whose version has changed are re-learned; unchanged tools are skipped
+  3. When external tools are configured, `/donna:begin-the-day` pulls relevant data (e.g. assigned Jira tickets, GitHub PRs awaiting review) and includes it in the daily brief
+  4. When no external tools are configured, `/donna:begin-the-day` works exactly as before with no errors or degradation
 **Plans**: TBD
 
 Plans:

@@ -10,14 +10,14 @@ Features users expect from any personal task/productivity system. Missing any of
 
 | Feature | Why Expected | Complexity | Notes |
 |---------|--------------|------------|-------|
-| Quick task capture | Every tool from Things 3's Quick Entry to OmniFocus's Inbox does this. Users abandon tools where capture has friction. | Low | Must be faster than opening a note app. Single command, minimal prompts. The `/pa:add-task` skill covers this. |
+| Quick task capture | Every tool from Things 3's Quick Entry to OmniFocus's Inbox does this. Users abandon tools where capture has friction. | Low | Must be faster than opening a note app. Single command, minimal prompts. The `/donna:add-task` skill covers this. |
 | Task completion/checking off | Fundamental feedback loop. Todoist, Things 3, and every task app make this satisfying. | Low | Mark done, move to completed section in daily file. |
-| Daily view / "today" list | Things 3's "Today" view, OmniFocus's Forecast, Todoist's "Today" -- users need to see what's on their plate right now. | Medium | The `/pa:begin-the-day` skill covers this. Must aggregate: carried-forward tasks + recurring tasks due + manually scheduled items. |
+| Daily view / "today" list | Things 3's "Today" view, OmniFocus's Forecast, Todoist's "Today" -- users need to see what's on their plate right now. | Medium | The `/donna:begin-the-day` skill covers this. Must aggregate: carried-forward tasks + recurring tasks due + manually scheduled items. |
 | Carry-forward of incomplete tasks | Every serious tool handles this. If yesterday's undone tasks vanish, trust is destroyed. OmniFocus and Things 3 keep deferred items visible; Bullet Journal's "migration" ritual does this manually. | Medium | Must be automatic in `begin-the-day`. Show what carried forward so user stays aware. |
 | Recurring tasks | OmniFocus has the most sophisticated recurrence engine (defer dates, repeat-after-completion vs repeat-on-schedule). Things 3 handles basics well. Todoist supports natural language recurrence. | Medium | Interval definitions stored in `recurring.md`. Surface in `begin-the-day`. Support at minimum: daily, weekly-on-day, monthly, and interval-from-completion. |
 | Persistence across sessions | Every tool saves state. For a CLI tool, this is extra critical since there's no always-running process. | Low | Git-backed markdown files handle this. Already in the design. |
 | Search / find tasks | Users need to locate things they captured days or weeks ago. Obsidian's search, Notion's search, Things 3's filtering. | Medium | Search across daily files and standing files. Grep over markdown is natural for CLI users. |
-| Basic prioritization | Even simple priority (high/medium/low or 1-4 scale like OmniFocus) is expected. Without it, the "today" list is a flat wall of text. | Low | Priority flag on tasks. Used by `/pa:next` for triage ordering. |
+| Basic prioritization | Even simple priority (high/medium/low or 1-4 scale like OmniFocus) is expected. Without it, the "today" list is a flat wall of text. | Low | Priority flag on tasks. Used by `/donna:next` for triage ordering. |
 | Context / tagging | GTD contexts (OmniFocus), tags (Things 3, Todoist), or any way to slice tasks by dimension (person, project, energy level). | Low | Lightweight tags in task markdown. Don't over-engineer -- simple `#tag` inline syntax. |
 
 ## Differentiators
@@ -26,9 +26,9 @@ Features that set this CLI assistant apart. Not expected in every tool, but uniq
 
 | Feature | Value Proposition | Complexity | Notes |
 |---------|-------------------|------------|-------|
-| Role-aware recurring task suggestions | No existing tool does this. OmniFocus/Things make you define your own recurring tasks from scratch. This system researches your job role and proposes recurring responsibilities you might forget. | High | The `/pa:set-role` web research agent pattern. Major differentiator -- turns "blank canvas" into a pre-populated system. |
-| AI-powered triage / "what next" | Things 3 and OmniFocus show you your list and let you decide. Todoist has basic "priority + due date" sorting. This system can reason about urgency, role importance, time-of-day, and accumulated context. | High | The `/pa:next` skill. Goes beyond sorting -- it recommends with rationale. |
-| Meeting follow-up capture with people tracking | Most task tools treat tasks as isolated. This system captures who said what, links follow-ups to people, and can surface "you owe X a response" patterns. | Medium | The `/pa:log-meeting` skill + `people.md` standing file. Notion databases can do this but require manual setup; this is built-in. |
+| Role-aware recurring task suggestions | No existing tool does this. OmniFocus/Things make you define your own recurring tasks from scratch. This system researches your job role and proposes recurring responsibilities you might forget. | High | The `/donna:set-role` web research agent pattern. Major differentiator -- turns "blank canvas" into a pre-populated system. |
+| AI-powered triage / "what next" | Things 3 and OmniFocus show you your list and let you decide. Todoist has basic "priority + due date" sorting. This system can reason about urgency, role importance, time-of-day, and accumulated context. | High | The `/donna:next` skill. Goes beyond sorting -- it recommends with rationale. |
+| Meeting follow-up capture with people tracking | Most task tools treat tasks as isolated. This system captures who said what, links follow-ups to people, and can surface "you owe X a response" patterns. | Medium | The `/donna:log-meeting` skill + `people.md` standing file. Notion databases can do this but require manual setup; this is built-in. |
 | Git-backed version history | No productivity app gives you `git log` on your task history. Full audit trail, branch/merge for experiments, works offline. | Low | Already designed in. Developers especially appreciate this. |
 | CLI-native workflow (no context switching) | Professionals who live in the terminal (engineers, devops, SREs) lose flow switching to a GUI app. This stays in the terminal. | Low | The entire design thesis. Taskwarrior proves there's demand but it lacks AI reasoning. |
 | Morning ritual as a first-class concept | Bullet Journal's morning migration ritual is powerful but manual. Most apps just show "overdue." This system has an explicit `begin-the-day` ceremony that carries forward, surfaces recurring work, and optionally pulls from external tools. | Medium | The ceremony aspect matters -- it's a moment of intention-setting, not just a list dump. |
@@ -56,36 +56,36 @@ Features to explicitly NOT build. These are tempting but wrong for this tool.
 ## Feature Dependencies
 
 ```
-config.md (pa:setup) --> everything else (all skills need config)
+config.md (donna:setup) --> everything else (all skills need config)
     |
     v
-role.md (pa:set-role) --> recurring.md (role research proposes recurring tasks)
+role.md (donna:set-role) --> recurring.md (role research proposes recurring tasks)
     |                          |
     v                          v
-people.md (populated by pa:log-meeting) --> pa:next (people context for triage)
+people.md (populated by donna:log-meeting) --> donna:next (people context for triage)
     |                          |
     v                          v
-daily/YYYY-MM-DD.md (pa:begin-the-day) --> pa:next (today's tasks are input)
+daily/YYYY-MM-DD.md (donna:begin-the-day) --> donna:next (today's tasks are input)
     ^                          ^
     |                          |
-pa:add-task (writes to today)  recurring engine (surfaces due tasks)
+donna:add-task (writes to today)  recurring engine (surfaces due tasks)
     ^
     |
-pa:log-meeting (creates follow-up tasks)
+donna:log-meeting (creates follow-up tasks)
 ```
 
-**Critical path:** `pa:setup` --> `pa:set-role` --> `pa:begin-the-day` --> `pa:add-task` / `pa:log-meeting` --> `pa:next`
+**Critical path:** `donna:setup` --> `donna:set-role` --> `donna:begin-the-day` --> `donna:add-task` / `donna:log-meeting` --> `donna:next`
 
-**Independent of role:** `pa:add-task` can work immediately after `pa:setup`. Users don't need to set a role to start capturing tasks. This is important for onboarding -- don't gate basic value behind a long setup.
+**Independent of role:** `donna:add-task` can work immediately after `donna:setup`. Users don't need to set a role to start capturing tasks. This is important for onboarding -- don't gate basic value behind a long setup.
 
 ## MVP Recommendation
 
 ### Phase 1: Capture and Daily Rhythm (minimum viable daily driver)
 
 Prioritize:
-1. **pa:setup** -- config, link repo, minimal setup (table stakes: persistence)
-2. **pa:add-task** -- quick capture with priority and optional tags (table stakes: capture)
-3. **pa:begin-the-day** -- morning ritual with carry-forward (table stakes: daily view, carry-forward)
+1. **donna:setup** -- config, link repo, minimal setup (table stakes: persistence)
+2. **donna:add-task** -- quick capture with priority and optional tags (table stakes: capture)
+3. **donna:begin-the-day** -- morning ritual with carry-forward (table stakes: daily view, carry-forward)
 4. **Task completion** -- mark tasks done within daily file (table stakes: completion)
 5. **Basic recurring tasks** -- manual definition, surfaced in begin-the-day (table stakes: recurrence)
 
@@ -93,9 +93,9 @@ This phase makes the tool usable as a daily driver. A professional can capture t
 
 ### Phase 2: Intelligence and Context
 
-6. **pa:set-role** -- role definition + research agent for recurring task suggestions (differentiator: role-awareness)
-7. **pa:log-meeting** -- meeting capture with people and follow-ups (differentiator: people tracking)
-8. **pa:next** -- AI triage with priority, context, and role awareness (differentiator: intelligent triage)
+6. **donna:set-role** -- role definition + research agent for recurring task suggestions (differentiator: role-awareness)
+7. **donna:log-meeting** -- meeting capture with people and follow-ups (differentiator: people tracking)
+8. **donna:next** -- AI triage with priority, context, and role awareness (differentiator: intelligent triage)
 9. **people.md** -- people-centric task views (differentiator: relationship tracking)
 
 This phase adds the AI intelligence layer that makes the tool more than "Taskwarrior with markdown."

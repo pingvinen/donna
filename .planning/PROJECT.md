@@ -16,12 +16,12 @@ Never forget an important task again — the assistant knows your role, surfaces
 
 ### Active
 
-- [ ] `/pa:setup` skill — first-time configuration: link git repo, declare available tools (Jira CLI, GitHub CLI, etc.)
-- [ ] `/pa:set-role` skill — define job role, trigger research agent to surface typical responsibilities, propose recurring tasks for approval, store research as reference
-- [ ] `/pa:begin-the-day` skill — morning routine: carry forward unfinished tasks from yesterday, surface recurring tasks due today, optionally pull from Jira/GitHub if configured
-- [ ] `/pa:add-task` skill — quickly capture a task, follow-up, or note
-- [ ] `/pa:log-meeting` skill — post-meeting capture: who was there, decisions made, follow-ups committed to
-- [ ] `/pa:next` skill — on-demand triage: given everything in the system, what should I do right now?
+- [ ] `/donna:setup` skill — first-time configuration: link git repo, declare available tools (Jira CLI, GitHub CLI, etc.)
+- [ ] `/donna:set-role` skill — define job role, trigger research agent to surface typical responsibilities, propose recurring tasks for approval, store research as reference
+- [ ] `/donna:begin-the-day` skill — morning routine: carry forward unfinished tasks from yesterday, surface recurring tasks due today, optionally pull from Jira/GitHub if configured
+- [ ] `/donna:add-task` skill — quickly capture a task, follow-up, or note
+- [ ] `/donna:log-meeting` skill — post-meeting capture: who was there, decisions made, follow-ups committed to
+- [ ] `/donna:next` skill — on-demand triage: given everything in the system, what should I do right now?
 - [ ] Recurring task engine — tasks with interval definitions (e.g. "refine backlog every Monday"), surfaced by `begin-the-day`
 - [ ] Hybrid storage structure — daily journal files (`daily/YYYY-MM-DD.md`) + standing files (`role.md`, `role-research.md`, `recurring.md`, `people.md`, `config.md`)
 - [ ] Git-backed persistence — all state committed to user's chosen GitHub repo after each skill run
@@ -52,7 +52,7 @@ Never forget an important task again — the assistant knows your role, surfaces
 
 | Decision | Rationale | Outcome |
 |----------|-----------|----------|
-| Skill prefix `pa:` | Namespaced like GSD's `gsd:` to avoid collisions and signal the suite | — Pending |
+| Skill prefix `donna:` | Namespaced like GSD's `gsd:` to avoid collisions and signal the suite | — Pending |
 | Hybrid storage (daily + standing files) | Daily files capture the running log; standing files capture durable context (role, recurring tasks, people) | — Pending |
 | Role research via web agent | User's role drives recurring task suggestions — research grounds them in reality rather than just user assumption | — Pending |
 | Optional external integrations | Jira/GitHub enrichment is valuable but the system must work without them | — Pending |

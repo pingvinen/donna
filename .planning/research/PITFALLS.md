@@ -14,17 +14,17 @@ Mistakes that cause user abandonment or require significant rework.
 
 **What goes wrong:** The tool requires too many steps or too much context to capture a task. Users revert to Slack self-DMs, sticky notes, or "I'll remember it." Every second of friction between "I need to remember this" and "it's captured" loses users.
 
-**Why it happens:** Developers design skills around data completeness (category, priority, due date, assignee) instead of speed. The `pa:add-task` skill asks three questions when the user just needs to dump a sentence.
+**Why it happens:** Developers design skills around data completeness (category, priority, due date, assignee) instead of speed. The `donna:add-task` skill asks three questions when the user just needs to dump a sentence.
 
-**Consequences:** Users stop capturing tasks within the first week. The system becomes stale, which triggers a death spiral: stale data means `pa:begin-the-day` surfaces irrelevant content, which means the user stops invoking it entirely.
+**Consequences:** Users stop capturing tasks within the first week. The system becomes stale, which triggers a death spiral: stale data means `donna:begin-the-day` surfaces irrelevant content, which means the user stops invoking it entirely.
 
 **Warning signs:**
-- `pa:add-task` has more than one required interactive prompt
+- `donna:add-task` has more than one required interactive prompt
 - Users need to switch context (open a different terminal, navigate to the repo) to capture
 - Capture takes more than 10 seconds from invocation to completion
 
 **Prevention:**
-- `pa:add-task` should accept a single freeform string: `/pa:add-task Follow up with Sarah about API timeline`
+- `donna:add-task` should accept a single freeform string: `/donna:add-task Follow up with Sarah about API timeline`
 - All metadata (priority, category, due date) is optional and inferred or deferred
 - The skill should work from any directory, not just the state repo
 - Commit happens silently in the background; user never waits for git
@@ -35,7 +35,7 @@ Mistakes that cause user abandonment or require significant rework.
 
 ### Pitfall 2: Morning Routine Becomes a Wall of Text
 
-**What goes wrong:** `pa:begin-the-day` dumps everything -- carried-forward tasks, recurring items, Jira tickets, GitHub notifications -- in a single unstructured wall. The user's eyes glaze over. The skill feels like work, not like help.
+**What goes wrong:** `donna:begin-the-day` dumps everything -- carried-forward tasks, recurring items, Jira tickets, GitHub notifications -- in a single unstructured wall. The user's eyes glaze over. The skill feels like work, not like help.
 
 **Why it happens:** The developer thinks "more information = more value." In reality, a morning routine skill competes with the user simply opening their calendar and Jira board. If it is not faster and more focused than what they already do, it loses.
 
@@ -88,7 +88,7 @@ Mistakes that cause user abandonment or require significant rework.
 
 **Why it happens:** The developer tests with 3 days of data. In production, users have 60+ daily files, a large `people.md`, extensive role research, and months of meeting notes. The system was never designed for data growth.
 
-**Consequences:** Skills degrade over time. After 2-3 months of use, `pa:next` cannot read all context and makes poor recommendations. `pa:begin-the-day` misses carried-forward tasks from files it could not load. The tool becomes less useful precisely when it should be most valuable (when the user has invested in it).
+**Consequences:** Skills degrade over time. After 2-3 months of use, `donna:next` cannot read all context and makes poor recommendations. `donna:begin-the-day` misses carried-forward tasks from files it could not load. The tool becomes less useful precisely when it should be most valuable (when the user has invested in it).
 
 **Warning signs:**
 - Skills that read more than 3-4 files to perform their function
@@ -97,7 +97,7 @@ Mistakes that cause user abandonment or require significant rework.
 - Meeting logs are stored in a single file rather than per-date
 
 **Prevention:**
-- **Read only what you need:** `begin-the-day` reads yesterday's file and `recurring.md`, not all historical files. `pa:next` reads today's file, not the full archive
+- **Read only what you need:** `begin-the-day` reads yesterday's file and `recurring.md`, not all historical files. `donna:next` reads today's file, not the full archive
 - **Time-windowed reads:** Never read more than 3-7 days of daily files. Older history is available via git but not loaded by default
 - **Bounded file sizes:** Standing files (`people.md`, `recurring.md`) should have a practical cap. If `people.md` exceeds ~200 lines, consider splitting
 - **Summary files:** Periodically generate `weekly-summary.md` that compresses daily files into key points, allowing skills to read summaries instead of raw data
@@ -126,7 +126,7 @@ Mistakes that cause user abandonment or require significant rework.
 - **Timeout everything:** 10-second timeout on external CLI calls. If it times out, report it clearly: "Jira data unavailable (timeout)"
 - **Distinguish failure modes:** "No Jira tasks found" vs. "Jira CLI not configured" vs. "Jira authentication expired" -- each gets a different, human-readable message
 - **Graceful degradation is not optional:** Every feature that touches an external CLI must have a fallback path that works without it. Test the no-CLI path as the primary path
-- **Version-pin expectations:** Document which CLI versions you test against. Check `jira --version` and `gh --version` during `pa:setup` and warn if untested
+- **Version-pin expectations:** Document which CLI versions you test against. Check `jira --version` and `gh --version` during `donna:setup` and warn if untested
 - **Cache external data:** If Jira data was fetched successfully, cache it in the daily file. If the next invocation fails, show stale data with a "last fetched: 2h ago" note rather than nothing
 
 **Phase mapping:** Phase 3 (integrations). Build the entire core system without external CLIs first. Integrations are enhancement, not foundation.
@@ -135,7 +135,7 @@ Mistakes that cause user abandonment or require significant rework.
 
 ### Pitfall 6: Skill Complexity Creep
 
-**What goes wrong:** Each skill starts simple but accumulates edge cases, configuration options, and "just one more feature" additions. `pa:begin-the-day` eventually handles timezone logic, holiday detection, sprint boundaries, integration with three different tools, and custom sorting -- becoming a 500-line prompt that is fragile and hard to modify.
+**What goes wrong:** Each skill starts simple but accumulates edge cases, configuration options, and "just one more feature" additions. `donna:begin-the-day` eventually handles timezone logic, holiday detection, sprint boundaries, integration with three different tools, and custom sorting -- becoming a 500-line prompt that is fragile and hard to modify.
 
 **Why it happens:** The developer (or the user) keeps saying "it would be nice if..." without recognizing that each addition increases the surface area for bugs and makes the skill harder for Claude to execute reliably within a single context window.
 
@@ -151,7 +151,7 @@ Mistakes that cause user abandonment or require significant rework.
 - **One skill, one job:** `begin-the-day` surfaces tasks. It does not also reorganize priorities, archive old tasks, or sync with external tools. Those are separate skills
 - **Compose, don't consolidate:** If `begin-the-day` needs Jira data, it calls a helper that fetches Jira data -- not inline Jira logic in the main prompt
 - **Prompt size budget:** Set a hard limit (e.g., 100 lines) per skill prompt. If you exceed it, the skill is doing too much
-- **Feature gates, not feature flags:** New capabilities are new skills, not conditionals in existing skills. `/pa:begin-the-day` vs `/pa:begin-the-day-with-jira` is better than one skill with 5 integration toggles (though ideally the Jira integration is transparent when configured and absent when not)
+- **Feature gates, not feature flags:** New capabilities are new skills, not conditionals in existing skills. `/donna:begin-the-day` vs `/donna:begin-the-day-with-jira` is better than one skill with 5 integration toggles (though ideally the Jira integration is transparent when configured and absent when not)
 
 **Phase mapping:** Every phase. This is a discipline, not a one-time fix. Review skill complexity at each milestone.
 
@@ -161,7 +161,7 @@ Mistakes that cause user abandonment or require significant rework.
 
 ### Pitfall 7: The "Second Day Problem"
 
-**What goes wrong:** `pa:begin-the-day` works great on day one (clean slate). On day two, it needs to carry forward unfinished tasks from yesterday. The logic for determining what is "unfinished" is ambiguous. Checked-off tasks vs. unchecked, tasks that were deferred vs. abandoned, tasks added late in the day -- the carryforward logic gets messy fast.
+**What goes wrong:** `donna:begin-the-day` works great on day one (clean slate). On day two, it needs to carry forward unfinished tasks from yesterday. The logic for determining what is "unfinished" is ambiguous. Checked-off tasks vs. unchecked, tasks that were deferred vs. abandoned, tasks added late in the day -- the carryforward logic gets messy fast.
 
 **Prevention:**
 - Define explicit task states: `[ ]` (open), `[x]` (done), `[>]` (deferred to tomorrow), `[-]` (dropped). Only `[ ]` items carry forward
@@ -175,7 +175,7 @@ Mistakes that cause user abandonment or require significant rework.
 
 ### Pitfall 8: Role Research Becomes Noise
 
-**What goes wrong:** `/pa:set-role` spawns a research agent that returns 50 generic responsibilities for "Engineering Manager." The user approves some, ignores most, and the recurring task list becomes bloated with tasks like "Review team velocity metrics" that sound good but don't match their actual workflow.
+**What goes wrong:** `/donna:set-role` spawns a research agent that returns 50 generic responsibilities for "Engineering Manager." The user approves some, ignores most, and the recurring task list becomes bloated with tasks like "Review team velocity metrics" that sound good but don't match their actual workflow.
 
 **Prevention:**
 - Research agent should propose 5-7 high-confidence recurring tasks, not 20+
@@ -204,7 +204,7 @@ Mistakes that cause user abandonment or require significant rework.
 
 ### Pitfall 10: People File Becomes a Mess
 
-**What goes wrong:** `pa:log-meeting` adds people to `people.md` every time they appear in a meeting. After a month, the file has 40 entries, many duplicated (name variations: "Sarah", "Sarah Chen", "sarah.chen@company.com"), with no useful context beyond "was in a meeting."
+**What goes wrong:** `donna:log-meeting` adds people to `people.md` every time they appear in a meeting. After a month, the file has 40 entries, many duplicated (name variations: "Sarah", "Sarah Chen", "sarah.chen@company.com"), with no useful context beyond "was in a meeting."
 
 **Prevention:**
 - Normalize names on capture. Ask once: "Is this Sarah Chen (sarah.chen@company.com)?" and store the canonical name

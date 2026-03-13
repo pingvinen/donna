@@ -51,7 +51,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- [Phase 2]: The Task tool spawning pattern for `pa:set-role` research agent needs validation against current Claude Code behavior before building (flagged by research)
+- [Phase 2]: The Task tool spawning pattern for `donna:set-role` research agent needs validation against current Claude Code behavior before building (flagged by research)
 - [Phase 3]: Jira CLI ecosystem is fragmented -- needs targeted research at Phase 3 planning time
 
 ## Session Continuity

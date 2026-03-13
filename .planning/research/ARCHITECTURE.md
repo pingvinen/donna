@@ -12,7 +12,7 @@ The system follows a **skill-per-command architecture** where each slash command
 ```
 User's machine
   |
-  +-- ~/.claude/commands/pa:*.md        <-- Skill prompt files (installed)
+  +-- ~/.claude/commands/donna:*.md        <-- Skill prompt files (installed)
   |
   +-- [user-chosen-repo]/               <-- State repository
        +-- config.md                    <-- Setup config (repo path, tools, prefs)
@@ -31,33 +31,33 @@ User's machine
 
 | Component | Responsibility | Reads From | Writes To |
 |-----------|---------------|------------|-----------|
-| `pa:setup` | Bootstrap config: link storage repo, detect CLIs, set preferences | User input | `config.md` |
-| `pa:set-role` | Define job role, spawn research agent, propose recurring tasks | User input, web search | `role.md`, `role-research.md`, `recurring.md` |
-| `pa:begin-the-day` | Morning routine: carry forward, surface recurring, pull external | `config.md`, `role.md`, `recurring.md`, `daily/{yesterday}.md`, Jira/GH CLIs | `daily/{today}.md` |
-| `pa:add-task` | Quick task capture with metadata | User input, `people.md` | `daily/{today}.md` |
-| `pa:log-meeting` | Post-meeting capture: attendees, decisions, follow-ups | User input, `people.md` | `daily/{today}.md`, `people.md` |
-| `pa:next` | Triage: what should I do right now? | `daily/{today}.md`, `recurring.md`, `role.md` | (read-mostly, may reprioritize `daily/{today}.md`) |
-| Research Agent | Sub-agent spawned by `pa:set-role` | Web search results | `role-research.md` |
+| `donna:setup` | Bootstrap config: link storage repo, detect CLIs, set preferences | User input | `config.md` |
+| `donna:set-role` | Define job role, spawn research agent, propose recurring tasks | User input, web search | `role.md`, `role-research.md`, `recurring.md` |
+| `donna:begin-the-day` | Morning routine: carry forward, surface recurring, pull external | `config.md`, `role.md`, `recurring.md`, `daily/{yesterday}.md`, Jira/GH CLIs | `daily/{today}.md` |
+| `donna:add-task` | Quick task capture with metadata | User input, `people.md` | `daily/{today}.md` |
+| `donna:log-meeting` | Post-meeting capture: attendees, decisions, follow-ups | User input, `people.md` | `daily/{today}.md`, `people.md` |
+| `donna:next` | Triage: what should I do right now? | `daily/{today}.md`, `recurring.md`, `role.md` | (read-mostly, may reprioritize `daily/{today}.md`) |
+| Research Agent | Sub-agent spawned by `donna:set-role` | Web search results | `role-research.md` |
 | Git Commit Layer | Each skill commits after writing | All changed files | Git history |
 
 ### Data Flow
 
 ```
-pa:setup --> config.md
+donna:setup --> config.md
                 |
                 v
-pa:set-role --> role.md + role-research.md + recurring.md
+donna:set-role --> role.md + role-research.md + recurring.md
                 |              |                  |
                 v              v                  v
-pa:begin-the-day ----reads all standing files---->  daily/{today}.md
+donna:begin-the-day ----reads all standing files---->  daily/{today}.md
                      + yesterday's journal              |
                      + Jira/GH (if configured)          |
                                                         v
-pa:add-task  ---------------------------------------->  daily/{today}.md
-pa:log-meeting -------------------------------------->  daily/{today}.md + people.md
+donna:add-task  ---------------------------------------->  daily/{today}.md
+donna:log-meeting -------------------------------------->  daily/{today}.md + people.md
                                                         |
                                                         v
-pa:next  <---------reads daily + standing files---------+
+donna:next  <---------reads daily + standing files---------+
 ```
 
 **Key principle:** Data flows in one direction per skill invocation. Each skill reads what it needs, does its work, writes results, and commits. No skill depends on another skill running in the same session.
@@ -68,12 +68,12 @@ Each skill is a single markdown file installed into the Claude Code commands dir
 
 ```
 ~/.claude/commands/
-  pa:setup.md
-  pa:set-role.md
-  pa:begin-the-day.md
-  pa:add-task.md
-  pa:log-meeting.md
-  pa:next.md
+  donna:setup.md
+  donna:set-role.md
+  donna:begin-the-day.md
+  donna:add-task.md
+  donna:log-meeting.md
+  donna:next.md
 ```
 
 Each skill markdown file contains:
@@ -89,7 +89,7 @@ Each skill markdown file contains:
 Every skill should follow this skeleton:
 
 ```markdown
-# pa:{skill-name}
+# donna:{skill-name}
 
 ## Context Loading
 - Read config.md to get storage repo path and available tools
@@ -113,7 +113,7 @@ Every skill should follow this skeleton:
 
 The storage repo path must be known before any other skill can read/write state. This creates a bootstrap dependency:
 
-**Solution:** `pa:setup` writes a config file to a **known location** that all other skills check first.
+**Solution:** `donna:setup` writes a config file to a **known location** that all other skills check first.
 
 ```
 ~/.claude/pa-config.json    <-- Bootstrap pointer (just the repo path)
@@ -125,13 +125,13 @@ OR (simpler, following GSD's pattern of keeping everything in the commands direc
 ~/.claude/commands/pa-state/config.md   <-- Inline with skills
 ```
 
-**Recommended approach:** Use a well-known path like `~/.config/personal-assistant/config.md` that every skill reads first. This file contains:
+**Recommended approach:** Use a well-known path like `~/.config/donna/config.md` that every skill reads first. This file contains:
 
 ```markdown
-# Personal Assistant Config
+# Donna Config
 
 ## Storage Repository
-path: /Users/patrick/workspace/pa-storage
+path: /Users/patrick/workspace/donna-storage
 
 ## Available Tools
 - [x] gh (GitHub CLI)
@@ -144,11 +144,11 @@ workdays: Mon-Fri
 
 ### Config Guard Pattern
 
-Every skill (except `pa:setup`) should start with:
+Every skill (except `donna:setup`) should start with:
 
 ```
-1. Read ~/.config/personal-assistant/config.md
-2. If missing: tell user to run /pa:setup first, then stop
+1. Read ~/.config/donna/config.md
+2. If missing: tell user to run /donna:setup first, then stop
 3. Extract storage repo path
 4. Read state files from that path
 ```
@@ -245,7 +245,7 @@ jira_project: —
 
 ### When to Spawn
 
-Only `pa:set-role` needs a research sub-agent. The pattern:
+Only `donna:set-role` needs a research sub-agent. The pattern:
 
 1. User provides their job role title and context
 2. Main skill spawns a research agent with a focused prompt
@@ -320,7 +320,7 @@ External data should be normalized into the daily journal format. A GitHub PR be
 ### Pattern 2: Config Guard
 **What:** Every skill (except setup) checks for config before proceeding.
 **When:** First action of every non-setup skill.
-**Why:** Prevents cryptic failures and gives clear remediation ("run /pa:setup first").
+**Why:** Prevents cryptic failures and gives clear remediation ("run /donna:setup first").
 
 ### Pattern 3: Idempotent Daily File Creation
 **What:** `begin-the-day` creates today's daily file, but `add-task` and `log-meeting` also create it if it does not exist yet.
@@ -357,7 +357,7 @@ External data should be normalized into the daily journal format. A GitHub PR be
 ### Anti-Pattern 4: Spawning Agents for Simple Tasks
 **What:** Using sub-agents for anything other than web research.
 **Why bad:** Agent spawning adds latency and complexity. Most skills just need to read files, interact with the user, and write files.
-**Instead:** Only spawn agents when you need web search or parallel independent work. The only current use case is role research in `pa:set-role`.
+**Instead:** Only spawn agents when you need web search or parallel independent work. The only current use case is role research in `donna:set-role`.
 
 ### Anti-Pattern 5: Silent External CLI Failures
 **What:** Running `gh` or `jira` and swallowing errors without informing the user.
@@ -369,31 +369,31 @@ External data should be normalized into the daily journal format. A GitHub PR be
 Skills should be built in this order based on dependencies:
 
 ```
-Phase 1: pa:setup
+Phase 1: donna:setup
    |  (all other skills depend on config.md existing)
    v
-Phase 2: pa:set-role + pa:add-task
+Phase 2: donna:set-role + donna:add-task
    |  (set-role establishes role context; add-task is simple and independent)
    |  (set-role includes the research agent, which is the most complex sub-component)
    v
-Phase 3: pa:begin-the-day
+Phase 3: donna:begin-the-day
    |  (needs role.md, recurring.md, config.md, and yesterday's daily file)
    |  (this is where external CLI integration first appears)
    v
-Phase 4: pa:log-meeting
+Phase 4: donna:log-meeting
    |  (needs people.md for context, writes to daily file and people.md)
    v
-Phase 5: pa:next
+Phase 5: donna:next
    |  (needs everything: daily file, recurring.md, role.md)
    |  (this is the "capstone" -- it reads all state and synthesizes priority)
 ```
 
 **Rationale:**
-- `pa:setup` is the foundation. Nothing works without it.
-- `pa:set-role` and `pa:add-task` can be built in parallel. `set-role` is complex (research agent) but establishes the role context everything else uses. `add-task` is simple and lets you start capturing tasks immediately.
-- `pa:begin-the-day` is the daily driver but needs role and recurring data to be meaningful.
-- `pa:log-meeting` needs the daily file pattern established and benefits from people.md.
-- `pa:next` is the intelligence layer -- it reads everything and makes recommendations. Build it last when all data sources exist.
+- `donna:setup` is the foundation. Nothing works without it.
+- `donna:set-role` and `donna:add-task` can be built in parallel. `set-role` is complex (research agent) but establishes the role context everything else uses. `add-task` is simple and lets you start capturing tasks immediately.
+- `donna:begin-the-day` is the daily driver but needs role and recurring data to be meaningful.
+- `donna:log-meeting` needs the daily file pattern established and benefits from people.md.
+- `donna:next` is the intelligence layer -- it reads everything and makes recommendations. Build it last when all data sources exist.
 
 ## Git Commit Strategy
 
@@ -402,15 +402,15 @@ Every skill commits after completing its write operations. One commit per skill 
 
 ### Commit Message Format
 ```
-pa:{skill}: {what changed}
+donna:{skill}: {what changed}
 
 Examples:
-pa:setup: initial configuration
-pa:set-role: defined role as Senior Software Engineer
-pa:begin-the-day: started daily journal for 2026-03-13
-pa:add-task: captured "Follow up with Alex on API migration"
-pa:log-meeting: logged Platform sync meeting
-pa:next: reprioritized today's tasks
+donna:setup: initial configuration
+donna:set-role: defined role as Senior Software Engineer
+donna:begin-the-day: started daily journal for 2026-03-13
+donna:add-task: captured "Follow up with Alex on API migration"
+donna:log-meeting: logged Platform sync meeting
+donna:next: reprioritized today's tasks
 ```
 
 ### Commit Scope

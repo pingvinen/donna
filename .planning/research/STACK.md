@@ -34,7 +34,7 @@ This is not a traditional software project with runtime dependencies. The "stack
 | **Bash** | Run git commands, invoke external CLIs | `git add/commit`, `gh issue list`, `jira list`, date calculations |
 | **Glob** | Find files by pattern | Locating daily files (`daily/2026-*.md`), listing standing files |
 | **Grep** | Search file contents | Finding tasks by keyword, locating mentions of a person |
-| **WebSearch** | Research the web | Used by `/pa:set-role` to research job responsibilities |
+| **WebSearch** | Research the web | Used by `/donna:set-role` to research job responsibilities |
 | **WebFetch** | Fetch specific URLs | Pulling specific reference pages during role research |
 | **Task** (sub-agent) | Spawn independent agent threads | Role research, complex triage calculations, parallel information gathering |
 
@@ -46,15 +46,15 @@ Each skill is a single markdown file in `.claude/commands/`:
 
 ```
 .claude/commands/
-  pa:setup.md
-  pa:set-role.md
-  pa:begin-the-day.md
-  pa:add-task.md
-  pa:log-meeting.md
-  pa:next.md
+  donna:setup.md
+  donna:set-role.md
+  donna:begin-the-day.md
+  donna:add-task.md
+  donna:log-meeting.md
+  donna:next.md
 ```
 
-**File naming convention:** `pa:<skill-name>.md` becomes `/pa:<skill-name>` in Claude Code.
+**File naming convention:** `donna:<skill-name>.md` becomes `/donna:<skill-name>` in Claude Code.
 
 **File content is pure markdown prompt text.** There is no frontmatter, no YAML header, no structured metadata. The entire file is the system prompt that Claude Code executes when the user invokes the command.
 
@@ -63,7 +63,7 @@ Each skill is a single markdown file in `.claude/commands/`:
 The `$ARGUMENTS` placeholder in a command file captures everything the user types after the command name:
 
 ```markdown
-# /pa:add-task
+# /donna:add-task
 
 Add a task to today's daily file.
 
@@ -72,7 +72,7 @@ User input: $ARGUMENTS
 [... rest of instructions ...]
 ```
 
-Invoked as: `/pa:add-task Follow up with Sarah about the API decision`
+Invoked as: `/donna:add-task Follow up with Sarah about the API decision`
 
 `$ARGUMENTS` resolves to: `Follow up with Sarah about the API decision`
 
@@ -120,7 +120,7 @@ If available, pull GitHub data. If not, skip gracefully and note it was skipped.
 **3. Git Commit After State Changes:**
 ```markdown
 After updating files, commit all changes:
-`git -C {repo_path} add -A && git -C {repo_path} commit -m "pa: [skill-name] - [summary of changes]"`
+`git -C {repo_path} add -A && git -C {repo_path} commit -m "donna: [skill-name] - [summary of changes]"`
 ```
 
 **4. Sub-Agent Spawning (Task Tool):**
@@ -138,7 +138,7 @@ recurring tasks, and stakeholder interactions. Write findings to {repo_path}/rol
 {user-chosen-repo}/
   config.md          # Setup: repo path, available CLIs, preferences
   role.md            # User's job role definition and approved recurring tasks
-  role-research.md   # Research output from /pa:set-role
+  role-research.md   # Research output from /donna:set-role
   recurring.md       # Recurring task definitions with intervals
   people.md          # People the user interacts with, context notes
   daily/
@@ -234,7 +234,7 @@ This mirrors GSD's approach: GSD commands live in `~/.claude/commands/` and oper
 | **MCP servers for state management** | Massive overengineering. Read/Write/Edit tools handle markdown files perfectly. MCP adds a server process, connection management, and failure modes for zero benefit. |
 | **JSON or YAML state files** | Humans need to read and occasionally hand-edit state. Markdown with checkboxes and headers is the most ergonomic format for a productivity tool. |
 | **Complex parsing logic in skill prompts** | Keep state files simple enough that "read the file and understand it" is sufficient. No regex parsing instructions, no custom delimiters. |
-| **Hardcoded paths in skill files** | Always read `config.md` for the repo path. Never assume `~/personal-assistant/` or any fixed location. |
+| **Hardcoded paths in skill files** | Always read `config.md` for the repo path. Never assume `~/donna/` or any fixed location. |
 | **Interactive multi-turn flows within a single skill** | Each skill should do one thing and complete. If user input is needed mid-flow, use the AskUser pattern (Bash tool or direct question) but keep it to 0-1 questions per skill run. |
 | **npm/pip/any package dependencies** | There is no code to install. Skills are markdown files. The only "dependencies" are the CLIs the user already has (git, gh, jira). |
 | **Database of any kind** | Git + markdown IS the database. Version history IS the audit log. `git log` IS the query engine for historical state. |
@@ -251,7 +251,7 @@ mkdir ~/personal-assistant-data && cd ~/personal-assistant-data && git init
 cp skills/*.md ~/.claude/commands/
 
 # 3. Run setup skill (one-time)
-# In Claude Code: /pa:setup
+# In Claude Code: /donna:setup
 # This creates config.md pointing to the data repo
 ```
 
