@@ -81,35 +81,43 @@ Each skill is a single markdown file installed into the Claude Code commands dir
   donna:next.md
 ```
 
-Each skill markdown file contains:
-
-1. **System instructions** -- Role definition, constraints, behavioral rules
-2. **File reading directives** -- Which state files to load at the start (`<files_to_read>` block or explicit Read instructions)
-3. **Interaction flow** -- Steps the skill executes (read state, interact with user, write state, commit)
-4. **Output format** -- How to structure written markdown
-5. **Git commit instructions** -- Commit after each meaningful state change
+Each skill markdown file uses XML tags as semantic boundaries (following GSD's pattern). Claude treats these as clearer structural markers than markdown headers for separating instructions from context.
 
 ### Skill Template Pattern
 
 Every skill should follow this skeleton:
 
 ```markdown
-# donna:{skill-name}
+<purpose>
+One-line description of what this skill does and why.
+</purpose>
 
-## Context Loading
-- Read config.md to get storage repo path and available tools
+<context_loading>
+- Read config.md to get storage repo path
 - Read [relevant standing files]
 - Read daily/{today}.md if it exists
+</context_loading>
 
-## Execution
-[Skill-specific logic]
+<process>
 
-## State Writing
-- Write changes to [target files]
-- Git add + commit with descriptive message
+<step name="step_name">
+[Step-specific logic, interaction, or state changes]
+</step>
 
-## Output
-[What to display to the user]
+<step name="another_step">
+[...]
+</step>
+
+</process>
+
+<output>
+[What files are written, what is displayed to the user]
+</output>
+
+<success_criteria>
+- [ ] [Observable outcome 1]
+- [ ] [Observable outcome 2]
+</success_criteria>
 ```
 
 ## Config/Setup Layer

@@ -58,6 +58,7 @@ Never forget an important task again — the assistant knows your role, surfaces
 | Role research via web agent | User's role drives recurring task suggestions — research grounds them in reality rather than just user assumption | — Pending |
 | User-declared tools, not hardcoded integrations | Tools are taught by the user, not baked in — keeps the system generic and extensible | — Pending |
 | Parallel tool agents in begin-the-day | Each configured tool gets its own agent during daily brief — isolates tool logic and scales naturally | — Pending |
+| XML tags for skill prompt structure | Follow GSD's pattern of using `<purpose>`, `<process>`, `<step>`, `<success_criteria>` etc. — Claude treats these as clear semantic boundaries, better than markdown headers for separating instructions | — Pending |
 
 ---
 *Last updated: 2026-03-13 after initialization*
