@@ -1,6 +1,6 @@
 # Project Research Summary
 
-**Project:** Personal Assistant Skills
+**Project:** Donna
 **Domain:** CLI-native personal productivity / task management (Claude Code skill suite)
 **Researched:** 2026-03-13
 **Confidence:** MEDIUM

@@ -1,6 +1,6 @@
 # Technology Stack
 
-**Project:** Personal Assistant Skills
+**Project:** Donna
 **Researched:** 2026-03-13
 
 ## Recommended Stack

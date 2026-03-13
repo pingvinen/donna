@@ -1,4 +1,4 @@
-# Requirements: Personal Assistant Skills
+# Requirements: Donna
 
 **Defined:** 2026-03-13
 **Core Value:** Never forget an important task again — a personal assistant that knows your role, surfaces what needs attention each day, and captures everything that falls through the cracks outside your ticketing system.

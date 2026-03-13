@@ -1,8 +1,8 @@
-# Roadmap: Personal Assistant Skills
+# Roadmap: Donna
 
 ## Overview
 
-This project delivers a suite of Claude Code slash commands that act as a personal assistant for professionals. The build follows a capture-first strategy: establish the storage foundation and task capture habit (Phase 1), layer on role-aware daily planning (Phase 2), then enrich with optional external tool integrations (Phase 3). Each phase delivers a complete, usable capability -- the system is valuable from the end of Phase 1.
+This project delivers Donna, a suite of Claude Code slash commands that act as a personal assistant for professionals. The build follows a capture-first strategy: establish the storage foundation and task capture habit (Phase 1), layer on role-aware daily planning (Phase 2), then enrich with optional external tool integrations (Phase 3). Each phase delivers a complete, usable capability -- the system is valuable from the end of Phase 1.
 
 ## Phases
 
