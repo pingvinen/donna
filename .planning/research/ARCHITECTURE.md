@@ -1,6 +1,6 @@
 # Architecture Patterns
 
-**Domain:** Claude Code personal assistant skill suite
+**Domain:** AI coding assistant personal productivity skill suite (provider-agnostic)
 **Researched:** 2026-03-13
 
 ## Recommended Architecture
@@ -10,23 +10,96 @@ The system follows a **skill-per-command architecture** where each slash command
 ### High-Level Structure
 
 ```
-User's machine
+Source repository (npm package)
   |
-  +-- ~/.claude/commands/donna:*.md        <-- Skill prompt files (installed)
+  +-- commands/donna/               <-- Skill stubs (thin frontmatter + @workflow reference)
+  +-- workflows/                    <-- Actual skill logic (XML-tagged prompt files)
+  +-- templates/                    <-- File format templates (daily journal, tools.md, etc.)
+  +-- references/                   <-- Shared knowledge docs (journal conventions, etc.)
+  +-- bin/install.js                <-- Installer: copies skills to provider-specific directories
+
+User's machine (after install)
   |
-  +-- [user-chosen-repo]/               <-- State repository
-       +-- config.md                    <-- Setup config (repo path, prefs)
-       +-- role.md                      <-- Job role definition
-       +-- role-research.md             <-- Research agent output
-       +-- recurring.md                 <-- Recurring task definitions
-       +-- tools.md                     <-- Learned tool knowledge
-       +-- people.md                    <-- People/relationship context
+  +-- ~/.donna/                              <-- Runtime (workflows, templates, references)
+  |    +-- workflows/
+  |    +-- templates/
+  |    +-- references/
+  |
+  +-- [provider skill directory]             <-- Skill stubs (provider-specific location)
+  |    +-- donna:setup.md                    <-- Stub: frontmatter + @~/.donna/workflows/setup.md
+  |    +-- donna:begin-the-day.md
+  |    +-- donna:add-task.md
+  |    +-- ...
+  |
+  +-- [user-chosen-repo]/                    <-- State repository
+       +-- config.md                         <-- Setup config (repo path, prefs)
+       +-- role.md                           <-- Job role definition
+       +-- role-research.md                  <-- Research agent output
+       +-- recurring.md                      <-- Recurring task definitions
+       +-- tools.md                          <-- Learned tool knowledge
+       +-- people.md                         <-- People/relationship context
        +-- daily/
-       |    +-- 2026-03-13.md           <-- Today's journal
-       |    +-- 2026-03-12.md           <-- Yesterday's journal
+       |    +-- 2026-03-13.md                <-- Today's journal
+       |    +-- 2026-03-12.md                <-- Yesterday's journal
        |    +-- ...
-       +-- archive/                     <-- Completed/old items (optional)
+       +-- archive/                          <-- Completed/old items (optional)
 ```
+
+### Multi-Provider Support
+
+Donna is provider-agnostic. The installer asks which providers to install for and copies skill stubs to the appropriate directories. The runtime directory (`~/.donna/`) and state repository are shared across providers.
+
+| Provider | Skill stub location | Stub format |
+|----------|-------------------|-------------|
+| Claude Code | `~/.claude/commands/donna/` | Markdown with YAML frontmatter |
+| OpenCode | TBD | TBD |
+| Gemini | TBD | TBD |
+| Codex | TBD | TBD |
+
+Skill stubs are thin — they contain only provider-specific metadata (name, description, allowed tools) and an `@` reference to the actual workflow file in `~/.donna/workflows/`. This means workflow logic is written once and works across providers.
+
+### Stub vs. Workflow Split
+
+**Stub** (installed per-provider):
+```markdown
+---
+name: donna:begin-the-day
+description: Morning routine — carry forward tasks, surface recurring, pull tool data
+allowed-tools:
+  - Read
+  - Write
+  - Bash
+  - Agent
+---
+
+@~/.donna/workflows/begin-the-day.md
+```
+
+**Workflow** (shared runtime, in `~/.donna/workflows/`):
+```markdown
+<purpose>
+Morning routine: carry forward open tasks, surface recurring tasks due today,
+spawn tool agents for relevant configured tools.
+</purpose>
+
+<process>
+...full skill logic...
+</process>
+```
+
+### Templates and References
+
+**Templates** (`~/.donna/templates/`) — standardized formats for files Donna creates:
+- `daily.md` — daily journal structure (sections, conventions)
+- `tools.md` — tool entry format
+- `role.md` — role definition structure
+- `role-research.md` — research output format
+
+**References** (`~/.donna/references/`) — shared knowledge used by multiple workflows:
+- `journal-conventions.md` — how daily files are structured, section ordering, task format
+- `tool-learning.md` — how to learn a tool (help output vs training data, what to store)
+
+Templates and references are `@`-referenced by workflows, keeping each workflow focused on its own logic while sharing conventions.
 
 ### Component Boundaries
 
@@ -69,19 +142,12 @@ donna:next  <---------reads daily + standing files---------+
 
 ## Skill File Structure (How Skills Are Built)
 
-Each skill is a single markdown file installed into the Claude Code commands directory. Following the GSD pattern:
+Each skill has two layers:
 
-```
-~/.claude/commands/
-  donna:setup.md
-  donna:set-role.md
-  donna:begin-the-day.md
-  donna:add-task.md
-  donna:log-meeting.md
-  donna:next.md
-```
+1. **Stub** — thin file in the provider's commands directory. Contains YAML frontmatter (name, description, allowed tools) and an `@` reference to the workflow file. Provider-specific.
+2. **Workflow** — full skill logic in `~/.donna/workflows/`. Uses XML tags as semantic boundaries. Provider-agnostic, written once.
 
-Each skill markdown file uses XML tags as semantic boundaries (following GSD's pattern). Claude treats these as clearer structural markers than markdown headers for separating instructions from context.
+Workflow files may `@`-reference templates and references from `~/.donna/` for shared conventions.
 
 ### Skill Template Pattern
 
@@ -126,19 +192,7 @@ One-line description of what this skill does and why.
 
 The storage repo path must be known before any other skill can read/write state. This creates a bootstrap dependency:
 
-**Solution:** `donna:setup` writes a config file to a **known location** that all other skills check first.
-
-```
-~/.claude/pa-config.json    <-- Bootstrap pointer (just the repo path)
-```
-
-OR (simpler, following GSD's pattern of keeping everything in the commands directory):
-
-```
-~/.claude/commands/pa-state/config.md   <-- Inline with skills
-```
-
-**Recommended approach:** Use a well-known path like `~/.config/donna/config.md` that every skill reads first. This file contains:
+**Solution:** `donna:setup` writes a config file to a well-known, provider-agnostic location that all workflows check first: `~/.config/donna/config.md`. This file contains:
 
 ```markdown
 # Donna Config
