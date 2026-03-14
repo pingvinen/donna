@@ -12,7 +12,7 @@ This project delivers Donna, a suite of AI coding assistant slash commands that 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Packaging and Distribution** - npm package, installer, stub donna:setup skill, version tracking, migration system, CI/CD pipeline
+- [x] **Phase 1: Packaging and Distribution** - npm package, installer, stub donna:setup skill, version tracking, migration system, CI/CD pipeline (completed 2026-03-14)
 - [ ] **Phase 2: Foundation and Capture** - Real donna:setup, add-task, task completion, hybrid storage, git persistence
 - [ ] **Phase 3: Role Awareness and Daily Rhythm** - Role definition with research agent, morning ritual, carry-forward, recurring tasks
 - [ ] **Phase 4: External Tool Enrichment** - Tool registry skills and external data surfaced in the daily brief
@@ -88,7 +88,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Packaging and Distribution | 1/3 | In Progress | - |
+| 1. Packaging and Distribution | 2/3 | In Progress | - |
 | 2. Foundation and Capture | 0/0 | Not started | - |
 | 3. Role Awareness and Daily Rhythm | 0/0 | Not started | - |
 | 4. External Tool Enrichment | 0/0 | Not started | - |
