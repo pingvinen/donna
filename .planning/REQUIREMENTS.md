@@ -8,11 +8,11 @@
 ### Packaging & Distribution
 
 - [ ] **DIST-01**: Installer available as `npx donna-install` — detects installed providers (Claude Code initially), copies stubs to provider command directories and shared runtime to `~/.donna/`
-- [ ] **DIST-02**: `~/.donna/version.md` tracks installed version; installer shows changelog when upgrading
-- [ ] **DIST-03**: Migration system handles upgrades from any previous version to current — users may skip intermediate updates; migrations are cumulative (v1→v5 runs v1→v2, v2→v3, v3→v4, v4→v5)
+- [x] **DIST-02**: `~/.donna/version.md` tracks installed version; installer shows changelog when upgrading
+- [x] **DIST-03**: Migration system handles upgrades from any previous version to current — users may skip intermediate updates; migrations are cumulative (v1→v5 runs v1→v2, v2→v3, v3→v4, v4→v5)
 - [ ] **DIST-04**: Installer is idempotent and safe to re-run — preserves user state, only updates skill files and runtime
-- [ ] **DIST-05**: npm package contains stubs, workflows, templates, references, and installer script
-- [ ] **DIST-06**: `donna:setup` skill exists as a stub + workflow with a hello-world implementation (proves the full stub→workflow→execution pipeline)
+- [x] **DIST-05**: npm package contains stubs, workflows, templates, references, and installer script
+- [x] **DIST-06**: `donna:setup` skill exists as a stub + workflow with a hello-world implementation (proves the full stub→workflow→execution pipeline)
 - [ ] **DIST-07**: PR validation workflow — GitHub Actions runs lint and verifies the package builds on every pull request
 - [ ] **DIST-08**: Release creation workflow — manually triggered GitHub Actions workflow determines version bump from conventional commit PR titles (semver 0.x.y while pre-stable), generates changelog, and creates a GitHub release
 - [ ] **DIST-09**: Deployment workflow — GitHub Actions reacts to a new GitHub release being created and publishes the package to npm
@@ -96,11 +96,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | DIST-01 | Phase 1 | Pending |
-| DIST-02 | Phase 1 | Pending |
-| DIST-03 | Phase 1 | Pending |
+| DIST-02 | Phase 1 | Complete |
+| DIST-03 | Phase 1 | Complete |
 | DIST-04 | Phase 1 | Pending |
-| DIST-05 | Phase 1 | Pending |
-| DIST-06 | Phase 1 | Pending |
+| DIST-05 | Phase 1 | Complete |
+| DIST-06 | Phase 1 | Complete |
 | DIST-07 | Phase 1 | Pending |
 | DIST-08 | Phase 1 | Pending |
 | DIST-09 | Phase 1 | Pending |
