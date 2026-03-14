@@ -73,6 +73,10 @@
 
 - **REVIEW-01**: User can run `/donna:end-the-day` to close out the day, mark remaining tasks as carried forward, and add notes on blockers
 
+## Cross-Cutting Constraints
+
+- **Obsidian compatibility**: All Donna runtime files (`~/.donna/`, storage repo) must use plain markdown with YAML frontmatter in a standard folder structure. Users should be able to open these directories as Obsidian vaults for a free human-friendly UI. No proprietary formats. Daily files should stay in a flat folder (Obsidian Calendar plugin is folder-sensitive). Archiving older daily files to subfolders is acceptable but may affect calendar views — design with this trade-off in mind.
+
 ## Out of Scope
 
 | Feature | Reason |
