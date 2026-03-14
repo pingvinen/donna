@@ -8,24 +8,26 @@
  * When run directly, reads git log and writes to GITHUB_OUTPUT.
  */
 
+function extractScope(msg) {
+    const match = msg.match(/^[a-z]+\((.+?)\)/);
+    return match ? match[1] : null;
+}
+
 function generateChangelog(messages) {
     const groups = {
         Features: [],
         Fixes: [],
-        Other: [],
     };
 
     for (const msg of messages) {
         if (/^feat(\(.+\))?!?:/.test(msg)) {
             const description = msg.replace(/^feat(\(.+\))?!?:\s*/, "");
-            groups.Features.push(description);
-        } else if (/^fix(\(.+\))?:/.test(msg)) {
-            const description = msg.replace(/^fix(\(.+\))?:\s*/, "");
-            groups.Fixes.push(description);
-        } else {
-            // Strip any conventional commit prefix
-            const description = msg.replace(/^[a-z]+(\(.+\))?!?:\s*/, "");
-            groups.Other.push(description);
+            const scope = extractScope(msg);
+            groups.Features.push(scope ? `**${scope}:** ${description}` : description);
+        } else if (/^fix(\(.+\))?!?:/.test(msg)) {
+            const description = msg.replace(/^fix(\(.+\))?!?:\s*/, "");
+            const scope = extractScope(msg);
+            groups.Fixes.push(scope ? `**${scope}:** ${description}` : description);
         }
     }
 
@@ -65,4 +67,4 @@ if (require.main === module) {
     console.log(changelog);
 }
 
-module.exports = { generateChangelog };
+module.exports = { generateChangelog, extractScope };
