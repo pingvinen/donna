@@ -75,6 +75,9 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - Clean up removed files on upgrade (tooling)
+- Comment on PRs after release with version number (tooling)
+- Document how a developer of Donna can test things locally (docs)
+- Evaluate natural language input as alternative to slash commands (general)
 - Make changelog more compact and human friendly (tooling)
 - User-facing changelog for package updates (tooling)
 
