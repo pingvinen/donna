@@ -11,8 +11,8 @@ function readWorkflow(name) {
     return fs.readFileSync(path.join(workflowsDir, name), "utf8");
 }
 
-describe("validate.yml", () => {
-    const content = readWorkflow("validate.yml");
+describe("pr-lint.yml", () => {
+    const content = readWorkflow("pr-lint.yml");
 
     it("exists and is readable", () => {
         assert.ok(content.length > 0);
@@ -22,13 +22,24 @@ describe("validate.yml", () => {
         assert.ok(content.includes("pull_request:"));
     });
 
-    it("has lint-pr-title job using semantic-pull-request action", () => {
-        assert.ok(content.includes("lint-pr-title:"));
+    it("has pr-lint job using semantic-pull-request action", () => {
+        assert.ok(content.includes("pr-lint:"));
         assert.ok(content.includes("amannn/action-semantic-pull-request"));
     });
+});
 
-    it("has validate job with lint, test, and build check", () => {
-        assert.ok(content.includes("validate:"));
+describe("pr-validate.yml", () => {
+    const content = readWorkflow("pr-validate.yml");
+
+    it("exists and is readable", () => {
+        assert.ok(content.length > 0);
+    });
+
+    it("triggers on pull_request", () => {
+        assert.ok(content.includes("pull_request:"));
+    });
+
+    it("has lint, test, and build jobs", () => {
         assert.ok(content.includes("npm run lint"));
         assert.ok(content.includes("npm test"));
         assert.ok(content.includes("npm pack --dry-run"));
