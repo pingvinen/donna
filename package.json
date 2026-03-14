@@ -3,7 +3,7 @@
   "version": "0.3.1",
   "description": "Donna - your AI powered personal assistant",
   "bin": {
-    "donna-assistant": "./bin/install.cjs"
+    "donna-assistant": "./bin/donna-assistant"
   },
   "files": [
     "bin/",
@@ -25,7 +25,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "test": "node --test 'test/*.test.cjs'",
-    "prepublishOnly": "chmod +x bin/install.cjs"
+    "prepublishOnly": "chmod +x bin/donna-assistant"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0"
@@ -36,5 +36,9 @@
     "productivity",
     "ai"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pingvinen/donna"
+  }
 }

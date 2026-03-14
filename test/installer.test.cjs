@@ -326,14 +326,17 @@ module.exports = {
     });
 });
 
-describe("bin/install.cjs", () => {
+describe("bin/donna-assistant", () => {
     it("has shebang line", () => {
-        const content = fs.readFileSync(path.join(__dirname, "..", "bin", "install.cjs"), "utf8");
+        const content = fs.readFileSync(
+            path.join(__dirname, "..", "bin", "donna-assistant"),
+            "utf8",
+        );
         assert.ok(content.startsWith("#!/usr/bin/env node"), "should have node shebang");
     });
 
     it("is executable", () => {
-        const stat = fs.statSync(path.join(__dirname, "..", "bin", "install.cjs"));
+        const stat = fs.statSync(path.join(__dirname, "..", "bin", "donna-assistant"));
         // Check owner execute bit
         const isExecutable = (stat.mode & 0o100) !== 0;
         assert.ok(isExecutable, "should be executable");
