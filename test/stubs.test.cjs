@@ -79,13 +79,7 @@ describe("workflow: workflows/setup.md", () => {
 
 // ─── add-task stub ───────────────────────────────────────────────────────────
 
-const addTaskStubPath = path.join(
-    projectRoot,
-    "stubs",
-    "claude-code",
-    "donna",
-    "add-task.md",
-);
+const addTaskStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "add-task.md");
 const addTaskWorkflowPath = path.join(projectRoot, "workflows", "add-task.md");
 
 describe("stub: stubs/claude-code/donna/add-task.md", () => {
@@ -151,7 +145,10 @@ describe("workflow: workflows/add-task.md", () => {
 
     it("contains git commit step", () => {
         const content = fs.readFileSync(addTaskWorkflowPath, "utf8");
-        assert.ok(content.includes("git") && content.includes("commit"), "Should contain git commit step");
+        assert.ok(
+            content.includes("git") && content.includes("commit"),
+            "Should contain git commit step",
+        );
     });
 });
 
@@ -226,6 +223,9 @@ describe("workflow: workflows/done.md", () => {
 
     it("contains git commit step", () => {
         const content = fs.readFileSync(doneWorkflowPath, "utf8");
-        assert.ok(content.includes("git") && content.includes("commit"), "Should contain git commit step");
+        assert.ok(
+            content.includes("git") && content.includes("commit"),
+            "Should contain git commit step",
+        );
     });
 });
