@@ -50,6 +50,8 @@ Never forget an important task again — the assistant knows your role, surfaces
 - **Storage**: Markdown files in git — no databases, no external services beyond what the user already has
 - **Dependencies**: No required external tools — user declares tools via `/donna:add-tool`, all are optional
 - **Style**: Follow GSD's aesthetic and structural patterns — banners, AskUserQuestion for interactive flows, agent spawning indicators, committed state at each step
+- **SSH signing**: User has commit signing and SSH via 1Password — git commits and pushes trigger an interactive unlock prompt. All git operations (commit, push) must happen in the main conversation context where the user can interact with the prompt, never from subagents or background processes
+- **Token resilience**: Sessions can be interrupted by token exhaustion mid-work. Skills should stage changes (`git add`) early and often so work is recoverable. Commits should happen at natural checkpoints, not only at the end of a skill run
 
 ## Key Decisions
 
@@ -67,6 +69,8 @@ Never forget an important task again — the assistant knows your role, surfaces
 | Distribution-first development | Build full packaging/CI/CD with stub implementation first, then add real features — complexity rises gradually | — Pending |
 | Migration from any version | Installer must migrate from any previous version to current — users may skip intermediate updates | — Pending |
 | donna:setup as hello-world | Use real skill with stub implementation to prove pipeline, not a throwaway dummy skill | — Pending |
+| No git operations from subagents | SSH signing via 1Password requires interactive unlock — git commits/pushes must run in main context | — Pending |
+| Stage early, commit at checkpoints | Token exhaustion can interrupt sessions — `git add` preserves work; commit at natural milestones, not just at the end | — Pending |
 
 ---
-*Last updated: 2026-03-13 after research revision and roadmap restructure*
+*Last updated: 2026-03-14 after adding SSH signing and token resilience constraints*
