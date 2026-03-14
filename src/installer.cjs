@@ -92,6 +92,7 @@ async function run(options = {}) {
     output.success(`Version ${packageVersion} installed`);
 
     // Final message
+    console.log("");
     output.info("Run /donna:setup in Claude Code to get started.");
 }
 
