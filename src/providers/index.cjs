@@ -11,11 +11,11 @@ const PROVIDERS = [claudeCode];
  * @returns {Array<{name: string, stubSource: string, stubTarget: string}>}
  */
 function detectProviders(homeDir) {
-  return PROVIDERS.filter((p) => p.detect(homeDir)).map((p) => ({
-    name: p.name,
-    stubSource: p.stubSource,
-    stubTarget: p.getStubTarget(homeDir),
-  }));
+    return PROVIDERS.filter((p) => p.detect(homeDir)).map((p) => ({
+        name: p.name,
+        stubSource: p.stubSource,
+        stubTarget: p.getStubTarget(homeDir),
+    }));
 }
 
 module.exports = { detectProviders };

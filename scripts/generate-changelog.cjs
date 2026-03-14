@@ -9,68 +9,68 @@
  */
 
 function generateChangelog(messages) {
-  const groups = {
-    Features: [],
-    Fixes: [],
-    Other: [],
-  };
+    const groups = {
+        Features: [],
+        Fixes: [],
+        Other: [],
+    };
 
-  for (const msg of messages) {
-    if (/^feat(\(.+\))?!?:/.test(msg)) {
-      const description = msg.replace(/^feat(\(.+\))?!?:\s*/, "");
-      groups.Features.push(description);
-    } else if (/^fix(\(.+\))?:/.test(msg)) {
-      const description = msg.replace(/^fix(\(.+\))?:\s*/, "");
-      groups.Fixes.push(description);
-    } else {
-      // Strip any conventional commit prefix
-      const description = msg.replace(/^[a-z]+(\(.+\))?!?:\s*/, "");
-      groups.Other.push(description);
+    for (const msg of messages) {
+        if (/^feat(\(.+\))?!?:/.test(msg)) {
+            const description = msg.replace(/^feat(\(.+\))?!?:\s*/, "");
+            groups.Features.push(description);
+        } else if (/^fix(\(.+\))?:/.test(msg)) {
+            const description = msg.replace(/^fix(\(.+\))?:\s*/, "");
+            groups.Fixes.push(description);
+        } else {
+            // Strip any conventional commit prefix
+            const description = msg.replace(/^[a-z]+(\(.+\))?!?:\s*/, "");
+            groups.Other.push(description);
+        }
     }
-  }
 
-  const sections = [];
-  for (const [heading, items] of Object.entries(groups)) {
-    if (items.length > 0) {
-      sections.push(`### ${heading}\n${items.map((i) => `- ${i}`).join("\n")}`);
+    const sections = [];
+    for (const [heading, items] of Object.entries(groups)) {
+        if (items.length > 0) {
+            sections.push(`### ${heading}\n${items.map((i) => `- ${i}`).join("\n")}`);
+        }
     }
-  }
 
-  return sections.join("\n\n");
+    return sections.join("\n\n");
 }
 
 // CLI mode: when run directly (not imported)
 if (require.main === module) {
-  const { execSync } = require("node:child_process");
-  const fs = require("node:fs");
+    const { execSync } = require("node:child_process");
+    const fs = require("node:fs");
 
-  // Get last tag, or use initial commit if no tags
-  let lastTag;
-  try {
-    lastTag = execSync("git describe --tags --abbrev=0", {
-      encoding: "utf8",
-    }).trim();
-  } catch {
-    lastTag = execSync("git rev-list --max-parents=0 HEAD", {
-      encoding: "utf8",
-    }).trim();
-  }
+    // Get last tag, or use initial commit if no tags
+    let lastTag;
+    try {
+        lastTag = execSync("git describe --tags --abbrev=0", {
+            encoding: "utf8",
+        }).trim();
+    } catch {
+        lastTag = execSync("git rev-list --max-parents=0 HEAD", {
+            encoding: "utf8",
+        }).trim();
+    }
 
-  // Get commit messages since last tag
-  const log = execSync(`git log ${lastTag}..HEAD --pretty=format:"%s"`, {
-    encoding: "utf8",
-  });
-  const messages = log.split("\n").filter(Boolean);
+    // Get commit messages since last tag
+    const log = execSync(`git log ${lastTag}..HEAD --pretty=format:"%s"`, {
+        encoding: "utf8",
+    });
+    const messages = log.split("\n").filter(Boolean);
 
-  const changelog = generateChangelog(messages);
+    const changelog = generateChangelog(messages);
 
-  // Write to GITHUB_OUTPUT if in CI, otherwise print
-  if (process.env.GITHUB_OUTPUT) {
-    // Use delimiter for multiline output
-    fs.appendFileSync(process.env.GITHUB_OUTPUT, `changelog<<EOF\n${changelog}\nEOF\n`);
-  }
+    // Write to GITHUB_OUTPUT if in CI, otherwise print
+    if (process.env.GITHUB_OUTPUT) {
+        // Use delimiter for multiline output
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `changelog<<EOF\n${changelog}\nEOF\n`);
+    }
 
-  console.log(changelog);
+    console.log(changelog);
 }
 
 module.exports = { generateChangelog };

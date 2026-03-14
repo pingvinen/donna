@@ -1,27 +1,27 @@
 {
-  "name": "@pingvinen/donna-assistant",
-  "version": "0.1.0",
-  "description": "Donna - your AI powered personal assistant",
-  "bin": {
-    "donna-assistant": "./bin/install.cjs"
-  },
-  "files": ["bin/", "src/", "stubs/", "workflows/", "migrations/", "templates/", "references/"],
-  "engines": {
-    "node": ">=18"
-  },
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
-  "scripts": {
-    "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "test": "node --test 'test/*.test.cjs'",
-    "prepublishOnly": "chmod +x bin/install.cjs"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.0"
-  },
-  "keywords": ["claude-code", "assistant", "productivity", "ai"],
-  "license": "MIT"
+    "name": "@pingvinen/donna-assistant",
+    "version": "0.1.0",
+    "description": "Donna - your AI powered personal assistant",
+    "bin": {
+        "donna-assistant": "./bin/install.cjs"
+    },
+    "files": ["bin/", "src/", "stubs/", "workflows/", "migrations/", "templates/", "references/"],
+    "engines": {
+        "node": ">=18"
+    },
+    "publishConfig": {
+        "access": "public",
+        "provenance": true
+    },
+    "scripts": {
+        "lint": "biome check .",
+        "lint:fix": "biome check --write .",
+        "test": "node --test 'test/*.test.cjs'",
+        "prepublishOnly": "chmod +x bin/install.cjs"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^1.9.0"
+    },
+    "keywords": ["claude-code", "assistant", "productivity", "ai"],
+    "license": "MIT"
 }

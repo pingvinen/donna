@@ -17,82 +17,82 @@ const providers = require("./providers/index.cjs");
  * @returns {Promise<void>}
  */
 async function run(options = {}) {
-  const homeDir = options.homeDir || os.homedir();
-  const donnaDir = path.join(homeDir, ".donna");
-  const migrationsDir = path.join(__dirname, "..", "migrations");
-  const workflowsSource = path.join(__dirname, "..", "workflows");
-  const pkg = require("../package.json");
-  const packageVersion = pkg.version;
+    const homeDir = options.homeDir || os.homedir();
+    const donnaDir = path.join(homeDir, ".donna");
+    const migrationsDir = path.join(__dirname, "..", "migrations");
+    const workflowsSource = path.join(__dirname, "..", "workflows");
+    const pkg = require("../package.json");
+    const packageVersion = pkg.version;
 
-  // Print banner
-  output.banner();
+    // Print banner
+    output.banner();
 
-  // Create donnaDir if it doesn't exist
-  fs.mkdirSync(donnaDir, { recursive: true });
+    // Create donnaDir if it doesn't exist
+    fs.mkdirSync(donnaDir, { recursive: true });
 
-  // Read current version
-  const current = version.readVersion(donnaDir);
-  const currentVersion = current?.version || null;
-  const lastMigration = current?.lastMigration || 0;
+    // Read current version
+    const current = version.readVersion(donnaDir);
+    const currentVersion = current?.version || null;
+    const lastMigration = current?.lastMigration || 0;
 
-  // Check if already up to date
-  if (currentVersion === packageVersion) {
-    // Check for pending migrations too
-    const pendingResults = migrator.runMigrations(migrationsDir, donnaDir, lastMigration);
-    if (pendingResults.length === 0) {
-      output.info(`Already up to date at ${packageVersion}`);
-      return;
+    // Check if already up to date
+    if (currentVersion === packageVersion) {
+        // Check for pending migrations too
+        const pendingResults = migrator.runMigrations(migrationsDir, donnaDir, lastMigration);
+        if (pendingResults.length === 0) {
+            output.info(`Already up to date at ${packageVersion}`);
+            return;
+        }
     }
-  }
 
-  // If upgrading (current version exists but differs)
-  if (currentVersion && currentVersion !== packageVersion) {
-    output.upgradeHeader(currentVersion, packageVersion);
-  }
+    // If upgrading (current version exists but differs)
+    if (currentVersion && currentVersion !== packageVersion) {
+        output.upgradeHeader(currentVersion, packageVersion);
+    }
 
-  // Run migrations
-  const results = migrator.runMigrations(migrationsDir, donnaDir, lastMigration);
+    // Run migrations
+    const results = migrator.runMigrations(migrationsDir, donnaDir, lastMigration);
 
-  // Track last successful migration number
-  let lastSuccessful = lastMigration;
+    // Track last successful migration number
+    let lastSuccessful = lastMigration;
 
-  for (const result of results) {
-    if (result.ok) {
-      output.migrationLine(result.description);
-      lastSuccessful = result.num;
+    for (const result of results) {
+        if (result.ok) {
+            output.migrationLine(result.description);
+            lastSuccessful = result.num;
+        } else {
+            output.fail(`Migration ${result.num} failed: ${result.error.message}`);
+            // Write version.md with last successful migration
+            version.writeVersion(donnaDir, packageVersion, lastSuccessful);
+            throw result.error;
+        }
+    }
+
+    // Detect providers and copy stubs
+    const detected = providers.detectProviders(homeDir);
+
+    if (detected.length > 0) {
+        for (const provider of detected) {
+            fs.cpSync(provider.stubSource, provider.stubTarget, { recursive: true });
+            output.success(`Copied donna:setup to ${provider.stubTarget}`);
+        }
     } else {
-      output.fail(`Migration ${result.num} failed: ${result.error.message}`);
-      // Write version.md with last successful migration
-      version.writeVersion(donnaDir, packageVersion, lastSuccessful);
-      throw result.error;
+        output.info("No supported AI providers detected");
+        output.info("Install Claude Code and re-run to add donna skills");
     }
-  }
 
-  // Detect providers and copy stubs
-  const detected = providers.detectProviders(homeDir);
+    // Copy workflows to donnaDir/workflows/
+    const workflowsTarget = path.join(donnaDir, "workflows");
+    fs.mkdirSync(workflowsTarget, { recursive: true });
+    fs.cpSync(workflowsSource, workflowsTarget, { recursive: true });
+    output.success("Installed workflows to ~/.donna/workflows/");
 
-  if (detected.length > 0) {
-    for (const provider of detected) {
-      fs.cpSync(provider.stubSource, provider.stubTarget, { recursive: true });
-      output.success(`Copied donna:setup to ${provider.stubTarget}`);
-    }
-  } else {
-    output.info("No supported AI providers detected");
-    output.info("Install Claude Code and re-run to add donna skills");
-  }
+    // Write version.md
+    version.writeVersion(donnaDir, packageVersion, lastSuccessful);
+    output.success(`Version ${packageVersion} installed`);
 
-  // Copy workflows to donnaDir/workflows/
-  const workflowsTarget = path.join(donnaDir, "workflows");
-  fs.mkdirSync(workflowsTarget, { recursive: true });
-  fs.cpSync(workflowsSource, workflowsTarget, { recursive: true });
-  output.success("Installed workflows to ~/.donna/workflows/");
-
-  // Write version.md
-  version.writeVersion(donnaDir, packageVersion, lastSuccessful);
-  output.success(`Version ${packageVersion} installed`);
-
-  // Final message
-  output.info("Run /donna:setup in Claude Code to get started.");
+    // Final message
+    output.info("Run /donna:setup in Claude Code to get started.");
 }
 
 module.exports = { run };

@@ -4,6 +4,6 @@
 const { run } = require("../src/installer.cjs");
 
 run().catch((err) => {
-  console.error(`\nInstallation failed: ${err.message}`);
-  process.exit(1);
+    console.error(`\nInstallation failed: ${err.message}`);
+    process.exit(1);
 });
