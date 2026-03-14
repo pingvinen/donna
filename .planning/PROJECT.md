@@ -16,13 +16,13 @@ Never forget an important task again — the assistant knows your role, surfaces
 
 ### Active
 
-- [ ] `/donna:setup` skill — first-time configuration: link git repo
+- [ ] npm package with installer (`npx donna-install`) — detects providers, copies stubs + shared runtime
+- [ ] Version tracking (`~/.donna/version.md`) and migration system — upgrades from any previous version
+- [ ] `/donna:setup` skill — first-time configuration: link git repo, initialize file structure
 - [ ] `/donna:set-role` skill — define job role, trigger research agent to surface typical responsibilities and commonly used tools, propose recurring tasks and tools for approval, store research as reference
 - [ ] `/donna:add-tool` skill — declare available tools by name; Claude learns the tool (reads help output or uses training data) and stores knowledge in `tools.md`
 - [ ] `/donna:begin-the-day` skill — morning routine: carry forward unfinished tasks from yesterday, surface recurring tasks due today, spawn parallel agents to pull data from each configured tool
 - [ ] `/donna:add-task` skill — quickly capture a task, follow-up, or note
-- [ ] `/donna:log-meeting` skill — post-meeting capture: who was there, decisions made, follow-ups committed to
-- [ ] `/donna:next` skill — on-demand triage: given everything in the system, what should I do right now?
 - [ ] Recurring task engine — tasks with interval definitions (e.g. "refine backlog every Monday"), surfaced by `begin-the-day`
 - [ ] Hybrid storage structure — daily journal files (`daily/YYYY-MM-DD.md`) + standing files (`role.md`, `role-research.md`, `recurring.md`, `tools.md`, `people.md`, `config.md`)
 - [ ] Git-backed persistence — all state committed to user's chosen GitHub repo after each skill run
@@ -34,6 +34,8 @@ Never forget an important task again — the assistant knows your role, surfaces
 - Real-time notifications — this is a pull model (user invokes skills), not push
 - A UI or web interface — Claude Code terminal only
 - Replacing Jira — this complements ticketing systems, doesn't compete with them
+- `/donna:log-meeting` — deferred; may return in a future milestone
+- `/donna:next` — deferred; requires accumulated data to be valuable
 
 ## Context
 
@@ -62,6 +64,9 @@ Never forget an important task again — the assistant knows your role, surfaces
 | Stub-workflow split | Thin provider-specific stubs reference shared workflow files — write logic once, install for multiple providers | — Pending |
 | Provider-agnostic design | Installer asks which providers to install for (Claude Code, OpenCode, Gemini, Codex) and copies stubs to provider-specific directories | — Pending |
 | Shared runtime at ~/.donna/ | Workflows, templates, and references live in a provider-agnostic location; stubs reference them via `@` paths | — Pending |
+| Distribution-first development | Build full packaging/CI/CD with stub implementation first, then add real features — complexity rises gradually | — Pending |
+| Migration from any version | Installer must migrate from any previous version to current — users may skip intermediate updates | — Pending |
+| donna:setup as hello-world | Use real skill with stub implementation to prove pipeline, not a throwaway dummy skill | — Pending |
 
 ---
-*Last updated: 2026-03-13 after initialization*
+*Last updated: 2026-03-13 after research revision and roadmap restructure*
