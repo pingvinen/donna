@@ -57,7 +57,7 @@ completed: 2026-03-14
 - **Duration:** 3 min
 - **Started:** 2026-03-14T11:29:30Z
 - **Completed:** 2026-03-14T11:33:00Z
-- **Tasks:** 2 of 3 (Task 3 is checkpoint:human-verify, pending)
+- **Tasks:** 3 of 3 (Task 3 checkpoint resolved with feedback)
 - **Files created:** 7
 
 ## Accomplishments
@@ -121,14 +121,16 @@ External services require manual configuration before CI/CD works:
 **GitHub repository:**
 1. Enable squash merging with PR title as default commit message: Settings -> General -> Pull Requests -> Allow squash merging (checked), Default to pull request title
 
-## Checkpoint Pending
+## Checkpoint Resolved
 
-Task 3 (checkpoint:human-verify) has not been executed. The checkpoint requires:
-1. Review workflow files for correctness
-2. Run `node bin/install.cjs` locally to verify installer
-3. Run `/donna:setup` in Claude Code to verify stub
-4. Verify all tests pass: `node --test test/`
-5. Verify lint passes: `npx biome check .`
+Task 3 (checkpoint:human-verify) — user reviewed and provided feedback:
+- Restricted PR title types to feat, fix, docs, chore (validate.yml)
+- Updated all workflows to node 24
+- Removed redundant npm test from deploy.yml
+- Added npm pack + tgz artifact upload to release.yml
+- Converted workflows/setup.md to use `<step>` tags
+- Confirmed manual dispatch release flow is correct for per-phase branching strategy
+- Confirmed OIDC handles npm auth (no NPM_TOKEN needed)
 
 ## Next Phase Readiness
 - All Phase 1 code is complete (plans 01, 02, 03)
