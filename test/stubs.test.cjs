@@ -43,7 +43,10 @@ describe("stub: stubs/claude-code/donna/setup.md", () => {
 
     it("has AskUserQuestion in allowed-tools", () => {
         const content = fs.readFileSync(stubPath, "utf8");
-        assert.ok(content.includes("- AskUserQuestion"), "Should have AskUserQuestion in allowed-tools");
+        assert.ok(
+            content.includes("- AskUserQuestion"),
+            "Should have AskUserQuestion in allowed-tools",
+        );
     });
 });
 
@@ -57,9 +60,12 @@ describe("workflow: workflows/setup.md", () => {
         assert.ok(content.includes("DONNA"), "Should contain DONNA banner reference");
     });
 
-    it("references version.md for version display", () => {
+    it("contains AskUserQuestion step for interactive prompts", () => {
         const content = fs.readFileSync(workflowPath, "utf8");
-        assert.ok(content.includes("version.md"), "Should reference version.md");
+        assert.ok(
+            content.includes("AskUserQuestion"),
+            "Should use AskUserQuestion for interactive prompts",
+        );
     });
 
     it("references config/donna/config.md proving real setup logic present", () => {
