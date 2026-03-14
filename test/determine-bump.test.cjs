@@ -4,7 +4,7 @@ const { describe, it } = require("node:test");
 const assert = require("node:assert/strict");
 
 const { determineBump } = require("../scripts/determine-bump.cjs");
-const { generateChangelog } = require("../scripts/generate-changelog.cjs");
+const { generateChangelog, extractScope } = require("../scripts/generate-changelog.cjs");
 
 describe("determineBump", () => {
     it("fix commits produce patch bump", () => {
@@ -68,18 +68,33 @@ describe("determineBump", () => {
 });
 
 describe("generateChangelog", () => {
-    it("groups commits by type (Features, Fixes, Other)", () => {
-        const changelog = generateChangelog([
-            "feat: add login",
-            "fix: correct password check",
-            "chore: update deps",
-        ]);
+    it("groups feat and fix commits into Features and Fixes", () => {
+        const changelog = generateChangelog(["feat: add login", "fix: correct password check"]);
         assert.ok(changelog.includes("### Features"));
         assert.ok(changelog.includes("### Fixes"));
-        assert.ok(changelog.includes("### Other"));
         assert.ok(changelog.includes("add login"));
         assert.ok(changelog.includes("correct password check"));
-        assert.ok(changelog.includes("update deps"));
+    });
+
+    it("drops chore/docs/other commits", () => {
+        const changelog = generateChangelog([
+            "feat: add login",
+            "chore: update deps",
+            "docs: update readme",
+            "ci: fix pipeline",
+        ]);
+        assert.ok(!changelog.includes("update deps"));
+        assert.ok(!changelog.includes("update readme"));
+        assert.ok(!changelog.includes("fix pipeline"));
+    });
+
+    it("includes bold scopes when present", () => {
+        const changelog = generateChangelog([
+            "feat(capture): add meeting log",
+            "fix(ci): fix workflow issues (#1)",
+        ]);
+        assert.ok(changelog.includes("**capture:** add meeting log"));
+        assert.ok(changelog.includes("**ci:** fix workflow issues (#1)"));
     });
 
     it("outputs formatted markdown", () => {
@@ -92,6 +107,16 @@ describe("generateChangelog", () => {
         const changelog = generateChangelog(["feat: add login"]);
         assert.ok(changelog.includes("### Features"));
         assert.ok(!changelog.includes("### Fixes"));
-        assert.ok(!changelog.includes("### Other"));
+    });
+});
+
+describe("extractScope", () => {
+    it("extracts scope from conventional commit", () => {
+        assert.equal(extractScope("feat(ci): something"), "ci");
+        assert.equal(extractScope("fix(auth): something"), "auth");
+    });
+
+    it("returns null when no scope", () => {
+        assert.equal(extractScope("feat: something"), null);
     });
 });
