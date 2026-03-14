@@ -69,6 +69,7 @@ Recent decisions affecting current work:
 
 - Clean up removed files on upgrade (tooling)
 - Make changelog more compact and human friendly (tooling)
+- User-facing changelog for package updates (tooling)
 
 ### Blockers/Concerns
 
