@@ -1,13 +1,15 @@
 ---
 name: donna:setup
-description: Set up Donna assistant for this machine
+description: Set up Donna — configure storage repo, initialize file structure, create bootstrap config
 allowed-tools:
   - Read
+  - Write
   - Bash
+  - AskUserQuestion
 ---
 
 <objective>
-Run the Donna setup workflow. This command verifies that Donna is installed correctly by loading the setup workflow from the shared runtime directory and displaying the current installation status.
+Run the Donna setup workflow. This command guides the user through configuring Donna: setting the storage repo path, initializing the file structure, and writing the bootstrap config at ~/.config/donna/config.md.
 </objective>
 
 <execution_context>

@@ -35,6 +35,16 @@ describe("stub: stubs/claude-code/donna/setup.md", () => {
             "Should reference @~/.donna/workflows/setup.md",
         );
     });
+
+    it("has Write in allowed-tools", () => {
+        const content = fs.readFileSync(stubPath, "utf8");
+        assert.ok(content.includes("- Write"), "Should have Write in allowed-tools");
+    });
+
+    it("has AskUserQuestion in allowed-tools", () => {
+        const content = fs.readFileSync(stubPath, "utf8");
+        assert.ok(content.includes("- AskUserQuestion"), "Should have AskUserQuestion in allowed-tools");
+    });
 });
 
 describe("workflow: workflows/setup.md", () => {
@@ -52,8 +62,11 @@ describe("workflow: workflows/setup.md", () => {
         assert.ok(content.includes("version.md"), "Should reference version.md");
     });
 
-    it('mentions "stub" indicating Phase 2 will add real logic', () => {
+    it("references config/donna/config.md proving real setup logic present", () => {
         const content = fs.readFileSync(workflowPath, "utf8");
-        assert.ok(content.toLowerCase().includes("stub"), "Should mention stub");
+        assert.ok(
+            content.includes("config/donna/config.md"),
+            "Should reference config/donna/config.md (real setup logic, not stub placeholder)",
+        );
     });
 });
