@@ -5,9 +5,9 @@ Guide the user through configuring Donna: set the storage repo path, initialize 
 </objective>
 
 <step name="banner">
-Print the DONNA banner:
+Print the Donna banner:
 ```
-━━━ DONNA ▸ Setup ━━━
+━━━ Donna ▸ Setup ━━━
 ```
 </step>
 
@@ -74,17 +74,45 @@ Then check the path status:
 - If `<repo>` does not exist: run `mkdir -p <repo>` then `git -C <repo> init`. Print `✓ Created and initialized git repo at <repo>`.
 </step>
 
+<step name="detect-daily-folder">
+Determine where daily files should live.
+
+**If `<repo>/.obsidian/daily-notes.json` exists:**
+Read it. If it has a `folder` field, use that value as `<daily_folder>`. Print:
+```
+✓ Found Obsidian daily notes folder: <daily_folder>
+```
+
+**If `<repo>/.obsidian/` exists but `.obsidian/daily-notes.json` does not exist or has no `folder` field:**
+Set `<daily_folder>` to `daily`. Write `<repo>/.obsidian/daily-notes.json` with:
+```json
+{
+  "folder": "daily"
+}
+```
+Print:
+```
+✓ Configured Obsidian daily notes to use daily/
+```
+
+**If `<repo>/.obsidian/` does not exist:**
+Set `<daily_folder>` to `daily`. Print:
+```
+✓ Using daily/ for daily files
+```
+</step>
+
 <step name="create-storage-structure">
 Create the daily directory:
 
 Run via Bash:
 ```bash
-mkdir -p <repo>/daily
+mkdir -p <repo>/<daily_folder>
 ```
 
 Print:
 ```
-✓ Created daily/ directory
+✓ Created <daily_folder>/ directory
 ```
 </step>
 
@@ -101,6 +129,7 @@ Write `~/.config/donna/config.md` with the following content (substituting the a
 ```markdown
 ---
 storage_repo: <repo>
+daily_folder: <daily_folder>
 auto_push: false
 ---
 

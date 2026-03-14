@@ -21,9 +21,10 @@ describe("workflow: workflows/setup.md", () => {
         );
     });
 
-    it("contains daily/ directory creation", () => {
+    it("detects daily folder from Obsidian or defaults to daily/", () => {
         const content = fs.readFileSync(workflowPath, "utf8");
-        assert.ok(content.includes("daily/"), "Should reference daily/ directory creation");
+        assert.ok(content.includes("daily_folder"), "Should reference daily_folder detection");
+        assert.ok(content.includes("daily-notes.json"), "Should check Obsidian daily-notes.json");
     });
 
     it("contains git commit step", () => {

@@ -14,10 +14,12 @@ const providers = require("./providers/index.cjs");
  *
  * @param {object} [options]
  * @param {string} [options.homeDir] - Override home directory (for testing)
+ * @param {boolean} [options.force] - Force re-install even if version matches
  * @returns {Promise<void>}
  */
 async function run(options = {}) {
     const homeDir = options.homeDir || os.homedir();
+    const force = options.force || false;
     const donnaDir = path.join(homeDir, ".donna");
     const migrationsDir = path.join(__dirname, "..", "migrations");
     const workflowsSource = path.join(__dirname, "..", "workflows");
@@ -36,7 +38,7 @@ async function run(options = {}) {
     const lastMigration = current?.lastMigration || 0;
 
     // Check if already up to date
-    if (currentVersion === packageVersion) {
+    if (currentVersion === packageVersion && !force) {
         // Check for pending migrations too
         const pendingResults = migrator.runMigrations(migrationsDir, donnaDir, lastMigration);
         if (pendingResults.length === 0) {

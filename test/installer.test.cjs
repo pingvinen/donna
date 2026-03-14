@@ -113,7 +113,7 @@ describe("installer - fresh install", () => {
         const { run } = require("../src/installer.cjs");
         const lines = await captureOutput(() => run({ homeDir: env.homeDir }));
         const output = lines.join("\n");
-        assert.ok(output.includes("DONNA"), "should print banner");
+        assert.ok(output.includes("Donna"), "should print banner");
         assert.ok(output.includes("\u2713"), "should print success checkmarks");
     });
 });

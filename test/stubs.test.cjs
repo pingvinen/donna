@@ -55,9 +55,9 @@ describe("workflow: workflows/setup.md", () => {
         assert.ok(fs.existsSync(workflowPath), "Workflow file should exist");
     });
 
-    it("contains DONNA banner section", () => {
+    it("contains Donna banner section", () => {
         const content = fs.readFileSync(workflowPath, "utf8");
-        assert.ok(content.includes("DONNA"), "Should contain DONNA banner reference");
+        assert.ok(content.includes("Donna"), "Should contain Donna banner reference");
     });
 
     it("contains AskUserQuestion step for interactive prompts", () => {
@@ -138,9 +138,9 @@ describe("workflow: workflows/add-task.md", () => {
         );
     });
 
-    it("references daily/ path pattern", () => {
+    it("references daily_folder from config", () => {
         const content = fs.readFileSync(addTaskWorkflowPath, "utf8");
-        assert.ok(content.includes("daily/"), "Should reference daily/ path pattern");
+        assert.ok(content.includes("daily_folder"), "Should reference daily_folder from config");
     });
 
     it("contains git commit step", () => {

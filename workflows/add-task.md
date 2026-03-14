@@ -13,7 +13,12 @@ If the file does not exist, print:
 ```
 Stop.
 
-Extract the `storage_repo` field from the YAML frontmatter. Also extract `auto_push` (default: false).
+Extract the `storage_repo`, `daily_folder` (default: `daily`), and `auto_push` (default: false) fields from the YAML frontmatter.
+
+**Obsidian sync:** Check if `<storage_repo>/.obsidian/daily-notes.json` exists.
+- If it exists and has a `folder` field that differs from `<daily_folder>`: update `<daily_folder>` to match Obsidian's value, and update `~/.config/donna/config.md` with the new `daily_folder`. Print `✓ Synced daily folder with Obsidian: <daily_folder>`.
+- If `<storage_repo>/.obsidian/` exists but `daily-notes.json` does not exist or has no `folder` field: write `<storage_repo>/.obsidian/daily-notes.json` with `{"folder":"<daily_folder>"}`. Print `✓ Configured Obsidian daily notes to use <daily_folder>/`.
+- Otherwise: do nothing.
 </step>
 
 <step name="get-description">
@@ -33,11 +38,11 @@ Run via Bash to get today's date:
 date +%Y-%m-%d
 ```
 
-Store the result as `<date>`. Construct the daily file path: `<storage_repo>/daily/<date>.md`.
+Store the result as `<date>`. Construct the daily file path: `<storage_repo>/<daily_folder>/<date>.md`.
 
-Run via Bash to ensure the daily/ directory exists:
+Run via Bash to ensure the daily folder exists:
 ```bash
-mkdir -p <storage_repo>/daily
+mkdir -p <storage_repo>/<daily_folder>
 ```
 
 If the daily file does not exist, create it with the Write tool using this content (substituting the actual date):
@@ -88,5 +93,5 @@ Print:
 ✓ Added: <description>
 ```
 
-Also print the path to the daily file: `<storage_repo>/daily/<date>.md`
+Also print the path to the daily file: `<storage_repo>/<daily_folder>/<date>.md`
 </step>
