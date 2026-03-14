@@ -1,11 +1,19 @@
 {
     "name": "@pingvinen/donna-assistant",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Donna - your AI powered personal assistant",
     "bin": {
         "donna-assistant": "./bin/install.cjs"
     },
-    "files": ["bin/", "src/", "stubs/", "workflows/", "migrations/", "templates/", "references/"],
+    "files": [
+        "bin/",
+        "src/",
+        "stubs/",
+        "workflows/",
+        "migrations/",
+        "templates/",
+        "references/"
+    ],
     "engines": {
         "node": ">=18"
     },
@@ -22,6 +30,11 @@
     "devDependencies": {
         "@biomejs/biome": "^1.9.0"
     },
-    "keywords": ["claude-code", "assistant", "productivity", "ai"],
+    "keywords": [
+        "claude-code",
+        "assistant",
+        "productivity",
+        "ai"
+    ],
     "license": "MIT"
 }
