@@ -20,20 +20,21 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Phase Details
 
 ### Phase 1: Packaging and Distribution
-**Goal**: Anyone can run `npx donna-install` and get a working (stub) donna:setup skill in Claude Code, with version tracking and a migration system that handles upgrades from any previous version
+**Goal**: Anyone can run `npx @pingvinen/donna-assistant` and get a working (stub) donna:setup skill in Claude Code, with version tracking and a migration system that handles upgrades from any previous version
 **Depends on**: Nothing (first phase)
 **Requirements**: DIST-01, DIST-02, DIST-03, DIST-04, DIST-05, DIST-06
 **Success Criteria** (what must be TRUE):
-  1. Running `npx donna-install` on a machine with Claude Code copies the donna:setup stub to `~/.claude/commands/donna/` and shared runtime to `~/.donna/`
-  2. Running `/donna:setup` in Claude Code loads the workflow from `~/.donna/workflows/setup.md` and produces a hello-world response (proving stub→workflow→execution pipeline)
+  1. Running `npx @pingvinen/donna-assistant` on a machine with Claude Code copies the donna:setup stub to `~/.claude/commands/donna/` and shared runtime to `~/.donna/`
+  2. Running `/donna:setup` in Claude Code loads the workflow from `~/.donna/workflows/setup.md` and produces a hello-world response (proving stub->workflow->execution pipeline)
   3. `~/.donna/version.md` exists after install and contains the installed version
-  4. Running `npx donna-install` again on a machine with an older version upgrades correctly, running all necessary migrations
-  5. Running `npx donna-install` on an already-current machine is a safe no-op (idempotent)
-**Plans**: TBD
+  4. Running `npx @pingvinen/donna-assistant` again on a machine with an older version upgrades correctly, running all necessary migrations
+  5. Running `npx @pingvinen/donna-assistant` on an already-current machine is a safe no-op (idempotent)
+**Plans:** 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Package scaffolding, output helpers, and version tracking module
+- [ ] 01-02-PLAN.md — Migration runner and provider detection modules
+- [ ] 01-03-PLAN.md — Installer orchestration, content files, and end-to-end validation
 
 ### Phase 2: Foundation and Capture
 **Goal**: User can set up the assistant, capture tasks instantly, mark them done, and trust that everything persists in git
@@ -89,7 +90,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Packaging and Distribution | 0/0 | Not started | - |
+| 1. Packaging and Distribution | 0/3 | Planned | - |
 | 2. Foundation and Capture | 0/0 | Not started | - |
 | 3. Role Awareness and Daily Rhythm | 0/0 | Not started | - |
 | 4. External Tool Enrichment | 0/0 | Not started | - |
