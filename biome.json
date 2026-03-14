@@ -24,6 +24,6 @@
     }
   ],
   "files": {
-    "ignore": [".planning/**", "node_modules/**"]
+    "ignore": [".planning/**", "node_modules/**", "package.json"]
   }
 }
