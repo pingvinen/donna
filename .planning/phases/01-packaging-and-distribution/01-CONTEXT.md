@@ -6,7 +6,7 @@
 <domain>
 ## Phase Boundary
 
-npm package (`@pingvinen/donna-assistant`) with installer, stub donna:setup skill, version tracking, and migration system. Anyone can run `npx @pingvinen/donna-assistant` and get a working stub skill in Claude Code. Real setup logic comes in Phase 2.
+npm package (`@pingvinen/donna-assistant`) with installer, stub donna:setup skill, version tracking, migration system, and full CI/CD pipeline. Anyone can run `npx @pingvinen/donna-assistant` and get a working stub skill in Claude Code. The deployment pipeline must be in place from day 1 — PRs are validated, releases are created manually with semver, and publishing to npm is automated. Real setup logic comes in Phase 2.
 
 </domain>
 
@@ -39,11 +39,21 @@ npm package (`@pingvinen/donna-assistant`) with installer, stub donna:setup skil
 - Stub uses `@` path to reference workflow: `@~/.donna/workflows/setup.md`
 - Stub file lives at `~/.claude/commands/donna/setup.md` with standard frontmatter (name, description)
 
+### CI/CD pipeline
+- PR validation: GitHub Actions workflow runs lint and verifies the package builds on every pull request
+- Release creation: manually triggered GitHub Actions workflow — determines version bump from conventional commit PR titles, uses semver 0.x.y while pre-stable, generates changelog, creates GitHub release
+- Deployment: separate GitHub Actions workflow triggers on release creation, publishes to npm
+- Three separate workflows (validate, release, deploy) — single responsibility, clear triggers
+- Conventional commits convention applied to PR titles (not individual commits) for version bump determination
+- Start at 0.1.0 — stay on 0.x.y until structure is stable to avoid inflated major versions
+
 ### Claude's Discretion
 - Exact banner styling and copy
 - Error message wording for edge cases
 - Internal installer code structure (how provider detection is implemented)
 - Compression/minification of package contents (if any)
+- Specific lint rules and tooling choice (eslint, biome, etc.)
+- Changelog format details
 
 </decisions>
 

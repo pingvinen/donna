@@ -13,6 +13,9 @@
 - [ ] **DIST-04**: Installer is idempotent and safe to re-run — preserves user state, only updates skill files and runtime
 - [ ] **DIST-05**: npm package contains stubs, workflows, templates, references, and installer script
 - [ ] **DIST-06**: `donna:setup` skill exists as a stub + workflow with a hello-world implementation (proves the full stub→workflow→execution pipeline)
+- [ ] **DIST-07**: PR validation workflow — GitHub Actions runs lint and verifies the package builds on every pull request
+- [ ] **DIST-08**: Release creation workflow — manually triggered GitHub Actions workflow determines version bump from conventional commit PR titles (semver 0.x.y while pre-stable), generates changelog, and creates a GitHub release
+- [ ] **DIST-09**: Deployment workflow — GitHub Actions reacts to a new GitHub release being created and publishes the package to npm
 
 ### Setup & Bootstrap
 
@@ -94,6 +97,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DIST-04 | Phase 1 | Pending |
 | DIST-05 | Phase 1 | Pending |
 | DIST-06 | Phase 1 | Pending |
+| DIST-07 | Phase 1 | Pending |
+| DIST-08 | Phase 1 | Pending |
+| DIST-09 | Phase 1 | Pending |
 | SETUP-01 | Phase 2 | Pending |
 | SETUP-02 | Phase 2 | Pending |
 | TASK-01 | Phase 2 | Pending |
@@ -114,8 +120,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DAILY-03 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 24 total
-- Mapped to phases: 24
+- v1 requirements: 27 total
+- Mapped to phases: 27
 - Unmapped: 0
 
 ---

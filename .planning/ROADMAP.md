@@ -12,7 +12,7 @@ This project delivers Donna, a suite of AI coding assistant slash commands that 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Packaging and Distribution** - npm package, installer, stub donna:setup skill, version tracking, migration system
+- [ ] **Phase 1: Packaging and Distribution** - npm package, installer, stub donna:setup skill, version tracking, migration system, CI/CD pipeline
 - [ ] **Phase 2: Foundation and Capture** - Real donna:setup, add-task, task completion, hybrid storage, git persistence
 - [ ] **Phase 3: Role Awareness and Daily Rhythm** - Role definition with research agent, morning ritual, carry-forward, recurring tasks
 - [ ] **Phase 4: External Tool Enrichment** - Tool registry skills and external data surfaced in the daily brief
@@ -22,19 +22,17 @@ Decimal phases appear between their surrounding integers in numeric order.
 ### Phase 1: Packaging and Distribution
 **Goal**: Anyone can run `npx @pingvinen/donna-assistant` and get a working (stub) donna:setup skill in Claude Code, with version tracking and a migration system that handles upgrades from any previous version
 **Depends on**: Nothing (first phase)
-**Requirements**: DIST-01, DIST-02, DIST-03, DIST-04, DIST-05, DIST-06
+**Requirements**: DIST-01, DIST-02, DIST-03, DIST-04, DIST-05, DIST-06, DIST-07, DIST-08, DIST-09
 **Success Criteria** (what must be TRUE):
   1. Running `npx @pingvinen/donna-assistant` on a machine with Claude Code copies the donna:setup stub to `~/.claude/commands/donna/` and shared runtime to `~/.donna/`
   2. Running `/donna:setup` in Claude Code loads the workflow from `~/.donna/workflows/setup.md` and produces a hello-world response (proving stub->workflow->execution pipeline)
   3. `~/.donna/version.md` exists after install and contains the installed version
   4. Running `npx @pingvinen/donna-assistant` again on a machine with an older version upgrades correctly, running all necessary migrations
   5. Running `npx @pingvinen/donna-assistant` on an already-current machine is a safe no-op (idempotent)
-**Plans:** 3 plans
-
-Plans:
-- [ ] 01-01-PLAN.md — Package scaffolding, output helpers, and version tracking module
-- [ ] 01-02-PLAN.md — Migration runner and provider detection modules
-- [ ] 01-03-PLAN.md — Installer orchestration, content files, and end-to-end validation
+  6. PRs trigger a GitHub Actions workflow that lints and verifies the package builds
+  7. A manually triggered workflow determines version bump from conventional commit PR titles, creates a GitHub release with changelog (using 0.x.y semver)
+  8. Creating a GitHub release triggers a deployment workflow that publishes the package to npm
+**Plans**: TBD
 
 ### Phase 2: Foundation and Capture
 **Goal**: User can set up the assistant, capture tasks instantly, mark them done, and trust that everything persists in git
