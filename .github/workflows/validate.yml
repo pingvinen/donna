@@ -22,9 +22,6 @@ jobs:
             fix
             docs
             chore
-            refactor
-            test
-            ci
 
   validate:
     name: Lint and build check
@@ -33,7 +30,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
       - run: npm ci
       - run: npm run lint
       - run: npm test

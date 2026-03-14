@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Determine version bump
         id: bump
@@ -29,6 +29,9 @@ jobs:
       - name: Generate changelog
         id: changelog
         run: node scripts/generate-changelog.cjs
+
+      - name: Build package
+        run: npm pack
 
       - name: Commit version bump
         run: |
@@ -44,4 +47,5 @@ jobs:
         run: |
           gh release create "v${{ steps.bump.outputs.new_version }}" \
             --title "v${{ steps.bump.outputs.new_version }}" \
-            --notes "${{ steps.changelog.outputs.changelog }}"
+            --notes "${{ steps.changelog.outputs.changelog }}" \
+            *.tgz
