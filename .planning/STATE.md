@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-14T17:23:57.153Z"
-last_activity: 2026-03-14 -- Executed Plan 01-02 (installer integration with TDD tests)
+stopped_at: Completed 02-01-PLAN.md (setup stub and workflow)
+last_updated: "2026-03-14T18:00:00.000Z"
+last_activity: 2026-03-14 -- Executed Plan 02-01 (donna:setup stub and real interactive setup workflow)
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 67
+  total_plans: 4
+  completed_plans: 4
+  percent: 44
 ---
 
 # Project State
@@ -21,29 +21,30 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13)
 
 **Core value:** Never forget an important task again -- the assistant knows your role, surfaces what needs attention each day, and captures everything that falls through the cracks outside your ticketing system.
-**Current focus:** Phase 1: Packaging and Distribution
+**Current focus:** Phase 2: Foundation and Capture
 
 ## Current Position
 
-Phase: 1 of 4 (Packaging and Distribution)
-Plan: 2 of 3 in current phase (complete)
+Phase: 2 of 4 (Foundation and Capture)
+Plan: 1 of 3 in current phase (complete)
 Status: Executing
-Last activity: 2026-03-14 -- Executed Plan 01-02 (installer integration with TDD tests)
+Last activity: 2026-03-14 -- Executed Plan 02-01 (donna:setup stub and real interactive setup workflow)
 
-Progress: [███████░░░] 67%
+Progress: [████░░░░░░] 44%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 3 min
-- Total execution time: 0.10 hours
+- Total plans completed: 4
+- Average duration: 5 min
+- Total execution time: 0.30 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 - Packaging | 2/3 | 6 min | 3 min |
+| 2 - Foundation | 1/3 | 12 min | 12 min |
 
 *Updated after each plan completion*
 
@@ -64,6 +65,9 @@ Recent decisions affecting current work:
 - [01-01]: Fixed npm test script to use glob pattern for Node v24 compatibility
 - [01-01]: Added .planning/ to biome ignore list
 - [01-02]: Copy provider stubs directly to stubTarget since stubs/ already contains donna/ subdirectory
+- [02-01]: Bootstrap config at ~/.config/donna/config.md uses YAML frontmatter with storage_repo and auto_push fields
+- [02-01]: Setup workflow uses re-run detection — reads config first, offers update/view/reset/cancel menu
+- [02-01]: Only daily/ created in setup — other standing files belong to later phases
 
 ### Pending Todos
 
@@ -78,6 +82,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-14T17:23:57.151Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-foundation-and-capture/02-CONTEXT.md
+Last session: 2026-03-14T18:00:00.000Z
+Stopped at: Completed 02-01-PLAN.md (setup stub and workflow)
+Resume file: .planning/phases/02-foundation-and-capture/02-02-PLAN.md
