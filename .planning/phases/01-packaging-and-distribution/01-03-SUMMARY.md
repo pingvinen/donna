@@ -26,7 +26,7 @@ key-files:
   created:
     - scripts/determine-bump.cjs
     - scripts/generate-changelog.cjs
-    - .github/workflows/validate.yml
+    - .github/workflows/pr-validate.yml
     - .github/workflows/release.yml
     - .github/workflows/deploy.yml
     - test/determine-bump.test.cjs
