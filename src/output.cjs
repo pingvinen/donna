@@ -23,7 +23,7 @@ function upgradeHeader(from, to) {
 }
 
 function migrationLine(desc) {
-    console.log(`    \u2022 ${desc}`);
+    console.log(`  \u2713 ${desc}`);
 }
 
 module.exports = { banner, success, fail, info, upgradeHeader, migrationLine };
