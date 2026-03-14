@@ -11,8 +11,8 @@ describe("package.json", () => {
         assert.equal(pkg.name, "@pingvinen/donna-assistant");
     });
 
-    it('bin field maps "donna-assistant" to "./bin/install.cjs"', () => {
-        assert.equal(pkg.bin["donna-assistant"], "./bin/install.cjs");
+    it('bin field maps "donna-assistant" to "./bin/donna-assistant"', () => {
+        assert.equal(pkg.bin["donna-assistant"], "./bin/donna-assistant");
     });
 
     it("files field includes bin/, src/, stubs/, workflows/, migrations/, templates/, references/", () => {
