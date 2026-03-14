@@ -19,13 +19,13 @@
 
 ### Setup & Bootstrap
 
-- [ ] **SETUP-01**: User can run `/donna:setup` to configure the storage repo path, initialize the file structure, and store bootstrap config at `~/.config/donna/config.md`
-- [ ] **SETUP-02**: System creates and maintains bootstrap config (`~/.config/donna/config.md`) pointing to the storage repo — all other skills read this first
+- [x] **SETUP-01**: User can run `/donna:setup` to configure the storage repo path, initialize the file structure, and store bootstrap config at `~/.config/donna/config.md`
+- [x] **SETUP-02**: System creates and maintains bootstrap config (`~/.config/donna/config.md`) pointing to the storage repo — all other skills read this first
 
 ### Task Capture
 
-- [ ] **TASK-01**: User can run `/donna:add-task <description>` to capture a task in a single command with no additional prompts — task is written to today's daily journal and committed immediately (< 10 seconds)
-- [ ] **TASK-02**: User can mark a task as complete (done inline or via a skill invocation), updating the daily journal and committing the change
+- [x] **TASK-01**: User can run `/donna:add-task <description>` to capture a task in a single command with no additional prompts — task is written to today's daily journal and committed immediately (< 10 seconds)
+- [x] **TASK-02**: User can mark a task as complete (done inline or via a skill invocation), updating the daily journal and committing the change
 
 ### Role Definition
 
@@ -49,8 +49,8 @@
 
 ### Storage & Persistence
 
-- [ ] **STORE-01**: All state persists as markdown files in the user's configured git repo with a hybrid structure: daily journal files (`daily/YYYY-MM-DD.md`) plus standing files (`role.md`, `role-research.md`, `recurring.md`, `tools.md`, `config.md`, `people.md`)
-- [ ] **STORE-02**: Every skill commits its changes to git immediately after writing, so state survives context resets
+- [x] **STORE-01**: All state persists as markdown files in the user's configured git repo with a hybrid structure: daily journal files (`daily/YYYY-MM-DD.md`) plus standing files (`role.md`, `role-research.md`, `recurring.md`, `tools.md`, `config.md`, `people.md`)
+- [x] **STORE-02**: Every skill commits its changes to git immediately after writing, so state survives context resets
 - [ ] **STORE-03**: Skills read only the files they need (not the full repo) to avoid context window exhaustion as the repo grows over time
 
 ## v2 Requirements
@@ -104,12 +104,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DIST-07 | Phase 1 | Complete |
 | DIST-08 | Phase 1 | Complete |
 | DIST-09 | Phase 1 | Complete |
-| SETUP-01 | Phase 2 | Pending |
-| SETUP-02 | Phase 2 | Pending |
-| TASK-01 | Phase 2 | Pending |
-| TASK-02 | Phase 2 | Pending |
-| STORE-01 | Phase 2 | Pending |
-| STORE-02 | Phase 2 | Pending |
+| SETUP-01 | Phase 2 | Complete |
+| SETUP-02 | Phase 2 | Complete |
+| TASK-01 | Phase 2 | Complete |
+| TASK-02 | Phase 2 | Complete |
+| STORE-01 | Phase 2 | Complete |
+| STORE-02 | Phase 2 | Complete |
 | ROLE-01 | Phase 3 | Pending |
 | ROLE-02 | Phase 3 | Pending |
 | ROLE-03 | Phase 3 | Pending |

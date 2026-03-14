@@ -3,7 +3,9 @@
 
 const { run } = require("../src/installer.cjs");
 
-run().catch((err) => {
+const force = process.argv.includes("--force");
+
+run({ force }).catch((err) => {
     console.error(`\nInstallation failed: ${err.message}`);
     process.exit(1);
 });

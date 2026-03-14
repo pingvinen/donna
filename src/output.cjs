@@ -2,7 +2,7 @@
 
 function banner() {
     console.log("");
-    console.log("━━━ DONNA ━━━");
+    console.log("━━━ Donna ━━━");
     console.log("");
 }
 

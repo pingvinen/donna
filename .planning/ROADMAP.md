@@ -13,7 +13,7 @@ This project delivers Donna, a suite of AI coding assistant slash commands that 
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Packaging and Distribution** - npm package, installer, stub donna:setup skill, version tracking, migration system, CI/CD pipeline (completed 2026-03-14)
-- [ ] **Phase 2: Foundation and Capture** - Real donna:setup, add-task, task completion, hybrid storage, git persistence
+- [x] **Phase 2: Foundation and Capture** - Real donna:setup, add-task, task completion, hybrid storage, git persistence (completed 2026-03-14)
 - [ ] **Phase 3: Role Awareness and Daily Rhythm** - Role definition with research agent, morning ritual, carry-forward, recurring tasks
 - [ ] **Phase 4: External Tool Enrichment** - Tool registry skills and external data surfaced in the daily brief
 
@@ -44,11 +44,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can mark a task as complete and see the change reflected in the daily journal and committed to git
   4. All state files follow the hybrid structure (daily journals + standing files) and every skill invocation results in a git commit
   5. `donna:add-task` creates today's daily file if it doesn't exist (doesn't require begin-the-day first)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [x] 02-01-PLAN.md — Real donna:setup skill (interactive config flow, storage repo init, bootstrap config)
+- [ ] 02-02-PLAN.md — donna:add-task and donna:done skills (task capture, completion, installer update)
 
 ### Phase 3: Role Awareness and Daily Rhythm
 **Goal**: User has a complete daily workflow — define their role, get role-grounded recurring task suggestions, and run a morning ritual that carries forward open tasks and surfaces what is due
@@ -89,6 +89,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Packaging and Distribution | 2/3 | In Progress | - |
-| 2. Foundation and Capture | 0/0 | Not started | - |
+| 2. Foundation and Capture | 2/2 | Complete   | 2026-03-14 |
 | 3. Role Awareness and Daily Rhythm | 0/0 | Not started | - |
 | 4. External Tool Enrichment | 0/0 | Not started | - |
