@@ -43,6 +43,9 @@ created: 2026-03-14
 | 01-01-03 | 01 | 0 | DIST-03 | unit | `node --test test/migrator.test.cjs` | ❌ W0 | ⬜ pending |
 | 01-01-04 | 01 | 0 | DIST-05 | unit | `node --test test/package.test.cjs` | ❌ W0 | ⬜ pending |
 | 01-01-05 | 01 | 0 | DIST-06 | unit | `node --test test/stubs.test.cjs` | ❌ W0 | ⬜ pending |
+| 01-03-01 | 03 | 2 | DIST-07 | unit | `node --test test/workflows.test.cjs` | ❌ W0 | ⬜ pending |
+| 01-03-02 | 03 | 2 | DIST-08 | unit | `node --test test/determine-bump.test.cjs` | ❌ W0 | ⬜ pending |
+| 01-03-03 | 03 | 2 | DIST-09 | unit | `node --test test/workflows.test.cjs` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -55,6 +58,8 @@ created: 2026-03-14
 - [ ] `test/migrator.test.cjs` — unit tests for DIST-03 (migration runner logic)
 - [ ] `test/package.test.cjs` — unit tests for DIST-05 (validates package.json files field)
 - [ ] `test/stubs.test.cjs` — unit tests for DIST-06 (stub format validation)
+- [ ] `test/workflows.test.cjs` — unit tests for DIST-07, DIST-09 (workflow YAML validation)
+- [ ] `test/determine-bump.test.cjs` — unit tests for DIST-08 (version bump determination)
 
 *All tests operate on temp directories to avoid touching real `~/.donna/` or `~/.claude/`.*
 
@@ -66,6 +71,9 @@ created: 2026-03-14
 |----------|-------------|------------|-------------------|
 | `npx @pingvinen/donna-assistant` runs on fresh machine | DIST-01 | Requires real npm registry + clean machine | 1. Publish to npm 2. Run npx on clean machine 3. Verify ~/.donna/ and ~/.claude/commands/donna/ exist |
 | `/donna:setup` produces hello-world in Claude Code | DIST-06 | Requires running Claude Code | 1. Install donna 2. Open Claude Code 3. Run `/donna:setup` 4. Verify hello-world response |
+| PR validation workflow runs on PR | DIST-07 | Requires real GitHub PR | 1. Open PR 2. Verify lint + build check runs |
+| Release workflow creates GitHub release | DIST-08 | Requires manual workflow trigger | 1. Trigger release workflow 2. Verify release + changelog created |
+| Deploy workflow publishes to npm | DIST-09 | Requires npm registry + OIDC | 1. Create GitHub release 2. Verify package published to npm |
 
 ---
 
