@@ -42,7 +42,6 @@ function generateChangelog(messages) {
 // CLI mode: when run directly (not imported)
 if (require.main === module) {
     const { execSync } = require("node:child_process");
-    const fs = require("node:fs");
 
     // Get last tag, or use initial commit if no tags
     let lastTag;
@@ -63,13 +62,6 @@ if (require.main === module) {
     const messages = log.split("\n").filter(Boolean);
 
     const changelog = generateChangelog(messages);
-
-    // Write to GITHUB_OUTPUT if in CI, otherwise print
-    if (process.env.GITHUB_OUTPUT) {
-        // Use delimiter for multiline output
-        fs.appendFileSync(process.env.GITHUB_OUTPUT, `changelog<<EOF\n${changelog}\nEOF\n`);
-    }
-
     console.log(changelog);
 }
 
