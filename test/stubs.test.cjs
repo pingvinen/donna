@@ -256,7 +256,10 @@ describe("stub: stubs/claude-code/donna/set-role.md", () => {
 
     it("has WebSearch in allowed-tools", () => {
         const content = fs.readFileSync(setRoleStubPath, "utf8");
-        assert.ok(content.includes("- WebSearch"), "Should have WebSearch in allowed-tools (critical for research step)");
+        assert.ok(
+            content.includes("- WebSearch"),
+            "Should have WebSearch in allowed-tools (critical for research step)",
+        );
     });
 
     it("has AskUserQuestion in allowed-tools", () => {
@@ -306,7 +309,10 @@ describe("workflow: workflows/set-role.md", () => {
 
     it("contains WebSearch usage for research", () => {
         const content = fs.readFileSync(setRoleWorkflowPath, "utf8");
-        assert.ok(content.includes("WebSearch"), "Should contain WebSearch usage for research step");
+        assert.ok(
+            content.includes("WebSearch"),
+            "Should contain WebSearch usage for research step",
+        );
     });
 
     it("contains AskUserQuestion for interactive flow", () => {
@@ -426,8 +432,7 @@ describe("workflow: workflows/begin-the-day.md", () => {
     it("contains deduplication logic", () => {
         const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
         assert.ok(
-            content.toLowerCase().includes("dedup") ||
-                content.toLowerCase().includes("normalize"),
+            content.toLowerCase().includes("dedup") || content.toLowerCase().includes("normalize"),
             "Should contain deduplication logic (references 'dedup' or 'normalize')",
         );
     });
