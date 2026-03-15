@@ -71,11 +71,13 @@ Plans:
 **Goal:** Move all standing files (role.md, recurring.md, role-research.md) into a dedicated subfolder within the storage repo so the user owns the repo root for their own notes. Update all workflows to read/write from the new location. Add installer migration for existing users.
 **Requirements**: REORG-01, REORG-02, REORG-03, REORG-04
 **Depends on:** Phase 3
-**Plans:** 2/2 plans complete
+**Plans:** 4 plans (2 complete, 2 gap closure)
 
 Plans:
 - [x] 03.1-01-PLAN.md — Migration file (002), setup.md donna/ creation, test updates
 - [x] 03.1-02-PLAN.md — Workflow path updates (set-role.md, begin-the-day.md) with migration guard
+- [ ] 03.1-03-PLAN.md — Fix migration 002 to write state.md pending flag instead of no-op
+- [ ] 03.1-04-PLAN.md — Add check-pending-migrations step to all four workflows
 
 ### Phase 4: External Tool Enrichment
 **Goal**: User can declare external CLI tools (GitHub CLI, Jira CLI) and have their data surfaced automatically in the morning ritual
@@ -102,5 +104,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 3.1 -> 4
 | 1. Packaging and Distribution | 2/3 | In Progress | - |
 | 2. Foundation and Capture | 0/2 | Not started | - |
 | 3. Role Awareness and Daily Rhythm | 2/2 | Complete   | 2026-03-15 |
-| 3.1 Standing Files Subfolder | 2/2 | Complete    | 2026-03-15 |
+| 3.1 Standing Files Subfolder | 2/4 | Gap Closure | - |
 | 4. External Tool Enrichment | 0/0 | Not started | - |
