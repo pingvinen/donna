@@ -92,7 +92,7 @@ describe("installer - fresh install", () => {
         assert.ok(ver, "version.md should exist");
         const pkg = require("../package.json");
         assert.equal(ver.version, pkg.version);
-        assert.equal(ver.lastMigration, 1);
+        assert.equal(ver.lastMigration, 2);
     });
 
     it("copies stubs to detected provider directories", async () => {
@@ -167,7 +167,7 @@ describe("installer - upgrade", () => {
         const ver = readVersion(env.donnaDir);
         const pkg = require("../package.json");
         assert.equal(ver.version, pkg.version);
-        assert.equal(ver.lastMigration, 1);
+        assert.equal(ver.lastMigration, 2);
     });
 });
 
@@ -178,7 +178,7 @@ describe("installer - idempotent", () => {
         const pkg = require("../package.json");
         env = makeTempHome({
             withClaude: true,
-            withVersion: { version: pkg.version, lastMigration: 1 },
+            withVersion: { version: pkg.version, lastMigration: 2 },
         });
         // Ensure migration dirs exist (as if previously installed)
         fs.mkdirSync(path.join(env.donnaDir, "workflows"), { recursive: true });
@@ -300,11 +300,11 @@ module.exports = {
 
         assert.ok(threw, "should throw on migration failure");
 
-        // Version should be written with last successful migration (001)
+        // Version should be written with last successful migration (002)
         const { readVersion } = require("../src/version.cjs");
         const ver = readVersion(env.donnaDir);
         assert.ok(ver, "version.md should exist after partial failure");
-        assert.equal(ver.lastMigration, 1, "should record last successful migration as 1");
+        assert.equal(ver.lastMigration, 2, "should record last successful migration as 2");
     });
 
     it("prints failure message with cross prefix", async () => {
