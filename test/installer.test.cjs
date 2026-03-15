@@ -123,7 +123,10 @@ describe("installer - fresh install", () => {
         const statePath = path.join(env.donnaDir, "state.md");
         assert.ok(fs.existsSync(statePath), "state.md should exist after install");
         const content = fs.readFileSync(statePath, "utf8");
-        assert.ok(content.includes("move-standing-files"), "state.md should contain move-standing-files");
+        assert.ok(
+            content.includes("move-standing-files"),
+            "state.md should contain move-standing-files",
+        );
     });
 });
 
@@ -185,7 +188,10 @@ describe("installer - upgrade", () => {
         const statePath = path.join(env.donnaDir, "state.md");
         assert.ok(fs.existsSync(statePath), "state.md should exist after upgrade");
         const content = fs.readFileSync(statePath, "utf8");
-        assert.ok(content.includes("move-standing-files"), "state.md should contain move-standing-files");
+        assert.ok(
+            content.includes("move-standing-files"),
+            "state.md should contain move-standing-files",
+        );
     });
 });
 
@@ -246,7 +252,10 @@ describe("installer - idempotent", () => {
         const statePath = path.join(env.donnaDir, "state.md");
         assert.ok(fs.existsSync(statePath), "state.md should still exist after idempotent run");
         const content = fs.readFileSync(statePath, "utf8");
-        assert.ok(content.includes("move-standing-files"), "state.md should still contain move-standing-files");
+        assert.ok(
+            content.includes("move-standing-files"),
+            "state.md should still contain move-standing-files",
+        );
     });
 });
 
@@ -260,7 +269,11 @@ describe("installer - migration 002 state.md idempotency", () => {
     afterEach(() => {
         // Clear require cache so installer.cjs is re-evaluated fresh each time
         for (const key of Object.keys(require.cache)) {
-            if (key.includes("installer") || key.includes("migrator") || key.includes("migrations")) {
+            if (
+                key.includes("installer") ||
+                key.includes("migrator") ||
+                key.includes("migrations")
+            ) {
                 delete require.cache[key];
             }
         }
@@ -273,7 +286,11 @@ describe("installer - migration 002 state.md idempotency", () => {
 
         // Clear cache so second run is a fresh require
         for (const key of Object.keys(require.cache)) {
-            if (key.includes("installer") || key.includes("migrator") || key.includes("migrations")) {
+            if (
+                key.includes("installer") ||
+                key.includes("migrator") ||
+                key.includes("migrations")
+            ) {
                 delete require.cache[key];
             }
         }

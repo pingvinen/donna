@@ -17,7 +17,7 @@ module.exports = {
             }
         }
 
-        const pendingFlag = `---\npending_migrations:\n  - move-standing-files\n---\n`;
+        const pendingFlag = "---\npending_migrations:\n  - move-standing-files\n---\n";
         ctx.fs.writeFileSync(statePath, pendingFlag, "utf8");
     },
 };
