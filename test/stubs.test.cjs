@@ -10,6 +10,10 @@ const stubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "setup.
 const workflowPath = path.join(projectRoot, "workflows", "setup.md");
 const addToolStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "add-tool.md");
 const addToolWorkflowPath = path.join(projectRoot, "workflows", "add-tool.md");
+const relearnToolsStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "relearn-tools.md");
+const relearnToolsWorkflowPath = path.join(projectRoot, "workflows", "relearn-tools.md");
+const refreshToolsStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "refresh-tools.md");
+const refreshToolsWorkflowPath = path.join(projectRoot, "workflows", "refresh-tools.md");
 
 describe("stub: stubs/claude-code/donna/setup.md", () => {
     it("exists", () => {
@@ -599,6 +603,220 @@ describe("workflow: workflows/add-tool.md", () => {
     });
 });
 
+// ─── relearn-tools stub ───────────────────────────────────────────────────────
+
+describe("stub: stubs/claude-code/donna/relearn-tools.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(relearnToolsStubPath), "relearn-tools stub should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:relearn-tools"', () => {
+        const content = fs.readFileSync(relearnToolsStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:relearn-tools"),
+            "Should have name: donna:relearn-tools in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(relearnToolsStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field in frontmatter");
+    });
+
+    it("has Read in allowed-tools", () => {
+        const content = fs.readFileSync(relearnToolsStubPath, "utf8");
+        assert.ok(content.includes("- Read"), "Should have Read in allowed-tools");
+    });
+
+    it("has Write in allowed-tools", () => {
+        const content = fs.readFileSync(relearnToolsStubPath, "utf8");
+        assert.ok(content.includes("- Write"), "Should have Write in allowed-tools");
+    });
+
+    it("has Bash in allowed-tools", () => {
+        const content = fs.readFileSync(relearnToolsStubPath, "utf8");
+        assert.ok(content.includes("- Bash"), "Should have Bash in allowed-tools");
+    });
+
+    it("does NOT have AskUserQuestion in allowed-tools (non-interactive)", () => {
+        const content = fs.readFileSync(relearnToolsStubPath, "utf8");
+        assert.ok(
+            !content.includes("- AskUserQuestion"),
+            "Should NOT have AskUserQuestion — relearn-tools is non-interactive",
+        );
+    });
+
+    it("contains @~/.donna/workflows/relearn-tools.md reference", () => {
+        const content = fs.readFileSync(relearnToolsStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/relearn-tools.md"),
+            "Should reference @~/.donna/workflows/relearn-tools.md",
+        );
+    });
+});
+
+describe("workflow: workflows/relearn-tools.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(relearnToolsWorkflowPath), "relearn-tools workflow should exist");
+    });
+
+    it("references config/donna/config.md", () => {
+        const content = fs.readFileSync(relearnToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("config/donna/config.md"),
+            "Should reference config/donna/config.md",
+        );
+    });
+
+    it("contains check-pending-migrations step", () => {
+        const content = fs.readFileSync(relearnToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("check-pending-migrations"),
+            "Should contain check-pending-migrations step",
+        );
+    });
+
+    it("contains version comparison logic (--version present)", () => {
+        const content = fs.readFileSync(relearnToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("--version"),
+            "Should contain --version for installed version comparison",
+        );
+    });
+
+    it("references donna/tools.md", () => {
+        const content = fs.readFileSync(relearnToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("donna/tools.md"),
+            "Should reference donna/tools.md for tool registry",
+        );
+    });
+
+    it("contains git commit step", () => {
+        const content = fs.readFileSync(relearnToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("git") && content.includes("commit"),
+            "Should contain git commit step",
+        );
+    });
+});
+
+// ─── refresh-tools stub ───────────────────────────────────────────────────────
+
+describe("stub: stubs/claude-code/donna/refresh-tools.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(refreshToolsStubPath), "refresh-tools stub should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:refresh-tools"', () => {
+        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:refresh-tools"),
+            "Should have name: donna:refresh-tools in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field in frontmatter");
+    });
+
+    it("has Read in allowed-tools", () => {
+        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        assert.ok(content.includes("- Read"), "Should have Read in allowed-tools");
+    });
+
+    it("has Write in allowed-tools", () => {
+        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        assert.ok(content.includes("- Write"), "Should have Write in allowed-tools");
+    });
+
+    it("has Bash in allowed-tools", () => {
+        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        assert.ok(content.includes("- Bash"), "Should have Bash in allowed-tools");
+    });
+
+    it("does NOT have AskUserQuestion in allowed-tools (non-interactive)", () => {
+        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        assert.ok(
+            !content.includes("- AskUserQuestion"),
+            "Should NOT have AskUserQuestion — refresh-tools is non-interactive",
+        );
+    });
+
+    it("contains @~/.donna/workflows/refresh-tools.md reference", () => {
+        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/refresh-tools.md"),
+            "Should reference @~/.donna/workflows/refresh-tools.md",
+        );
+    });
+});
+
+describe("workflow: workflows/refresh-tools.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(refreshToolsWorkflowPath), "refresh-tools workflow should exist");
+    });
+
+    it("references config/donna/config.md", () => {
+        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("config/donna/config.md"),
+            "Should reference config/donna/config.md",
+        );
+    });
+
+    it("contains check-pending-migrations step", () => {
+        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("check-pending-migrations"),
+            "Should contain check-pending-migrations step",
+        );
+    });
+
+    it("contains smart-merge step", () => {
+        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("smart-merge"),
+            "Should contain smart-merge step",
+        );
+    });
+
+    it('references "## From Tools" section format', () => {
+        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("## From Tools"),
+            "Should reference ## From Tools section format",
+        );
+    });
+
+    it('references "## Resolved" section format', () => {
+        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("## Resolved"),
+            "Should reference ## Resolved section format",
+        );
+    });
+
+    it("contains timeout for failure isolation", () => {
+        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("timeout"),
+            "Should contain timeout for per-tool failure isolation",
+        );
+    });
+
+    it("contains git commit step", () => {
+        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("git") && content.includes("commit"),
+            "Should contain git commit step",
+        );
+    });
+});
+
 // ─── cross-cutting: done.md counter-strip ────────────────────────────────────
 
 describe("cross-cutting: done.md counter-strip", () => {
@@ -629,6 +847,30 @@ describe("cross-cutting: installer skill list", () => {
         assert.ok(
             content.includes("begin-the-day"),
             "Installer success message should include begin-the-day skill",
+        );
+    });
+
+    it('success message includes "add-tool"', { todo: "installer updated in Plan 03" }, () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("add-tool"),
+            "Installer success message should include add-tool skill",
+        );
+    });
+
+    it('success message includes "relearn-tools"', { todo: "installer updated in Plan 03" }, () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("relearn-tools"),
+            "Installer success message should include relearn-tools skill",
+        );
+    });
+
+    it('success message includes "refresh-tools"', { todo: "installer updated in Plan 03" }, () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("refresh-tools"),
+            "Installer success message should include refresh-tools skill",
         );
     });
 });
