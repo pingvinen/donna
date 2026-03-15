@@ -16,10 +16,39 @@ Stop.
 Extract the `storage_repo` and `auto_push` (default: false) fields from the YAML frontmatter.
 </step>
 
+<step name="migrate-standing-files">
+Check if standing files exist at the old location (repo root) and move them to donna/ if needed.
+
+Run via Bash:
+```bash
+STORAGE_REPO="<storage_repo>"
+DONNA_DIR="$STORAGE_REPO/donna"
+
+# Only migrate if donna/ doesn't exist yet but root-level standing files do
+if [ ! -d "$DONNA_DIR" ] || [ -f "$STORAGE_REPO/role.md" ] || [ -f "$STORAGE_REPO/recurring.md" ] || [ -f "$STORAGE_REPO/role-research.md" ]; then
+    mkdir -p "$DONNA_DIR"
+    for FILE in role.md recurring.md role-research.md config.md; do
+        if [ -f "$STORAGE_REPO/$FILE" ] && [ ! -f "$DONNA_DIR/$FILE" ]; then
+            mv "$STORAGE_REPO/$FILE" "$DONNA_DIR/$FILE"
+            echo "Moved $FILE to donna/$FILE"
+        fi
+    done
+fi
+```
+
+If any files were moved, run:
+```bash
+git -C <storage_repo> add -A
+git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): move standing files to donna/ subfolder"
+```
+
+If `auto_push` is true in config, also push.
+</step>
+
 <step name="check-existing-role">
 Run via Bash:
 ```bash
-test -f <storage_repo>/role.md && echo "exists" || echo "missing"
+test -f <storage_repo>/donna/role.md && echo "exists" || echo "missing"
 ```
 
 If the output is "exists", proceed to the rerun-menu step.
@@ -39,8 +68,8 @@ A role definition already exists. What would you like to do?
 ```
 
 - On "reset" (option 1): proceed to ask-role (fresh start, will overwrite role.md and recurring.md).
-- On "diff-update" (option 2): read current role.md with the Read tool, proceed to ask-role but pre-fill with current values and note this is an update. After research, show delta (added/removed recurring tasks vs current recurring.md). Preserve any manually-added recurring tasks (tasks in recurring.md not in the research suggestions).
-- On "re-research" (option 3): read current role.md with the Read tool to get the existing role data, skip to the research step.
+- On "diff-update" (option 2): read current `<storage_repo>/donna/role.md` with the Read tool, proceed to ask-role but pre-fill with current values and note this is an update. After research, show delta (added/removed recurring tasks vs current `<storage_repo>/donna/recurring.md`). Preserve any manually-added recurring tasks (tasks in recurring.md not in the research suggestions).
+- On "re-research" (option 3): read current `<storage_repo>/donna/role.md` with the Read tool to get the existing role data, skip to the research step.
 - On "Cancel" (option 4): print "Cancelled." and stop.
 </step>
 
@@ -132,7 +161,7 @@ Do NOT create tools.md or configure anything — only note the user's interest.
 </step>
 
 <step name="save-role">
-Write `<storage_repo>/role.md` with the Write tool.
+Write `<storage_repo>/donna/role.md` with the Write tool.
 
 Use this format (substituting actual values):
 ```markdown
@@ -151,7 +180,7 @@ updated: <today's date in YYYY-MM-DD format>
 [Write a 2–3 sentence prose summary of the role as described by the user, incorporating their key responsibilities and team context.]
 ```
 
-Write `<storage_repo>/role-research.md` with the Write tool.
+Write `<storage_repo>/donna/role-research.md` with the Write tool.
 
 Use this format:
 ```markdown
@@ -185,7 +214,7 @@ role: <job_title>
 </step>
 
 <step name="save-recurring">
-Write `<storage_repo>/recurring.md` with the Write tool.
+Write `<storage_repo>/donna/recurring.md` with the Write tool.
 
 Format: one approved recurring task per line as `- Task description: interval`.
 For "every other" intervals (biweekly, every other Monday, etc.), append ` | last_run: <today's date>` suffix.
@@ -202,7 +231,7 @@ Use this format:
 ```
 
 If this is a diff-update (user chose option 2 in rerun-menu):
-1. Read the existing `<storage_repo>/recurring.md` with the Read tool.
+1. Read the existing `<storage_repo>/donna/recurring.md` with the Read tool.
 2. Identify manually-added tasks: tasks in recurring.md that were NOT in the research suggestions.
 3. Merge: keep manually-added tasks, add new approved tasks, remove tasks the user rejected.
 4. Write the merged result.
