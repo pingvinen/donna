@@ -354,3 +354,135 @@ describe("workflow: workflows/set-role.md", () => {
         );
     });
 });
+
+// ─── begin-the-day stub ───────────────────────────────────────────────────────
+
+const beginTheDayStubPath = path.join(
+    projectRoot,
+    "stubs",
+    "claude-code",
+    "donna",
+    "begin-the-day.md",
+);
+const beginTheDayWorkflowPath = path.join(projectRoot, "workflows", "begin-the-day.md");
+
+describe("stub: stubs/claude-code/donna/begin-the-day.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(beginTheDayStubPath), "begin-the-day stub should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:begin-the-day"', () => {
+        const content = fs.readFileSync(beginTheDayStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:begin-the-day"),
+            "Should have name: donna:begin-the-day in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(beginTheDayStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field in frontmatter");
+    });
+
+    it("contains @~/.donna/workflows/begin-the-day.md reference", () => {
+        const content = fs.readFileSync(beginTheDayStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/begin-the-day.md"),
+            "Should reference @~/.donna/workflows/begin-the-day.md",
+        );
+    });
+});
+
+describe("workflow: workflows/begin-the-day.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(beginTheDayWorkflowPath), "begin-the-day workflow should exist");
+    });
+
+    it("references config/donna/config.md", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("config/donna/config.md"),
+            "Should reference config/donna/config.md",
+        );
+    });
+
+    it("contains carry-forward logic referencing previous daily file", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.toLowerCase().includes("carry") || content.toLowerCase().includes("previous"),
+            "Should contain carry-forward logic (references 'carry' or 'previous')",
+        );
+    });
+
+    it("references recurring.md for due-today tasks", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("recurring.md"),
+            "Should reference recurring.md for due-today recurring tasks",
+        );
+    });
+
+    it("contains deduplication logic", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.toLowerCase().includes("dedup") ||
+                content.toLowerCase().includes("normalize"),
+            "Should contain deduplication logic (references 'dedup' or 'normalize')",
+        );
+    });
+
+    it("contains git commit step", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("git") && content.includes("commit"),
+            "Should contain git commit step",
+        );
+    });
+
+    it("reads only specific files — no full-repo scan (STORE-03)", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        // Must NOT glob or ls the entire storage repo
+        // (ls inside the daily_folder to find previous file is acceptable and expected)
+        assert.ok(
+            !content.includes("ls <storage_repo>/*.md") &&
+                !content.includes("glob") &&
+                !content.includes("find <storage_repo>"),
+            "Should not glob or ls the full storage repo — only targeted daily_folder listing and specific named files",
+        );
+    });
+});
+
+// ─── cross-cutting: done.md counter-strip ────────────────────────────────────
+
+describe("cross-cutting: done.md counter-strip", () => {
+    it("strips (N times) suffix in select-tasks for fuzzy matching", () => {
+        const content = fs.readFileSync(doneWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("(N times)") || content.includes("\\d+ times"),
+            "done.md should reference stripping the (N times) carry-forward counter suffix",
+        );
+    });
+});
+
+// ─── cross-cutting: installer skill list ─────────────────────────────────────
+
+const installerPath = path.join(projectRoot, "src", "installer.cjs");
+
+describe("cross-cutting: installer skill list", () => {
+    it('success message includes "set-role"', () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("set-role"),
+            "Installer success message should include set-role skill",
+        );
+    });
+
+    it('success message includes "begin-the-day"', () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("begin-the-day"),
+            "Installer success message should include begin-the-day skill",
+        );
+    });
+});
