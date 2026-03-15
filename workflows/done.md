@@ -41,6 +41,8 @@ Read the daily file with the Read tool.
 
 Find all lines matching the pattern `- [ ] <description>` (open tasks). Collect them as `<open_tasks>`. Do not print the list — it will be shown in the next step via AskUserQuestion.
 
+When presenting task descriptions to the user (in the numbered list or match confirmation), strip any trailing ` (N times)` suffix (where N is any integer, e.g., `Follow up with Sarah (3 times)` becomes `Follow up with Sarah`) for cleaner display. Keep the full line internally for file operations.
+
 If no open tasks are found, print:
 ```
 ✓ All tasks already complete for today!
@@ -52,13 +54,17 @@ Stop.
 Two modes based on whether an argument was provided to this command:
 
 **With argument** (e.g., `/donna:done buy milk`):
-Use your natural language understanding to fuzzy-match the argument against the open task descriptions. If a match is found, show it and use AskUserQuestion to confirm:
+When fuzzy-matching task descriptions, strip any trailing ` (N times)` suffix (where N is any integer, matching the regex `\(\d+ times\)`, e.g., `Follow up with Sarah (3 times)` becomes `Follow up with Sarah` for matching purposes). This counter is added by begin-the-day's carry-forward and is transparent to task completion.
+
+Use your natural language understanding to fuzzy-match the argument against the open task descriptions (after stripping the counter suffix). If a match is found, show it and use AskUserQuestion to confirm:
 ```
 Mark as done: '<task>'? (yes/no)
 ```
 If no match is found, tell the user and list all open tasks.
 
 **Without argument**:
+When fuzzy-matching task descriptions, strip any trailing ` (N times)` suffix (where N is any integer, matching the regex `\(\d+ times\)`, e.g., `Follow up with Sarah (3 times)` becomes `Follow up with Sarah` for matching purposes). This counter is added by begin-the-day's carry-forward and is transparent to task completion.
+
 Use AskUserQuestion to ask which task to mark as done. Provide the open task descriptions as options so the user can select from a list. The question text should be:
 ```
 Which task(s) did you finish? (or type something you did that's not on the list)
@@ -77,6 +83,8 @@ If the user types free text instead of selecting an option, treat it as a task t
 
 <step name="mark-complete">
 For each task in `<completed_tasks>`, replace `- [ ] <description>` with `- [x] <description>` in the daily file.
+
+When marking a carry-forward task as complete, strip the ` (N times)` suffix from the completed line. The completed task should read `- [x] Follow up with Sarah` (clean, no counter).
 
 Write the updated file with the Write tool.
 </step>
