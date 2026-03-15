@@ -21,6 +21,47 @@ Extract the `storage_repo`, `daily_folder` (default: `daily`), and `auto_push` (
 - Otherwise: do nothing.
 </step>
 
+<step name="check-pending-migrations">
+Read `~/.donna/state.md` with the Read tool. If the file does not exist or has no `pending_migrations` field in its YAML frontmatter, skip this step.
+
+For each entry in `pending_migrations`:
+
+**`move-standing-files`:** Move standing files from storage repo root to donna/ subfolder.
+
+Run via Bash:
+```bash
+STORAGE_REPO="<storage_repo>"
+DONNA_DIR="$STORAGE_REPO/donna"
+MOVED=0
+
+mkdir -p "$DONNA_DIR"
+for FILE in role.md recurring.md role-research.md; do
+    if [ -f "$STORAGE_REPO/$FILE" ] && [ ! -f "$DONNA_DIR/$FILE" ]; then
+        mv "$STORAGE_REPO/$FILE" "$DONNA_DIR/$FILE"
+        echo "Moved $FILE to donna/$FILE"
+        MOVED=$((MOVED + 1))
+    fi
+done
+
+echo "MOVED=$MOVED"
+```
+
+If MOVED > 0, commit the move:
+```bash
+git -C <storage_repo> add -A
+git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): move standing files to donna/ subfolder"
+```
+
+If `auto_push` is true in config, also push.
+
+After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
+```markdown
+---
+pending_migrations: []
+---
+```
+</step>
+
 <step name="get-today">
 Run via Bash to get today's date, day-of-week, and day-of-month:
 ```bash
@@ -66,7 +107,7 @@ Do NOT modify the previous file — it is a historical record and must remain un
 </step>
 
 <step name="check-recurring">
-Read `<storage_repo>/recurring.md` with the Read tool. If the file does not exist, set `<recurring_tasks>` to an empty list and continue (recurring tasks are optional — set-role may not have been run yet).
+Read `<storage_repo>/donna/recurring.md` with the Read tool. If the file does not exist, set `<recurring_tasks>` to an empty list and continue (recurring tasks are optional — set-role may not have been run yet).
 
 Parse each line matching the pattern `- <description>: <interval>`. For "every other" intervals, also parse the `| last_run: YYYY-MM-DD` suffix.
 
@@ -132,7 +173,7 @@ Tasks are written in this order: existing tasks first (preserving their original
 </step>
 
 <step name="update-recurring-last-run">
-If any tasks from `<recurring_tasks>` came from "every other" intervals and were added to today's file, update their `last_run` date in `<storage_repo>/recurring.md`.
+If any tasks from `<recurring_tasks>` came from "every other" intervals and were added to today's file, update their `last_run` date in `<storage_repo>/donna/recurring.md`.
 
 Read the full recurring.md file. For each such task, find the line and update the `| last_run: <old_date>` suffix to `| last_run: <today>`. If no `last_run` suffix exists, append ` | last_run: <today>` to the line. Write the full file back with the Write tool.
 

@@ -103,16 +103,17 @@ Set `<daily_folder>` to `daily`. Print:
 </step>
 
 <step name="create-storage-structure">
-Create the daily directory:
+Create the daily and donna directories:
 
 Run via Bash:
 ```bash
 mkdir -p <repo>/<daily_folder>
+mkdir -p <repo>/donna
 ```
 
 Print:
 ```
-✓ Created <daily_folder>/ directory
+✓ Created <daily_folder>/ and donna/ directories
 ```
 </step>
 

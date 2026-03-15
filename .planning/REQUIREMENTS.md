@@ -55,10 +55,10 @@
 
 ### Storage Reorganization
 
-- [ ] **REORG-01**: Installer migration 002 exists as a version marker for the standing files subfolder change
-- [ ] **REORG-02**: All workflow references to standing files (role.md, recurring.md, role-research.md) use the `donna/` subfolder path instead of the storage repo root
-- [ ] **REORG-03**: New installs via `donna:setup` create the `donna/` directory in the storage repo alongside `daily/`
-- [ ] **REORG-04**: Existing users' standing files are automatically moved from repo root to `donna/` subfolder on first skill run after upgrade (migration guard in workflows)
+- [x] **REORG-01**: Installer migration 002 exists as a version marker for the standing files subfolder change
+- [x] **REORG-02**: All workflow references to standing files (role.md, recurring.md, role-research.md) use the `donna/` subfolder path instead of the storage repo root
+- [x] **REORG-03**: New installs via `donna:setup` create the `donna/` directory in the storage repo alongside `daily/`
+- [x] **REORG-04**: Existing users' standing files are automatically moved from repo root to `donna/` subfolder on first skill run after upgrade (migration guard in workflows)
 
 ## v2 Requirements
 
@@ -125,10 +125,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DAILY-02 | Phase 3 | Complete |
 | DAILY-04 | Phase 3 | Complete |
 | STORE-03 | Phase 3 | Complete |
-| REORG-01 | Phase 03.1 | Pending |
-| REORG-02 | Phase 03.1 | Pending |
-| REORG-03 | Phase 03.1 | Pending |
-| REORG-04 | Phase 03.1 | Pending |
+| REORG-01 | Phase 03.1 | Complete |
+| REORG-02 | Phase 03.1 | Complete |
+| REORG-03 | Phase 03.1 | Complete |
+| REORG-04 | Phase 03.1 | Complete |
 | TOOL-01 | Phase 4 | Pending |
 | TOOL-02 | Phase 4 | Pending |
 | TOOL-03 | Phase 4 | Pending |

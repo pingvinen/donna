@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 03.1 context gathered
-last_updated: "2026-03-15T20:52:38.542Z"
+stopped_at: Completed 03.1-04-PLAN.md
+last_updated: "2026-03-15T22:06:03.628Z"
 last_activity: "2026-03-14 -- Executed Plan 02-02 (donna:add-task and donna:done skills)"
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
+  completed_phases: 4
+  total_plans: 11
+  completed_plans: 11
   percent: 100
 ---
 
@@ -49,6 +49,10 @@ Progress: [██████████] 100%
 *Updated after each plan completion*
 | Phase 03 P01 | 2 | 2 tasks | 3 files |
 | Phase 03 P02 | 2 | 2 tasks | 5 files |
+| Phase 03.1-standing-files-subfolder P01 | 2 | 2 tasks | 3 files |
+| Phase 03.1-standing-files-subfolder P02 | 2 | 2 tasks | 2 files |
+| Phase 03.1-standing-files-subfolder P03 | 8 | 2 tasks | 2 files |
+| Phase 03.1-standing-files-subfolder P04 | 3 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -80,6 +84,12 @@ Recent decisions affecting current work:
 - [Phase 03-02]: begin-the-day stub has Read/Write/Bash only — no WebSearch (non-research skill) and no AskUserQuestion (non-interactive brief)
 - [Phase 03-02]: Closed tasks block recurring task re-addition during deduplication to prevent re-surfacing already-completed work
 - [Phase 03-02]: done.md counter-strip is backward-compatible — tasks without counter continue to match normally
+- [Phase 03.1-01]: Migration 002 is a no-op in ~/.donna/ — actual file moves happen in storage repo at workflow runtime via migration guard steps
+- [Phase 03.1-02]: migrate-standing-files step triggers on any root-level standing file, not only when donna/ dir is absent (defensive against partial migrations)
+- [Phase 03.1-02]: Same migration guard bash pattern used in both set-role.md and begin-the-day.md for consistency
+- [Phase 03.1-03]: Migration 002 writes pending_migrations flag to state.md rather than remaining a no-op — enables workflows to detect and execute the actual file move
+- [Phase 03.1-03]: Idempotency guard checks for move-standing-files string before writing to prevent duplicate entries in state.md
+- [Phase 03.1-standing-files-subfolder]: check-pending-migrations step is character-for-character identical across all 4 workflows — ensures any future migration handler works everywhere without manual propagation
 
 ### Pending Todos
 
@@ -101,6 +111,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-15T20:52:38.540Z
-Stopped at: Phase 03.1 context gathered
-Resume file: .planning/phases/03.1-standing-files-subfolder/03.1-CONTEXT.md
+Last session: 2026-03-15T22:02:13.654Z
+Stopped at: Completed 03.1-04-PLAN.md
+Resume file: None
