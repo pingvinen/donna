@@ -88,11 +88,12 @@ Plans:
   2. User can run `/donna:relearn-tools` and only tools whose version has changed are re-learned; unchanged tools are skipped
   3. When external tools are configured, `/donna:begin-the-day` pulls relevant data (e.g. assigned Jira tickets, GitHub PRs awaiting review) and includes it in the daily brief
   4. When no external tools are configured, `/donna:begin-the-day` works exactly as before with no errors or degradation
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — donna:add-tool skill (stub, workflow with tool learning, tools.md creation, tests)
+- [ ] 04-02-PLAN.md — donna:relearn-tools and donna:refresh-tools skills (stubs, workflows, tests)
+- [ ] 04-03-PLAN.md — begin-the-day tool integration, done.md tool-tag handling, installer update
 
 ## Progress
 
@@ -105,4 +106,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 3.1 -> 4
 | 2. Foundation and Capture | 0/2 | Not started | - |
 | 3. Role Awareness and Daily Rhythm | 2/2 | Complete   | 2026-03-15 |
 | 3.1 Standing Files Subfolder | 2/4 | Gap Closure | - |
-| 4. External Tool Enrichment | 0/0 | Not started | - |
+| 4. External Tool Enrichment | 0/3 | Not started | - |
