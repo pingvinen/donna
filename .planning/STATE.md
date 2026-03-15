@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03.1-01-PLAN.md
-last_updated: "2026-03-15T21:11:44.712Z"
-last_activity: "2026-03-14 -- Executed Plan 02-02 (donna:add-task and donna:done skills)"
+stopped_at: Completed 03.1-02-PLAN.md
+last_updated: "2026-03-15T21:13:00Z"
+last_activity: "2026-03-15 -- Executed Plan 03.1-02 (workflow path updates to donna/ subfolder)"
 progress:
   total_phases: 5
   completed_phases: 3
@@ -50,6 +50,7 @@ Progress: [██████████] 100%
 | Phase 03 P01 | 2 | 2 tasks | 3 files |
 | Phase 03 P02 | 2 | 2 tasks | 5 files |
 | Phase 03.1-standing-files-subfolder P01 | 2 | 2 tasks | 3 files |
+| Phase 03.1-standing-files-subfolder P02 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,8 @@ Recent decisions affecting current work:
 - [Phase 03-02]: Closed tasks block recurring task re-addition during deduplication to prevent re-surfacing already-completed work
 - [Phase 03-02]: done.md counter-strip is backward-compatible — tasks without counter continue to match normally
 - [Phase 03.1-01]: Migration 002 is a no-op in ~/.donna/ — actual file moves happen in storage repo at workflow runtime via migration guard steps
+- [Phase 03.1-02]: migrate-standing-files step triggers on any root-level standing file, not only when donna/ dir is absent (defensive against partial migrations)
+- [Phase 03.1-02]: Same migration guard bash pattern used in both set-role.md and begin-the-day.md for consistency
 
 ### Pending Todos
 
@@ -103,6 +106,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-15T21:11:44.710Z
-Stopped at: Completed 03.1-01-PLAN.md
+Last session: 2026-03-15T21:13:00Z
+Stopped at: Completed 03.1-02-PLAN.md
 Resume file: None
