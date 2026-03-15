@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Packaging and Distribution** - npm package, installer, stub donna:setup skill, version tracking, migration system, CI/CD pipeline (completed 2026-03-14)
 - [ ] **Phase 2: Foundation and Capture** - Real donna:setup, add-task, task completion, hybrid storage, git persistence
 - [x] **Phase 3: Role Awareness and Daily Rhythm** - Role definition with research agent, morning ritual, carry-forward, recurring tasks (completed 2026-03-15)
-- [ ] **Phase 4: External Tool Enrichment** - Tool registry skills and external data surfaced in the daily brief
+- [x] **Phase 4: External Tool Enrichment** - Tool registry skills and external data surfaced in the daily brief (completed 2026-03-15)
 
 ## Phase Details
 
@@ -106,4 +106,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 3.1 -> 4
 | 2. Foundation and Capture | 0/2 | Not started | - |
 | 3. Role Awareness and Daily Rhythm | 2/2 | Complete   | 2026-03-15 |
 | 3.1 Standing Files Subfolder | 2/4 | Gap Closure | - |
-| 4. External Tool Enrichment | 2/3 | In Progress|  |
+| 4. External Tool Enrichment | 3/3 | Complete   | 2026-03-15 |

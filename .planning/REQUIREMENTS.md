@@ -38,7 +38,7 @@
 
 - [x] **DAILY-01**: User can run `/donna:begin-the-day` to receive a daily brief that carries forward all open tasks from the most recent previous daily file
 - [x] **DAILY-02**: `begin-the-day` surfaces recurring tasks that are due (based on role and approved recurring task list)
-- [ ] **DAILY-03**: `begin-the-day` optionally pulls data from configured tools (e.g. assigned Jira tickets, GitHub PRs awaiting review) if the tool is declared and configured; gracefully skipped if not
+- [x] **DAILY-03**: `begin-the-day` optionally pulls data from configured tools (e.g. assigned Jira tickets, GitHub PRs awaiting review) if the tool is declared and configured; gracefully skipped if not
 - [x] **DAILY-04**: `begin-the-day` is idempotent — safe to run multiple times in a day without duplicating tasks
 
 ### Tools Registry
@@ -132,7 +132,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TOOL-01 | Phase 4 | Complete |
 | TOOL-02 | Phase 4 | Complete |
 | TOOL-03 | Phase 4 | Complete |
-| DAILY-03 | Phase 4 | Pending |
+| DAILY-03 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 31 total
