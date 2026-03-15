@@ -116,6 +116,15 @@ describe("installer - fresh install", () => {
         assert.ok(output.includes("Donna"), "should print banner");
         assert.ok(output.includes("\u2713"), "should print success checkmarks");
     });
+
+    it("migration 002 creates state.md with pending_migrations", async () => {
+        const { run } = require("../src/installer.cjs");
+        await captureOutput(() => run({ homeDir: env.homeDir }));
+        const statePath = path.join(env.donnaDir, "state.md");
+        assert.ok(fs.existsSync(statePath), "state.md should exist after install");
+        const content = fs.readFileSync(statePath, "utf8");
+        assert.ok(content.includes("move-standing-files"), "state.md should contain move-standing-files");
+    });
 });
 
 describe("installer - upgrade", () => {
@@ -169,6 +178,15 @@ describe("installer - upgrade", () => {
         assert.equal(ver.version, pkg.version);
         assert.equal(ver.lastMigration, 2);
     });
+
+    it("migration 002 creates state.md with pending_migrations on upgrade", async () => {
+        const { run } = require("../src/installer.cjs");
+        await captureOutput(() => run({ homeDir: env.homeDir }));
+        const statePath = path.join(env.donnaDir, "state.md");
+        assert.ok(fs.existsSync(statePath), "state.md should exist after upgrade");
+        const content = fs.readFileSync(statePath, "utf8");
+        assert.ok(content.includes("move-standing-files"), "state.md should contain move-standing-files");
+    });
 });
 
 describe("installer - idempotent", () => {
@@ -184,6 +202,12 @@ describe("installer - idempotent", () => {
         fs.mkdirSync(path.join(env.donnaDir, "workflows"), { recursive: true });
         fs.mkdirSync(path.join(env.donnaDir, "templates"), { recursive: true });
         fs.mkdirSync(path.join(env.donnaDir, "references"), { recursive: true });
+        // Ensure state.md exists (as if migration 002 already ran)
+        fs.writeFileSync(
+            path.join(env.donnaDir, "state.md"),
+            "---\npending_migrations:\n  - move-standing-files\n---\n",
+            "utf8",
+        );
     });
 
     afterEach(() => {
@@ -214,6 +238,58 @@ describe("installer - idempotent", () => {
         // Version file should NOT be rewritten on idempotent run
         const mtimeAfter = fs.statSync(versionPath).mtimeMs;
         assert.equal(mtimeBefore, mtimeAfter, "version.md should not be rewritten");
+    });
+
+    it("state.md still exists on idempotent run", async () => {
+        const { run } = require("../src/installer.cjs");
+        await captureOutput(() => run({ homeDir: env.homeDir }));
+        const statePath = path.join(env.donnaDir, "state.md");
+        assert.ok(fs.existsSync(statePath), "state.md should still exist after idempotent run");
+        const content = fs.readFileSync(statePath, "utf8");
+        assert.ok(content.includes("move-standing-files"), "state.md should still contain move-standing-files");
+    });
+});
+
+describe("installer - migration 002 state.md idempotency", () => {
+    let env;
+
+    beforeEach(() => {
+        env = makeTempHome({ withClaude: true });
+    });
+
+    afterEach(() => {
+        // Clear require cache so installer.cjs is re-evaluated fresh each time
+        for (const key of Object.keys(require.cache)) {
+            if (key.includes("installer") || key.includes("migrator") || key.includes("migrations")) {
+                delete require.cache[key];
+            }
+        }
+        env.cleanup();
+    });
+
+    it("running installer twice does not duplicate move-standing-files entry", async () => {
+        const { run: run1 } = require("../src/installer.cjs");
+        await captureOutput(() => run1({ homeDir: env.homeDir }));
+
+        // Clear cache so second run is a fresh require
+        for (const key of Object.keys(require.cache)) {
+            if (key.includes("installer") || key.includes("migrator") || key.includes("migrations")) {
+                delete require.cache[key];
+            }
+        }
+
+        // Second run — migrations already applied (lastMigration=2), so migration 002 won't re-run.
+        // But if it did, the idempotency guard in migration 002 should prevent duplication.
+        const { run: run2 } = require("../src/installer.cjs");
+        await captureOutput(() => run2({ homeDir: env.homeDir }));
+
+        const statePath = path.join(env.donnaDir, "state.md");
+        assert.ok(fs.existsSync(statePath), "state.md should exist");
+        const content = fs.readFileSync(statePath, "utf8");
+
+        // Count occurrences — should be exactly one
+        const count = (content.match(/move-standing-files/g) || []).length;
+        assert.equal(count, 1, "move-standing-files should appear exactly once in state.md");
     });
 });
 
