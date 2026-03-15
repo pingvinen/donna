@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-15T23:09:42.088Z"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-15T23:14:30.399Z"
 last_activity: "2026-03-14 -- Executed Plan 02-02 (donna:add-task and donna:done skills)"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 14
-  completed_plans: 12
+  completed_plans: 13
   percent: 100
 ---
 
@@ -54,6 +54,7 @@ Progress: [██████████] 100%
 | Phase 03.1-standing-files-subfolder P03 | 8 | 2 tasks | 2 files |
 | Phase 03.1-standing-files-subfolder P04 | 3 | 2 tasks | 4 files |
 | Phase 04-external-tool-enrichment P01 | 2 | 2 tasks | 3 files |
+| Phase 04-external-tool-enrichment P02 | 2 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,10 @@ Recent decisions affecting current work:
 - [Phase 04-01]: add-tool stub has no WebSearch — configuration skill not research skill
 - [Phase 04-01]: Training data baseline for gh/jira/kubectl satisfies TOOL-02 — no --help parsing for known tools
 - [Phase 04-01]: tools.md upsert replaces individual tool sections while preserving all others
+- [Phase 04-02]: Both stubs are non-interactive (no AskUserQuestion) — relearn-tools and refresh-tools are background operations
+- [Phase 04-02]: check-pending-migrations step is character-for-character identical to begin-the-day.md in both relearn-tools and refresh-tools workflows
+- [Phase 04-02]: Version comparison uses string equality — no semver parsing needed for relearn-tools version check
+- [Phase 04-02]: refresh-tools smart merge uses embedded URL as stable identifier; 4 rules: user [x] wins, keep open, auto-resolve closed/removed, add new
 
 ### Pending Todos
 
@@ -115,6 +120,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-15T23:09:42.086Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-15T23:14:24.213Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None

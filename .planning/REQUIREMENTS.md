@@ -43,9 +43,9 @@
 
 ### Tools Registry
 
-- [ ] **TOOL-01**: User can run `/donna:add-tool` to declare a new tool via interactive prompts (name, CLI command, what tasks it helps with), after which Claude learns the tool by reading its help output and stores knowledge in `tools.md`
-- [ ] **TOOL-02**: When adding a tool Claude already knows well, the learning step is skipped and knowledge is synthesized from training data instead
-- [ ] **TOOL-03**: User can run `/donna:relearn-tools` to re-run the learning process for tools whose installed version has changed since last learned; tools at the same version are skipped
+- [x] **TOOL-01**: User can run `/donna:add-tool` to declare a new tool via interactive prompts (name, CLI command, what tasks it helps with), after which Claude learns the tool by reading its help output and stores knowledge in `tools.md`
+- [x] **TOOL-02**: When adding a tool Claude already knows well, the learning step is skipped and knowledge is synthesized from training data instead
+- [x] **TOOL-03**: User can run `/donna:relearn-tools` to re-run the learning process for tools whose installed version has changed since last learned; tools at the same version are skipped
 
 ### Storage & Persistence
 
@@ -129,9 +129,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REORG-02 | Phase 03.1 | Complete |
 | REORG-03 | Phase 03.1 | Complete |
 | REORG-04 | Phase 03.1 | Complete |
-| TOOL-01 | Phase 4 | Pending |
-| TOOL-02 | Phase 4 | Pending |
-| TOOL-03 | Phase 4 | Pending |
+| TOOL-01 | Phase 4 | Complete |
+| TOOL-02 | Phase 4 | Complete |
+| TOOL-03 | Phase 4 | Complete |
 | DAILY-03 | Phase 4 | Pending |
 
 **Coverage:**
