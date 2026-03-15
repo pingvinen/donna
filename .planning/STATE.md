@@ -3,11 +3,11 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-15T20:40:18.115Z"
+stopped_at: Phase 03.1 context gathered
+last_updated: "2026-03-15T20:52:38.542Z"
 last_activity: "2026-03-14 -- Executed Plan 02-02 (donna:add-task and donna:done skills)"
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 3
   total_plans: 7
   completed_plans: 7
@@ -90,6 +90,10 @@ Recent decisions affecting current work:
 - Make changelog more compact and human friendly (tooling)
 - User-facing changelog for package updates (tooling)
 
+### Roadmap Evolution
+
+- Phase 03.1 inserted after Phase 3: Standing Files Subfolder (URGENT)
+
 ### Blockers/Concerns
 
 - [Phase 3]: The Task tool spawning pattern for `donna:set-role` research agent needs validation against current Claude Code behavior before building (flagged by research)
@@ -97,6 +101,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-15T20:40:18.112Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-external-tool-enrichment/04-CONTEXT.md
+Last session: 2026-03-15T20:52:38.540Z
+Stopped at: Phase 03.1 context gathered
+Resume file: .planning/phases/03.1-standing-files-subfolder/03.1-CONTEXT.md
