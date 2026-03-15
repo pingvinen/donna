@@ -76,7 +76,9 @@ async function run(options = {}) {
     if (detected.length > 0) {
         for (const provider of detected) {
             fs.cpSync(provider.stubSource, provider.stubTarget, { recursive: true });
-            output.success(`Copied donna skills (setup, add-task, done) to ${provider.stubTarget}`);
+            output.success(
+                `Copied donna skills (setup, add-task, done, set-role, begin-the-day) to ${provider.stubTarget}`,
+            );
         }
     } else {
         output.info("No supported AI providers detected");

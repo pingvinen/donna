@@ -29,17 +29,17 @@
 
 ### Role Definition
 
-- [ ] **ROLE-01**: User can run `/donna:set-role` to define their job role via interactive prompts
-- [ ] **ROLE-02**: When setting role, a research agent is spawned to find what that role typically does day-to-day and what tools are commonly used (internet research), surfacing suggested recurring tasks and tools
-- [ ] **ROLE-03**: Research findings, suggested recurring tasks, and suggested tools are presented for the user to approve, reject, or modify before being saved; approved tools prompt the user to run `/donna:add-tool`
-- [ ] **ROLE-04**: Role definition is stored in `role.md` and research stored in `role-research.md` in the storage repo
+- [x] **ROLE-01**: User can run `/donna:set-role` to define their job role via interactive prompts
+- [x] **ROLE-02**: When setting role, a research agent is spawned to find what that role typically does day-to-day and what tools are commonly used (internet research), surfacing suggested recurring tasks and tools
+- [x] **ROLE-03**: Research findings, suggested recurring tasks, and suggested tools are presented for the user to approve, reject, or modify before being saved; approved tools prompt the user to run `/donna:add-tool`
+- [x] **ROLE-04**: Role definition is stored in `role.md` and research stored in `role-research.md` in the storage repo
 
 ### Daily Planning
 
-- [ ] **DAILY-01**: User can run `/donna:begin-the-day` to receive a daily brief that carries forward all open tasks from the most recent previous daily file
-- [ ] **DAILY-02**: `begin-the-day` surfaces recurring tasks that are due (based on role and approved recurring task list)
+- [x] **DAILY-01**: User can run `/donna:begin-the-day` to receive a daily brief that carries forward all open tasks from the most recent previous daily file
+- [x] **DAILY-02**: `begin-the-day` surfaces recurring tasks that are due (based on role and approved recurring task list)
 - [ ] **DAILY-03**: `begin-the-day` optionally pulls data from configured tools (e.g. assigned Jira tickets, GitHub PRs awaiting review) if the tool is declared and configured; gracefully skipped if not
-- [ ] **DAILY-04**: `begin-the-day` is idempotent — safe to run multiple times in a day without duplicating tasks
+- [x] **DAILY-04**: `begin-the-day` is idempotent — safe to run multiple times in a day without duplicating tasks
 
 ### Tools Registry
 
@@ -51,7 +51,7 @@
 
 - [x] **STORE-01**: All state persists as markdown files in the user's configured git repo with a hybrid structure: daily journal files (`daily/YYYY-MM-DD.md`) plus standing files (`role.md`, `role-research.md`, `recurring.md`, `tools.md`, `config.md`, `people.md`)
 - [x] **STORE-02**: Every skill commits its changes to git immediately after writing, so state survives context resets
-- [ ] **STORE-03**: Skills read only the files they need (not the full repo) to avoid context window exhaustion as the repo grows over time
+- [x] **STORE-03**: Skills read only the files they need (not the full repo) to avoid context window exhaustion as the repo grows over time
 
 ## v2 Requirements
 
@@ -110,14 +110,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TASK-02 | Phase 2 | Complete |
 | STORE-01 | Phase 2 | Complete |
 | STORE-02 | Phase 2 | Complete |
-| ROLE-01 | Phase 3 | Pending |
-| ROLE-02 | Phase 3 | Pending |
-| ROLE-03 | Phase 3 | Pending |
-| ROLE-04 | Phase 3 | Pending |
-| DAILY-01 | Phase 3 | Pending |
-| DAILY-02 | Phase 3 | Pending |
-| DAILY-04 | Phase 3 | Pending |
-| STORE-03 | Phase 3 | Pending |
+| ROLE-01 | Phase 3 | Complete |
+| ROLE-02 | Phase 3 | Complete |
+| ROLE-03 | Phase 3 | Complete |
+| ROLE-04 | Phase 3 | Complete |
+| DAILY-01 | Phase 3 | Complete |
+| DAILY-02 | Phase 3 | Complete |
+| DAILY-04 | Phase 3 | Complete |
+| STORE-03 | Phase 3 | Complete |
 | TOOL-01 | Phase 4 | Pending |
 | TOOL-02 | Phase 4 | Pending |
 | TOOL-03 | Phase 4 | Pending |
