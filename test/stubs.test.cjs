@@ -827,6 +827,58 @@ describe("cross-cutting: done.md counter-strip", () => {
             "done.md should reference stripping the (N times) carry-forward counter suffix",
         );
     });
+
+    it("strips [tool](url) suffix in select-tasks for fuzzy matching", () => {
+        const content = fs.readFileSync(doneWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("[tool-name]") || content.includes("[\\w-]+]"),
+            "done.md should reference stripping the [tool](url) source tag suffix",
+        );
+    });
+});
+
+// ─── cross-cutting: begin-the-day tool integration ───────────────────────────
+
+describe("cross-cutting: begin-the-day tool integration", () => {
+    it("contains pull-tool-data step", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("pull-tool-data"),
+            "begin-the-day should contain pull-tool-data step",
+        );
+    });
+
+    it("references donna/tools.md for tool data", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("donna/tools.md"),
+            "begin-the-day should reference donna/tools.md",
+        );
+    });
+
+    it("gracefully handles missing tools.md", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("does not exist") && content.includes("tool"),
+            "begin-the-day should handle missing tools.md gracefully",
+        );
+    });
+
+    it("includes ## From Tools section in daily file", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("## From Tools"),
+            "begin-the-day should include ## From Tools section",
+        );
+    });
+
+    it("includes timeout for failure isolation", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("timeout 10") || content.includes("timeout"),
+            "begin-the-day should use timeout for tool command failure isolation",
+        );
+    });
 });
 
 // ─── cross-cutting: installer skill list ─────────────────────────────────────
@@ -850,7 +902,7 @@ describe("cross-cutting: installer skill list", () => {
         );
     });
 
-    it('success message includes "add-tool"', { todo: "installer updated in Plan 03" }, () => {
+    it('success message includes "add-tool"', () => {
         const content = fs.readFileSync(installerPath, "utf8");
         assert.ok(
             content.includes("add-tool"),
@@ -858,7 +910,7 @@ describe("cross-cutting: installer skill list", () => {
         );
     });
 
-    it('success message includes "relearn-tools"', { todo: "installer updated in Plan 03" }, () => {
+    it('success message includes "relearn-tools"', () => {
         const content = fs.readFileSync(installerPath, "utf8");
         assert.ok(
             content.includes("relearn-tools"),
@@ -866,7 +918,7 @@ describe("cross-cutting: installer skill list", () => {
         );
     });
 
-    it('success message includes "refresh-tools"', { todo: "installer updated in Plan 03" }, () => {
+    it('success message includes "refresh-tools"', () => {
         const content = fs.readFileSync(installerPath, "utf8");
         assert.ok(
             content.includes("refresh-tools"),
