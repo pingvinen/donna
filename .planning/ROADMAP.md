@@ -71,7 +71,7 @@ Plans:
 **Goal:** Move all standing files (role.md, recurring.md, role-research.md) into a dedicated subfolder within the storage repo so the user owns the repo root for their own notes. Update all workflows to read/write from the new location. Add installer migration for existing users.
 **Requirements**: REORG-01, REORG-02, REORG-03, REORG-04
 **Depends on:** Phase 3
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 - [x] 03.1-01-PLAN.md — Migration file (002), setup.md donna/ creation, test updates
