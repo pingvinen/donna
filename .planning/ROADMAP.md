@@ -66,9 +66,20 @@ Plans:
 - [ ] 03-01-PLAN.md — donna:set-role skill (two-stage role definition with research, approval, and persistence)
 - [ ] 03-02-PLAN.md — donna:begin-the-day skill (carry-forward, recurring tasks, dedup, daily brief, done.md and installer updates)
 
+### Phase 03.1: Standing Files Subfolder (INSERTED)
+
+**Goal:** Move all standing files (role.md, recurring.md, role-research.md) into a dedicated subfolder within the storage repo so the user owns the repo root for their own notes. Update all workflows to read/write from the new location. Add installer migration for existing users.
+**Requirements**: REORG-01, REORG-02, REORG-03, REORG-04
+**Depends on:** Phase 3
+**Plans:** 2 plans
+
+Plans:
+- [ ] 03.1-01-PLAN.md — Migration file (002), setup.md donna/ creation, test updates
+- [ ] 03.1-02-PLAN.md — Workflow path updates (set-role.md, begin-the-day.md) with migration guard
+
 ### Phase 4: External Tool Enrichment
 **Goal**: User can declare external CLI tools (GitHub CLI, Jira CLI) and have their data surfaced automatically in the morning ritual
-**Depends on**: Phase 3
+**Depends on**: Phase 03.1
 **Requirements**: TOOL-01, TOOL-02, TOOL-03, DAILY-03
 **Success Criteria** (what must be TRUE):
   1. User can run `/donna:add-tool` to declare an external CLI tool, and Claude learns that tool's capabilities by reading its help output (or from training data for well-known tools), storing the knowledge in `tools.md`
@@ -84,11 +95,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4
+Phases execute in numeric order: 1 -> 2 -> 3 -> 3.1 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Packaging and Distribution | 2/3 | In Progress | - |
 | 2. Foundation and Capture | 0/2 | Not started | - |
 | 3. Role Awareness and Daily Rhythm | 2/2 | Complete   | 2026-03-15 |
+| 3.1 Standing Files Subfolder | 0/2 | Not started | - |
 | 4. External Tool Enrichment | 0/0 | Not started | - |

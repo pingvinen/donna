@@ -53,6 +53,13 @@
 - [x] **STORE-02**: Every skill commits its changes to git immediately after writing, so state survives context resets
 - [x] **STORE-03**: Skills read only the files they need (not the full repo) to avoid context window exhaustion as the repo grows over time
 
+### Storage Reorganization
+
+- [ ] **REORG-01**: Installer migration 002 exists as a version marker for the standing files subfolder change
+- [ ] **REORG-02**: All workflow references to standing files (role.md, recurring.md, role-research.md) use the `donna/` subfolder path instead of the storage repo root
+- [ ] **REORG-03**: New installs via `donna:setup` create the `donna/` directory in the storage repo alongside `daily/`
+- [ ] **REORG-04**: Existing users' standing files are automatically moved from repo root to `donna/` subfolder on first skill run after upgrade (migration guard in workflows)
+
 ## v2 Requirements
 
 ### Meeting Capture
@@ -118,16 +125,20 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DAILY-02 | Phase 3 | Complete |
 | DAILY-04 | Phase 3 | Complete |
 | STORE-03 | Phase 3 | Complete |
+| REORG-01 | Phase 03.1 | Pending |
+| REORG-02 | Phase 03.1 | Pending |
+| REORG-03 | Phase 03.1 | Pending |
+| REORG-04 | Phase 03.1 | Pending |
 | TOOL-01 | Phase 4 | Pending |
 | TOOL-02 | Phase 4 | Pending |
 | TOOL-03 | Phase 4 | Pending |
 | DAILY-03 | Phase 4 | Pending |
 
 **Coverage:**
-- v1 requirements: 27 total
-- Mapped to phases: 27
+- v1 requirements: 31 total
+- Mapped to phases: 31
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after roadmap restructure (added distribution phase, dropped log-meeting/next to v2)*
+*Last updated: 2026-03-15 added REORG-01 through REORG-04 for Phase 03.1 (standing files subfolder)*
