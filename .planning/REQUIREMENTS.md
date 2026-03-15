@@ -29,10 +29,10 @@
 
 ### Role Definition
 
-- [ ] **ROLE-01**: User can run `/donna:set-role` to define their job role via interactive prompts
-- [ ] **ROLE-02**: When setting role, a research agent is spawned to find what that role typically does day-to-day and what tools are commonly used (internet research), surfacing suggested recurring tasks and tools
-- [ ] **ROLE-03**: Research findings, suggested recurring tasks, and suggested tools are presented for the user to approve, reject, or modify before being saved; approved tools prompt the user to run `/donna:add-tool`
-- [ ] **ROLE-04**: Role definition is stored in `role.md` and research stored in `role-research.md` in the storage repo
+- [x] **ROLE-01**: User can run `/donna:set-role` to define their job role via interactive prompts
+- [x] **ROLE-02**: When setting role, a research agent is spawned to find what that role typically does day-to-day and what tools are commonly used (internet research), surfacing suggested recurring tasks and tools
+- [x] **ROLE-03**: Research findings, suggested recurring tasks, and suggested tools are presented for the user to approve, reject, or modify before being saved; approved tools prompt the user to run `/donna:add-tool`
+- [x] **ROLE-04**: Role definition is stored in `role.md` and research stored in `role-research.md` in the storage repo
 
 ### Daily Planning
 
@@ -110,10 +110,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TASK-02 | Phase 2 | Complete |
 | STORE-01 | Phase 2 | Complete |
 | STORE-02 | Phase 2 | Complete |
-| ROLE-01 | Phase 3 | Pending |
-| ROLE-02 | Phase 3 | Pending |
-| ROLE-03 | Phase 3 | Pending |
-| ROLE-04 | Phase 3 | Pending |
+| ROLE-01 | Phase 3 | Complete |
+| ROLE-02 | Phase 3 | Complete |
+| ROLE-03 | Phase 3 | Complete |
+| ROLE-04 | Phase 3 | Complete |
 | DAILY-01 | Phase 3 | Pending |
 | DAILY-02 | Phase 3 | Pending |
 | DAILY-04 | Phase 3 | Pending |
