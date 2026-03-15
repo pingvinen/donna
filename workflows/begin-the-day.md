@@ -261,7 +261,7 @@ git -C <storage_repo> push
 Print the daily brief to the terminal:
 ```
 ══════════════════════════════════════
- DONNA — Daily Brief for <today>
+ Donna — Daily Brief for <today>
 ══════════════════════════════════════
 ```
 

@@ -192,7 +192,7 @@ git -C <storage_repo> push
 Print:
 ```
 ══════════════════════════════════════
- DONNA — Run Tools for <today>
+ Donna — Run Tools for <today>
 ══════════════════════════════════════
 ```
 
