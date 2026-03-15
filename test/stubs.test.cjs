@@ -8,6 +8,8 @@ const path = require("node:path");
 const projectRoot = path.join(__dirname, "..");
 const stubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "setup.md");
 const workflowPath = path.join(projectRoot, "workflows", "setup.md");
+const addToolStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "add-tool.md");
+const addToolWorkflowPath = path.join(projectRoot, "workflows", "add-tool.md");
 
 describe("stub: stubs/claude-code/donna/setup.md", () => {
     it("exists", () => {
@@ -454,6 +456,145 @@ describe("workflow: workflows/begin-the-day.md", () => {
                 !content.includes("glob") &&
                 !content.includes("find <storage_repo>"),
             "Should not glob or ls the full storage repo — only targeted daily_folder listing and specific named files",
+        );
+    });
+});
+
+// ─── add-tool stub ────────────────────────────────────────────────────────────
+
+describe("stub: stubs/claude-code/donna/add-tool.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(addToolStubPath), "add-tool stub should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:add-tool"', () => {
+        const content = fs.readFileSync(addToolStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:add-tool"),
+            "Should have name: donna:add-tool in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(addToolStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field");
+    });
+
+    it("has Read in allowed-tools", () => {
+        const content = fs.readFileSync(addToolStubPath, "utf8");
+        assert.ok(content.includes("- Read"), "Should have Read in allowed-tools");
+    });
+
+    it("has Write in allowed-tools", () => {
+        const content = fs.readFileSync(addToolStubPath, "utf8");
+        assert.ok(content.includes("- Write"), "Should have Write in allowed-tools");
+    });
+
+    it("has Bash in allowed-tools", () => {
+        const content = fs.readFileSync(addToolStubPath, "utf8");
+        assert.ok(content.includes("- Bash"), "Should have Bash in allowed-tools");
+    });
+
+    it("has AskUserQuestion in allowed-tools", () => {
+        const content = fs.readFileSync(addToolStubPath, "utf8");
+        assert.ok(
+            content.includes("- AskUserQuestion"),
+            "Should have AskUserQuestion in allowed-tools",
+        );
+    });
+
+    it("does NOT have WebSearch in allowed-tools", () => {
+        const content = fs.readFileSync(addToolStubPath, "utf8");
+        assert.ok(
+            !content.includes("- WebSearch"),
+            "Should NOT have WebSearch — add-tool is not a research skill",
+        );
+    });
+
+    it("contains @~/.donna/workflows/add-tool.md reference", () => {
+        const content = fs.readFileSync(addToolStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/add-tool.md"),
+            "Should reference @~/.donna/workflows/add-tool.md",
+        );
+    });
+});
+
+describe("workflow: workflows/add-tool.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(addToolWorkflowPath), "add-tool workflow should exist");
+    });
+
+    it("references config/donna/config.md", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("config/donna/config.md"),
+            "Should reference config/donna/config.md",
+        );
+    });
+
+    it("contains check-pending-migrations step", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("check-pending-migrations"),
+            "Should contain check-pending-migrations step",
+        );
+    });
+
+    it("contains verify-installation step with which command", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("which") && content.includes("verify-installation"),
+            "Should verify tool installation with which command",
+        );
+    });
+
+    it("contains auth-test step", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("auth-test") && content.includes("gh api user"),
+            "Should contain auth-test step with gh api user example",
+        );
+    });
+
+    it("contains learn-capabilities step with training data baseline", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("training data") && content.includes("learn-capabilities"),
+            "Should use training data baseline for known tools (TOOL-02)",
+        );
+    });
+
+    it("contains select-capabilities step with AskUserQuestion", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("AskUserQuestion") && content.includes("select-capabilities"),
+            "Should use AskUserQuestion for capability selection",
+        );
+    });
+
+    it("references donna/tools.md for persistence", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("donna/tools.md"),
+            "Should reference donna/tools.md for tool knowledge persistence",
+        );
+    });
+
+    it("contains git commit step", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("git") && content.includes("commit"),
+            "Should contain git commit step",
+        );
+    });
+
+    it("contains detect-noted-tools step referencing role.md", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("detect-noted-tools") && content.includes("role.md"),
+            "Should detect tools noted by set-role",
         );
     });
 });
