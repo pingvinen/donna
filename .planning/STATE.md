@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Completed 03-01-PLAN.md (donna:set-role stub and workflow)"
-last_updated: "2026-03-15T10:04:17.996Z"
+stopped_at: "Completed 03-02-PLAN.md (donna:begin-the-day stub and workflow)"
+last_updated: "2026-03-15T10:08:40.315Z"
 last_activity: "2026-03-14 -- Executed Plan 02-02 (donna:add-task and donna:done skills)"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
   percent: 100
 ---
 
@@ -48,6 +48,7 @@ Progress: [██████████] 100%
 
 *Updated after each plan completion*
 | Phase 03 P01 | 2 | 2 tasks | 3 files |
+| Phase 03 P02 | 2 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,9 @@ Recent decisions affecting current work:
 - [Phase 03-01]: Recurring tasks format: '- Task: interval' with optional '| last_run: date' suffix for biweekly/every-other intervals
 - [Phase 03-01]: diff-update mode preserves manually-added tasks from existing recurring.md before merging new research suggestions
 - [Phase 03-01]: Tool suggestions noted only — no tools.md written (Phase 4 concern)
+- [Phase 03-02]: begin-the-day stub has Read/Write/Bash only — no WebSearch (non-research skill) and no AskUserQuestion (non-interactive brief)
+- [Phase 03-02]: Closed tasks block recurring task re-addition during deduplication to prevent re-surfacing already-completed work
+- [Phase 03-02]: done.md counter-strip is backward-compatible — tasks without counter continue to match normally
 
 ### Pending Todos
 
@@ -93,6 +97,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-03-15T10:04:17.994Z
-Stopped at: Completed 03-01-PLAN.md (donna:set-role stub and workflow)
+Last session: 2026-03-15T10:08:40.313Z
+Stopped at: Completed 03-02-PLAN.md (donna:begin-the-day stub and workflow)
 Resume file: None
