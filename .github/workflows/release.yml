@@ -11,9 +11,14 @@ jobs:
     name: Determine version and create release
     runs-on: ubuntu-latest
     steps:
+      # RELEASE_PAT is used instead of the default GITHUB_TOKEN so that the
+      # version-bump commit can push directly to main. Our branch ruleset
+      # allows admins to bypass required status checks, and the PAT
+      # authenticates as an admin user — the default GITHUB_TOKEN cannot.
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          token: ${{ secrets.RELEASE_PAT }}
 
       - uses: actions/setup-node@v6
         with:
