@@ -82,7 +82,7 @@ Read the daily file with the Read tool.
 
 Find all lines matching the pattern `- [ ] <description>` (open tasks). Collect them as `<open_tasks>`. Do not print the list — it will be shown in the next step via AskUserQuestion.
 
-When presenting task descriptions to the user (in the numbered list or match confirmation), strip any trailing ` (N times)` suffix (where N is any integer, e.g., `Follow up with Sarah (3 times)` becomes `Follow up with Sarah`) and any trailing ` [tool-name](url)` suffix (e.g., `Review PR #42 [gh](https://github.com/org/repo/pull/42)` becomes `Review PR #42`) for cleaner display. Keep the full line internally for file operations.
+When presenting task descriptions to the user (in the numbered list or match confirmation), strip any trailing ` (N times)` suffix (where N is any integer, e.g., `Follow up with Sarah (3 times)` becomes `Follow up with Sarah`) and any trailing ` [<text>](<url>)` suffix (e.g., `Review PR #42 [org/repo#42](https://github.com/org/repo/pull/42)` becomes `Review PR #42`) for cleaner display. Keep the full line internally for file operations.
 
 If no open tasks are found, print:
 ```
@@ -127,7 +127,7 @@ For each task in `<completed_tasks>`, replace `- [ ] <description>` with `- [x] 
 
 When marking a carry-forward task as complete, strip the ` (N times)` suffix from the completed line. The completed task should read `- [x] Follow up with Sarah` (clean, no counter).
 
-When marking a tool-sourced task as complete, keep the `[<tool-name>](<url>)` suffix on the completed line (it serves as provenance). The completed task should read `- [x] Review PR #42 [gh](https://github.com/org/repo/pull/42)` (tool tag preserved for traceability).
+When marking a tool-sourced task as complete, keep the `[<identifier>](<url>)` suffix on the completed line (it serves as provenance). The completed task should read `- [x] Review PR #42 [org/repo#42](https://github.com/org/repo/pull/42)` (source link preserved for traceability).
 
 Write the updated file with the Write tool.
 </step>

@@ -1,7 +1,7 @@
-# Donna Refresh-Tools Workflow
+# Donna Run-Tools Workflow
 
 <objective>
-Pull fresh data from all configured external tools and smart-merge it into today's daily file. Does not run the full begin-the-day carry-forward or recurring task logic — this is a mid-day update only.
+Execute all configured external tool commands, pull fresh data, and smart-merge results into today's daily file. Does not run the full begin-the-day carry-forward or recurring task logic — this is a mid-day update only.
 </objective>
 
 <step name="read-config">
@@ -108,19 +108,21 @@ Run the capability command via Bash with a 10-second timeout:
 timeout 10 <capability_command> 2>&1
 ```
 
-**On success (exit 0):** Parse the output into task entries. Format each as:
+**On success (exit 0):** Parse the output into task entries. The link text should be a descriptive identifier — NOT the tool name.
+
+For gh JSON output, extract `number`, `title`, `url` fields from each JSON object. Use the `url` field as the stable identifier. Extract `<owner>/<repo>` from the URL (e.g., `https://github.com/acme/api/pull/42` → `acme/api`). Format:
 ```
-- [ ] <description> [<tool_name>](<url>)
+- [ ] <title> [<owner/repo>#<number>](<url>)
 ```
 
-For gh JSON output, extract `number`, `title`, `url` fields from each JSON object. Use the `url` field as the stable identifier and build the description from `title` and `number`:
+For jira plain output, extract the issue key and summary from each line. Format:
 ```
-- [ ] <title> (#<number>) [gh](<url>)
+- [ ] <summary> [<issue_key>](https://jira.company.com/browse/<issue_key>)
 ```
 
-For jira plain output, extract the issue key and summary from each line. Build the description using the issue key as identifier:
+For other tools: use Claude's understanding to extract task-like items. Format with a descriptive identifier as the link text and URL if available:
 ```
-- [ ] <summary> [jira](https://jira.company.com/browse/<issue_key>)
+- [ ] <description> [<identifier>](<url>)
 ```
 
 **On failure (exit non-zero, including exit 124 for timeout):** Add a warning:
@@ -177,7 +179,7 @@ If the output is empty, skip the commit and continue.
 
 Otherwise, run:
 ```bash
-git -C <storage_repo> commit -m "donna(refresh-tools): refreshed tool data for <today>"
+git -C <storage_repo> commit -m "donna(run-tools): refreshed tool data for <today>"
 ```
 
 If `auto_push` is true in config, also run:
@@ -190,7 +192,7 @@ git -C <storage_repo> push
 Print:
 ```
 ══════════════════════════════════════
- DONNA — Tool Refresh for <today>
+ DONNA — Run Tools for <today>
 ══════════════════════════════════════
 ```
 

@@ -134,23 +134,50 @@ Fix instructions per tool:
 Continue (do not stop — user may want to save the tool despite auth issues).
 </step>
 
+<step name="ask-scope">
+Ask the user to define the scope/context for this tool. Different tools need different scope:
+
+- **gh**: Which GitHub orgs or repos to pull from (e.g., `mycompany`, `mycompany/api mycompany/web`)
+- **jira**: Which Jira project(s) or board(s) (e.g., `AUTH`, `AUTH PLAT`)
+- **kubectl**: Which namespace(s) or cluster(s) (e.g., `production`, `staging production`)
+- **Other tools**: Any relevant filtering context
+
+Use AskUserQuestion:
+```
+What scope should Donna use for <tool_name>?
+(e.g., for gh: which orgs/repos; for jira: which projects)
+Leave blank for no filtering.
+```
+
+Store the answer as `<scope>`. If blank, set to empty string.
+</step>
+
 <step name="learn-capabilities">
 Determine if the tool is well-known (gh, jira, kubectl) or unknown. For well-known tools, synthesize capabilities from training data. Do NOT parse --help for well-known tools.
 
 **gh (GitHub CLI) — training data baseline:**
+
+If `<scope>` is set, add `--owner=<org>` to each search command for each org in scope (space-separated). If scope contains specific repos (format `owner/repo`), use `--repo=<owner/repo>` instead. If scope is empty, do not add owner/repo filters.
+
 - list-assigned-prs: `gh search prs --assignee=@me --state=open --json number,title,url --limit 20`
 - list-review-requests: `gh search prs --review-requested=@me --state=open --json number,title,url --limit 20`
 - list-assigned-issues: `gh search issues --assignee=@me --state=open --json number,title,url --limit 20`
 
 **jira (ankitpokhrel/jira-cli) — training data baseline:**
+
+If `<scope>` is set, add `-p<project>` to each command for each project in scope (space-separated). If scope is empty, do not add project filters.
+
 - list-sprint-issues: `jira sprint list --current -a$(jira me) --plain`
 - list-my-issues: `jira issue list -a$(jira me) --plain`
 
 **kubectl — training data baseline:**
+
+If `<scope>` is set, replace `--all-namespaces` with `-n <namespace>` for each namespace in scope. If scope is empty, keep `--all-namespaces`.
+
 - list-pods: `kubectl get pods --all-namespaces --field-selector=status.phase!=Succeeded -o wide`
 - list-failing: `kubectl get pods --all-namespaces --field-selector=status.phase=Failed -o wide`
 
-For **unknown tools**, run `<command> --help 2>&1 | head -80` via Bash and use Claude's understanding to identify 3–5 capabilities relevant to daily task management. Format each as `name: <cli invocation>`.
+For **unknown tools**, run `<command> --help 2>&1 | head -80` via Bash and use Claude's understanding to identify 3–5 capabilities relevant to daily task management. If `<scope>` is set, incorporate the scope into the CLI invocations where appropriate. Format each as `name: <cli invocation>`.
 
 Store the full list as `<available_capabilities>`.
 </step>
@@ -183,6 +210,7 @@ Upsert (not overwrite) the tool's section. Each tool section has this format:
 - version: <version>
 - learned: <today's date YYYY-MM-DD>
 - auth_test: <auth_test_command or "none">
+- scope: <scope or "none">
 
 ### Capabilities
 - <capability_name>: <cli_invocation>

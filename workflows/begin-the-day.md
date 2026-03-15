@@ -140,16 +140,16 @@ timeout 10 <cli_invocation> 2>&1
 ```
 
 **On success (exit 0):**
-Parse the output into task entries. Format each as: `- [ ] <description> [<tool_name>](<url>)`
+Parse the output into task entries. The link text should be a descriptive identifier — NOT the tool name.
 
-For `gh` JSON output (`--json number,title,url`): parse the JSON array. For each item, create:
-`- [ ] <title> [gh](<url>)`
+For `gh` JSON output (`--json number,title,url`): parse the JSON array. Extract `<owner>/<repo>` from the `url` field (e.g., `https://github.com/acme/api/pull/42` → `acme/api`). For each item, create:
+`- [ ] <title> [<owner/repo>#<number>](<url>)`
 
 For `jira` plain output: parse each row. For each issue, create:
-`- [ ] <summary> [jira](https://<jira_host>/browse/<key>)`
-Note: jira plain output may not include URLs — if the URL is not available, use the issue key only: `- [ ] <summary> [jira](<key>)`
+`- [ ] <summary> [<key>](https://<jira_host>/browse/<key>)`
+Note: jira plain output may not include URLs — if the URL is not available, use the issue key only: `- [ ] <summary> [<key>](<key>)`
 
-For other tools: use Claude's understanding to extract task-like items from the output. Format with tool name tag and URL if available.
+For other tools: use Claude's understanding to extract task-like items from the output. Format with a descriptive identifier as the link text and URL if available.
 
 **On failure (non-zero exit):**
 Determine the failure type from the exit code and output:
@@ -173,7 +173,7 @@ If the file does not exist, `<existing_tasks>` is an empty list.
 <step name="deduplicate">
 Assemble the full task list using a single-pass deduplication to ensure idempotency:
 
-**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` [<word>](<url>)` suffix (tool source tag with URL, matching the pattern ` \[[\w-]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
+**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` [<text>](<url>)` suffix (tool source link, matching the pattern ` \[[^\]]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
 
 1. Start with `<existing_tasks>` — both open and closed tasks take priority. Add them all to the final list.
 
@@ -185,7 +185,7 @@ Assemble the full task list using a single-pass deduplication to ensure idempote
 
 CRITICAL: A closed task `- [x] Review PRs` must block a recurring `- [ ] Review PRs` from being re-added. Both open AND closed existing tasks count for deduplication.
 
-CRITICAL: A closed task `- [x] Review PR #42 [gh](https://...)` must block a tool task `- [ ] Review PR #42 [gh](https://...)` from being re-added. The normalization (strip tool tag + URL) ensures both normalize to "review pr #42".
+CRITICAL: A closed task `- [x] Review PR #42 [acme/api#42](https://...)` must block a tool task `- [ ] Review PR #42 [acme/api#42](https://...)` from being re-added. The normalization (strip source link) ensures both normalize to "review pr #42".
 
 CRITICAL: If a carried-forward task already exists in today's file (from a previous run of begin-the-day today), do not re-add it or re-increment its counter. The normalization (strip suffix) ensures this.
 
@@ -214,11 +214,15 @@ date: <today>
 
 ## Resolved
 <resolved tool tasks — only if there are resolved items>
+
+## Warnings
+<tool warnings — only if there are warnings>
 ```
 
 Tasks are written in this order: existing tasks first (preserving their original order and state), then carried-forward tasks, then recurring tasks.
 
 If `<tool_tasks>` is empty and there are no resolved items, omit the `## From Tools` and `## Resolved` sections entirely.
+If `<tool_warnings>` is empty, omit the `## Warnings` section entirely. Each warning is written as-is (e.g., `! jira: command not found — install jira first`).
 </step>
 
 <step name="update-recurring-last-run">
@@ -278,8 +282,8 @@ If there are recurring tasks due today (tasks from `<recurring_tasks>` that were
 If there are tool tasks (tasks from `<tool_tasks>` that were added to the final list), print:
 ```
 ## From Tools
-- [ ] Review PR #42 [gh](https://github.com/org/repo/pull/42)
-- [ ] Implement AUTH-07 [jira](https://company.atlassian.net/browse/AUTH-07)
+- [ ] Review PR #42 [org/repo#42](https://github.com/org/repo/pull/42)
+- [ ] Implement AUTH-07 [AUTH-07](https://company.atlassian.net/browse/AUTH-07)
 ```
 
 If there are tool warnings (`<tool_warnings>` is not empty), print:

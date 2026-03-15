@@ -12,8 +12,8 @@ const addToolStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", 
 const addToolWorkflowPath = path.join(projectRoot, "workflows", "add-tool.md");
 const relearnToolsStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "relearn-tools.md");
 const relearnToolsWorkflowPath = path.join(projectRoot, "workflows", "relearn-tools.md");
-const refreshToolsStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "refresh-tools.md");
-const refreshToolsWorkflowPath = path.join(projectRoot, "workflows", "refresh-tools.md");
+const runToolsStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "run-tools.md");
+const runToolsWorkflowPath = path.join(projectRoot, "workflows", "run-tools.md");
 
 describe("stub: stubs/claude-code/donna/setup.md", () => {
     it("exists", () => {
@@ -702,66 +702,66 @@ describe("workflow: workflows/relearn-tools.md", () => {
     });
 });
 
-// ─── refresh-tools stub ───────────────────────────────────────────────────────
+// ─── run-tools stub ──────────────────────────────────────────────────────────
 
-describe("stub: stubs/claude-code/donna/refresh-tools.md", () => {
+describe("stub: stubs/claude-code/donna/run-tools.md", () => {
     it("exists", () => {
-        assert.ok(fs.existsSync(refreshToolsStubPath), "refresh-tools stub should exist");
+        assert.ok(fs.existsSync(runToolsStubPath), "run-tools stub should exist");
     });
 
-    it('has YAML frontmatter with name "donna:refresh-tools"', () => {
-        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+    it('has YAML frontmatter with name "donna:run-tools"', () => {
+        const content = fs.readFileSync(runToolsStubPath, "utf8");
         assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
         assert.ok(
-            content.includes("name: donna:refresh-tools"),
-            "Should have name: donna:refresh-tools in frontmatter",
+            content.includes("name: donna:run-tools"),
+            "Should have name: donna:run-tools in frontmatter",
         );
     });
 
     it("has description field in frontmatter", () => {
-        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        const content = fs.readFileSync(runToolsStubPath, "utf8");
         assert.ok(content.includes("description:"), "Should have description field in frontmatter");
     });
 
     it("has Read in allowed-tools", () => {
-        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        const content = fs.readFileSync(runToolsStubPath, "utf8");
         assert.ok(content.includes("- Read"), "Should have Read in allowed-tools");
     });
 
     it("has Write in allowed-tools", () => {
-        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        const content = fs.readFileSync(runToolsStubPath, "utf8");
         assert.ok(content.includes("- Write"), "Should have Write in allowed-tools");
     });
 
     it("has Bash in allowed-tools", () => {
-        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        const content = fs.readFileSync(runToolsStubPath, "utf8");
         assert.ok(content.includes("- Bash"), "Should have Bash in allowed-tools");
     });
 
     it("does NOT have AskUserQuestion in allowed-tools (non-interactive)", () => {
-        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+        const content = fs.readFileSync(runToolsStubPath, "utf8");
         assert.ok(
             !content.includes("- AskUserQuestion"),
-            "Should NOT have AskUserQuestion — refresh-tools is non-interactive",
+            "Should NOT have AskUserQuestion — run-tools is non-interactive",
         );
     });
 
-    it("contains @~/.donna/workflows/refresh-tools.md reference", () => {
-        const content = fs.readFileSync(refreshToolsStubPath, "utf8");
+    it("contains @~/.donna/workflows/run-tools.md reference", () => {
+        const content = fs.readFileSync(runToolsStubPath, "utf8");
         assert.ok(
-            content.includes("@~/.donna/workflows/refresh-tools.md"),
-            "Should reference @~/.donna/workflows/refresh-tools.md",
+            content.includes("@~/.donna/workflows/run-tools.md"),
+            "Should reference @~/.donna/workflows/run-tools.md",
         );
     });
 });
 
-describe("workflow: workflows/refresh-tools.md", () => {
+describe("workflow: workflows/run-tools.md", () => {
     it("exists", () => {
-        assert.ok(fs.existsSync(refreshToolsWorkflowPath), "refresh-tools workflow should exist");
+        assert.ok(fs.existsSync(runToolsWorkflowPath), "run-tools workflow should exist");
     });
 
     it("references config/donna/config.md", () => {
-        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
             content.includes("config/donna/config.md"),
             "Should reference config/donna/config.md",
@@ -769,7 +769,7 @@ describe("workflow: workflows/refresh-tools.md", () => {
     });
 
     it("contains check-pending-migrations step", () => {
-        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
             content.includes("check-pending-migrations"),
             "Should contain check-pending-migrations step",
@@ -777,7 +777,7 @@ describe("workflow: workflows/refresh-tools.md", () => {
     });
 
     it("contains smart-merge step", () => {
-        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
             content.includes("smart-merge"),
             "Should contain smart-merge step",
@@ -785,7 +785,7 @@ describe("workflow: workflows/refresh-tools.md", () => {
     });
 
     it('references "## From Tools" section format', () => {
-        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
             content.includes("## From Tools"),
             "Should reference ## From Tools section format",
@@ -793,7 +793,7 @@ describe("workflow: workflows/refresh-tools.md", () => {
     });
 
     it('references "## Resolved" section format', () => {
-        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
             content.includes("## Resolved"),
             "Should reference ## Resolved section format",
@@ -801,7 +801,7 @@ describe("workflow: workflows/refresh-tools.md", () => {
     });
 
     it("contains timeout for failure isolation", () => {
-        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
             content.includes("timeout"),
             "Should contain timeout for per-tool failure isolation",
@@ -809,7 +809,7 @@ describe("workflow: workflows/refresh-tools.md", () => {
     });
 
     it("contains git commit step", () => {
-        const content = fs.readFileSync(refreshToolsWorkflowPath, "utf8");
+        const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
             content.includes("git") && content.includes("commit"),
             "Should contain git commit step",
@@ -828,11 +828,11 @@ describe("cross-cutting: done.md counter-strip", () => {
         );
     });
 
-    it("strips [tool](url) suffix in select-tasks for fuzzy matching", () => {
+    it("strips [text](url) suffix in select-tasks for fuzzy matching", () => {
         const content = fs.readFileSync(doneWorkflowPath, "utf8");
         assert.ok(
-            content.includes("[tool-name]") || content.includes("[\\w-]+]"),
-            "done.md should reference stripping the [tool](url) source tag suffix",
+            content.includes("[<text>](<url>)") || content.includes("[<identifier>](<url>)"),
+            "done.md should reference stripping the [text](url) source link suffix",
         );
     });
 });
@@ -879,6 +879,40 @@ describe("cross-cutting: begin-the-day tool integration", () => {
             "begin-the-day should use timeout for tool command failure isolation",
         );
     });
+
+    it("includes ## Warnings section in daily file", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("## Warnings"),
+            "begin-the-day should include ## Warnings section in daily file for tool warning persistence",
+        );
+    });
+
+    it("uses descriptive link text instead of tool name", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("owner/repo") && content.includes("#<number>"),
+            "begin-the-day should use descriptive link text like [owner/repo#number](url) instead of [gh](url)",
+        );
+    });
+});
+
+describe("cross-cutting: add-tool scope", () => {
+    it("contains ask-scope step", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("ask-scope"),
+            "add-tool should contain ask-scope step for per-tool context",
+        );
+    });
+
+    it("stores scope in tools.md", () => {
+        const content = fs.readFileSync(addToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("- scope:"),
+            "add-tool should persist scope field in tools.md",
+        );
+    });
 });
 
 // ─── cross-cutting: installer skill list ─────────────────────────────────────
@@ -918,11 +952,11 @@ describe("cross-cutting: installer skill list", () => {
         );
     });
 
-    it('success message includes "refresh-tools"', () => {
+    it('success message includes "run-tools"', () => {
         const content = fs.readFileSync(installerPath, "utf8");
         assert.ok(
-            content.includes("refresh-tools"),
-            "Installer success message should include refresh-tools skill",
+            content.includes("run-tools"),
+            "Installer success message should include run-tools skill",
         );
     });
 });
