@@ -21,33 +21,45 @@ Extract the `storage_repo`, `daily_folder` (default: `daily`), and `auto_push` (
 - Otherwise: do nothing.
 </step>
 
-<step name="migrate-standing-files">
-Check if standing files exist at the old location (repo root) and move them to donna/ if needed.
+<step name="check-pending-migrations">
+Read `~/.donna/state.md` with the Read tool. If the file does not exist or has no `pending_migrations` field in its YAML frontmatter, skip this step.
+
+For each entry in `pending_migrations`:
+
+**`move-standing-files`:** Move standing files from storage repo root to donna/ subfolder.
 
 Run via Bash:
 ```bash
 STORAGE_REPO="<storage_repo>"
 DONNA_DIR="$STORAGE_REPO/donna"
+MOVED=0
 
-# Only migrate if root-level standing files still exist
-if [ -f "$STORAGE_REPO/role.md" ] || [ -f "$STORAGE_REPO/recurring.md" ] || [ -f "$STORAGE_REPO/role-research.md" ]; then
-    mkdir -p "$DONNA_DIR"
-    for FILE in role.md recurring.md role-research.md config.md; do
-        if [ -f "$STORAGE_REPO/$FILE" ] && [ ! -f "$DONNA_DIR/$FILE" ]; then
-            mv "$STORAGE_REPO/$FILE" "$DONNA_DIR/$FILE"
-            echo "Moved $FILE to donna/$FILE"
-        fi
-    done
-fi
+mkdir -p "$DONNA_DIR"
+for FILE in role.md recurring.md role-research.md; do
+    if [ -f "$STORAGE_REPO/$FILE" ] && [ ! -f "$DONNA_DIR/$FILE" ]; then
+        mv "$STORAGE_REPO/$FILE" "$DONNA_DIR/$FILE"
+        echo "Moved $FILE to donna/$FILE"
+        MOVED=$((MOVED + 1))
+    fi
+done
+
+echo "MOVED=$MOVED"
 ```
 
-If any files were moved, run:
+If MOVED > 0, commit the move:
 ```bash
 git -C <storage_repo> add -A
 git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): move standing files to donna/ subfolder"
 ```
 
 If `auto_push` is true in config, also push.
+
+After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
+```markdown
+---
+pending_migrations: []
+---
+```
 </step>
 
 <step name="get-today">
