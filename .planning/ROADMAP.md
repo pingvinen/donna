@@ -60,11 +60,11 @@ Plans:
   3. User can run `/donna:begin-the-day` and see a concise daily brief (~40 lines max) that includes all open tasks carried forward from the most recent previous daily file plus any recurring tasks due today
   4. Running `/donna:begin-the-day` multiple times in the same day does not duplicate tasks or corrupt the daily journal
   5. Skills read only the files they need, not the full repo, so the system remains performant as daily files accumulate
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md — donna:set-role skill (two-stage role definition with research, approval, and persistence)
+- [ ] 03-02-PLAN.md — donna:begin-the-day skill (carry-forward, recurring tasks, dedup, daily brief, done.md and installer updates)
 
 ### Phase 4: External Tool Enrichment
 **Goal**: User can declare external CLI tools (GitHub CLI, Jira CLI) and have their data surfaced automatically in the morning ritual
@@ -90,5 +90,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Packaging and Distribution | 2/3 | In Progress | - |
 | 2. Foundation and Capture | 0/2 | Not started | - |
-| 3. Role Awareness and Daily Rhythm | 0/0 | Not started | - |
+| 3. Role Awareness and Daily Rhythm | 0/2 | Not started | - |
 | 4. External Tool Enrichment | 0/0 | Not started | - |
