@@ -34,9 +34,10 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 **Goal:** Add developer documentation (CONTRIBUTING.md), human-friendly upgrade changelog in the installer, and two new skills (donna:help for troubleshooting, donna:contribute-idea for feedback via GitHub Issues)
 **Requirements**: DOC-01 (CONTRIBUTING.md), DOC-02 (installer changelog), DOC-03 (donna:help skill), DOC-04 (donna:contribute-idea skill)
 **Depends on:** Phase 0
-**Plans:** 3/3 plans complete
+**Plans:** 4 plans (3 complete + 1 gap closure)
 
 Plans:
-- [ ] 01-01-PLAN.md — CONTRIBUTING.md and installer changelog system
-- [ ] 01-02-PLAN.md — donna:help and donna:contribute-idea skills (stubs + workflows)
-- [ ] 01-03-PLAN.md — Integration wiring (README, installer skill list, test coverage)
+- [x] 01-01-PLAN.md — CONTRIBUTING.md and installer changelog system
+- [x] 01-02-PLAN.md — donna:help and donna:contribute-idea skills (stubs + workflows)
+- [x] 01-03-PLAN.md — Integration wiring (README, installer skill list, test coverage)
+- [ ] 01-04-PLAN.md — Gap closure: GSD workflow in CONTRIBUTING.md + populate 0.5.0 changelog
