@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-16T22:08:18.428Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-16T22:12:26.686Z"
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 8
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -38,6 +38,8 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - [Phase 01]: donna:help and donna:contribute-idea skills: both read-only, use AskUserQuestion for interactive workflows, contribute-idea uses gh api with @base64d for cross-platform STATE.md fetching
 - [Phase 01]: test assertion for help workflow git commit check uses literal 'git commit' substring to avoid false positive on 'uncommitted changes' text
 - [Phase 01]: displayChangelog unit test updated: test imported real CHANGELOG constant (not isolated empty state), so assertion had to flip from 'no output' to 'shows output' after 0.5.0 entry was populated
+- [Phase 02]: adjust-tool workflow includes both move-standing-files and backfill-tool-type migration handlers to stay in sync with all other tool workflows
+- [Phase 02]: Capabilities editing loop uses open-ended AskUserQuestion allowing remove/add/edit commands until user says done
 
 ### Pending Todos
 
@@ -59,6 +61,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-16T21:33:42.854Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-tool-system-enhancements/02-CONTEXT.md
+Last session: 2026-03-16T22:12:26.684Z
+Stopped at: Completed 02-02-PLAN.md
+Resume file: None

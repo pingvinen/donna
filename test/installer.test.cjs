@@ -92,7 +92,7 @@ describe("installer - fresh install", () => {
         assert.ok(ver, "version.md should exist");
         const pkg = require("../package.json");
         assert.equal(ver.version, pkg.version);
-        assert.equal(ver.lastMigration, 2);
+        assert.equal(ver.lastMigration, 3);
     });
 
     it("copies stubs to detected provider directories", async () => {
@@ -187,7 +187,7 @@ describe("installer - upgrade", () => {
         const ver = readVersion(env.donnaDir);
         const pkg = require("../package.json");
         assert.equal(ver.version, pkg.version);
-        assert.equal(ver.lastMigration, 2);
+        assert.equal(ver.lastMigration, 3);
     });
 
     it("migration 002 creates state.md with pending_migrations on upgrade", async () => {
@@ -210,7 +210,7 @@ describe("installer - idempotent", () => {
         const pkg = require("../package.json");
         env = makeTempHome({
             withClaude: true,
-            withVersion: { version: pkg.version, lastMigration: 2 },
+            withVersion: { version: pkg.version, lastMigration: 3 },
         });
         // Ensure migration dirs exist (as if previously installed)
         fs.mkdirSync(path.join(env.donnaDir, "workflows"), { recursive: true });
@@ -303,7 +303,7 @@ describe("installer - migration 002 state.md idempotency", () => {
             }
         }
 
-        // Second run — migrations already applied (lastMigration=2), so migration 002 won't re-run.
+        // Second run — migrations already applied (lastMigration=3), so migrations won't re-run.
         // But if it did, the idempotency guard in migration 002 should prevent duplication.
         const { run: run2 } = require("../src/installer.cjs");
         await captureOutput(() => run2({ homeDir: env.homeDir }));
@@ -405,7 +405,7 @@ module.exports = {
         const { readVersion } = require("../src/version.cjs");
         const ver = readVersion(env.donnaDir);
         assert.ok(ver, "version.md should exist after partial failure");
-        assert.equal(ver.lastMigration, 2, "should record last successful migration as 2");
+        assert.equal(ver.lastMigration, 3, "should record last successful migration as 3");
     });
 
     it("prints failure message with cross prefix", async () => {

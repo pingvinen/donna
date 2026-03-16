@@ -17,6 +17,19 @@ module.exports = {
             }
         }
 
+        if (ctx.fs.existsSync(statePath)) {
+            // Append to existing pending_migrations list
+            const existing = ctx.fs.readFileSync(statePath, "utf8");
+            const updated = existing.replace(
+                /^(pending_migrations:\n(?:\s+-\s+.*\n)*)/m,
+                "$1  - backfill-tool-type\n",
+            );
+            if (updated !== existing) {
+                ctx.fs.writeFileSync(statePath, updated, "utf8");
+                return;
+            }
+        }
+
         const pendingFlag = "---\npending_migrations:\n  - backfill-tool-type\n---\n";
         ctx.fs.writeFileSync(statePath, pendingFlag, "utf8");
     },
