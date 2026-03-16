@@ -77,7 +77,7 @@ async function run(options = {}) {
         for (const provider of detected) {
             fs.cpSync(provider.stubSource, provider.stubTarget, { recursive: true });
             output.success(
-                `Copied donna skills (setup, add-task, done, set-role, begin-the-day) to ${provider.stubTarget}`,
+                `Copied donna skills (setup, add-task, done, set-role, begin-the-day, add-tool, relearn-tools, run-tools) to ${provider.stubTarget}`,
             );
         }
     } else {

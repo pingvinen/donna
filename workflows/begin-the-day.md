@@ -127,6 +127,46 @@ For each task, determine if it is due today using this logic:
 Store the descriptions of all due tasks as `<recurring_tasks>` (just the description text, without the interval suffix).
 </step>
 
+<step name="pull-tool-data">
+Read `<storage_repo>/donna/tools.md` with the Read tool.
+
+If the file does not exist or has no tool sections (no `## ` headers after the frontmatter), set `<tool_tasks>` to an empty list and `<tool_warnings>` to an empty list. Continue to the next step. Do NOT print any error — tools are optional.
+
+For each tool section in tools.md, parse the `command` field and the `### Capabilities` entries. For each capability entry (format: `- <name>: <cli_invocation>`):
+
+Run the CLI invocation via Bash with a 10-second timeout:
+```bash
+timeout 10 <cli_invocation> 2>&1
+```
+
+**On success (exit 0):**
+Parse the output into task entries. Every task line MUST include both a tool tag and a descriptive link.
+
+CRITICAL — tool tag format: Every tool task line MUST start with `(<tool_name>)` after the checkbox, where `<tool_name>` is the `## <tool_name>` section header from tools.md (e.g., `gh`, `jira`, `kubectl`). This tag identifies which tool sourced the task. Example: if processing the `## gh` section, every task line starts with `- [ ] (gh) `.
+
+For `gh` JSON output (`--json number,title,url`): parse the JSON array. Extract `<owner>/<repo>` from the `url` field (e.g., `https://github.com/acme/api/pull/42` → `acme/api`). For each item, create:
+`- [ ] (gh) <title> [<owner/repo>#<number>](<url>)`
+
+For `jira` plain output: parse each row. For each issue, create:
+`- [ ] (jira) <summary> [<key>](https://<jira_host>/browse/<key>)`
+Note: jira plain output may not include URLs — if the URL is not available, use the issue key only: `- [ ] (jira) <summary> [<key>](<key>)`
+
+For other tools: use Claude's understanding to extract task-like items from the output. Format with a descriptive identifier as the link text and URL if available:
+`- [ ] (<tool_name>) <description> [<identifier>](<url>)`
+
+**On failure (non-zero exit):**
+Determine the failure type from the exit code and output:
+- Exit 124: `! <tool_name>: timed out after 10s — check network connectivity`
+- Exit 1 with "auth" or "login" in output: `! <tool_name>: authentication failed — run \`<auth_fix_command>\``
+- Exit 127 or "not found" in output: `! <tool_name>: command not found — install <command> first`
+- Other: `! <tool_name>: <first line of stderr>`
+
+Add the warning to `<tool_warnings>`. Continue to next capability/tool. Never retry. Tool failures must never block manual tasks, carry-forward, or recurring task processing.
+
+Collect all task entries as `<tool_tasks>`.
+Collect all warning messages as `<tool_warnings>`.
+</step>
+
 <step name="read-existing-today">
 If today's daily file already exists, read it with the Read tool. Extract all task lines — both open (`- [ ] ...`) and closed (`- [x] ...`). Store as `<existing_tasks>`.
 
@@ -136,7 +176,7 @@ If the file does not exist, `<existing_tasks>` is an empty list.
 <step name="deduplicate">
 Assemble the full task list using a single-pass deduplication to ensure idempotency:
 
-**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any trailing ` (N times)` suffix (where N is any integer), lowercase all text, trim whitespace.
+**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any leading `(<tool>) ` prefix (tool tag, matching the pattern `\(\w+\) `), strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` [<text>](<url>)` suffix (tool source link, matching the pattern ` \[[^\]]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
 
 1. Start with `<existing_tasks>` — both open and closed tasks take priority. Add them all to the final list.
 
@@ -144,7 +184,11 @@ Assemble the full task list using a single-pass deduplication to ensure idempote
 
 3. Add `<recurring_tasks>` as `- [ ] <description>` — for each recurring task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it.
 
+4. Add `<tool_tasks>` as-is — for each tool task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it.
+
 CRITICAL: A closed task `- [x] Review PRs` must block a recurring `- [ ] Review PRs` from being re-added. Both open AND closed existing tasks count for deduplication.
+
+CRITICAL: A closed task `- [x] (gh) Review PR #42 [acme/api#42](https://...)` must block a tool task `- [ ] (gh) Review PR #42 [acme/api#42](https://...)` from being re-added. The normalization (strip tool tag + source link) ensures both normalize to "review pr #42".
 
 CRITICAL: If a carried-forward task already exists in today's file (from a previous run of begin-the-day today), do not re-add it or re-increment its counter. The normalization (strip suffix) ensures this.
 
@@ -167,9 +211,21 @@ date: <today>
 <existing tasks, preserving their original order and open/closed state>
 <carried-forward tasks not already in existing>
 <recurring tasks not already in existing>
+
+## From Tools
+<tool tasks not already in existing — only if there are tool tasks>
+
+## Resolved
+<resolved tool tasks — only if there are resolved items>
+
+## Warnings
+<tool warnings — only if there are warnings>
 ```
 
 Tasks are written in this order: existing tasks first (preserving their original order and state), then carried-forward tasks, then recurring tasks.
+
+If `<tool_tasks>` is empty and there are no resolved items, omit the `## From Tools` and `## Resolved` sections entirely.
+If `<tool_warnings>` is empty, omit the `## Warnings` section entirely. Each warning is written as-is (e.g., `! jira: command not found — install jira first`).
 </step>
 
 <step name="update-recurring-last-run">
@@ -208,7 +264,7 @@ git -C <storage_repo> push
 Print the daily brief to the terminal:
 ```
 ══════════════════════════════════════
- DONNA — Daily Brief for <today>
+ Donna — Daily Brief for <today>
 ══════════════════════════════════════
 ```
 
@@ -226,12 +282,25 @@ If there are recurring tasks due today (tasks from `<recurring_tasks>` that were
 - [ ] Review sprint backlog
 ```
 
+If there are tool tasks (tasks from `<tool_tasks>` that were added to the final list), print:
+```
+## From Tools
+- [ ] (gh) Review PR #42 [org/repo#42](https://github.com/org/repo/pull/42)
+- [ ] (jira) Implement AUTH-07 [AUTH-07](https://company.atlassian.net/browse/AUTH-07)
+```
+
+If there are tool warnings (`<tool_warnings>` is not empty), print:
+```
+## Warnings
+! gh: authentication failed — run `gh auth login`
+```
+
 Always end with:
 ```
 ══════════════════════════════════════
 ```
 
-Show ALL tasks — never truncate. If no carried-forward tasks, omit the "## Carried Forward" section. If no recurring tasks due today, omit the "## Due Today" section. If both sections are empty and there are no existing tasks, print:
+Show ALL tasks — never truncate. If no carried-forward tasks, omit the "## Carried Forward" section. If no recurring tasks due today, omit the "## Due Today" section. If no tool tasks, omit the "## From Tools" section. If no tool warnings, omit the "## Warnings" section. If carried-forward, recurring, AND tool tasks are all empty and there are no existing tasks, print:
 ```
 No tasks for today — enjoy your day!
 ```
