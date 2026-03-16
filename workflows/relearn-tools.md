@@ -94,22 +94,36 @@ Store the parsed tools as `<registered_tools>`.
 </step>
 
 <step name="check-versions">
-For each tool in `<registered_tools>`, run via Bash:
-```bash
-<command> --version 2>/dev/null | head -1
-```
+For each tool in `<registered_tools>`:
 
-Compare the output against the stored `version` field using simple string equality — "is it different?" is sufficient; no semver parsing required.
+If `<type>` is `rest`, `graphql`, or `mcp`:
+  Add to `<unchanged_tools>` — version checking is not applicable for non-CLI tools.
+  Continue to next tool.
 
-If `<command>` is not found (command fails), treat it as changed with a warning note.
+If `<type>` is `cli` (or absent; treat as `cli`):
+  Run via Bash:
+  ```bash
+  <command> --version 2>/dev/null | head -1
+  ```
 
-Collect tools into two lists:
-- `<changed_tools>` — installed version differs from stored version (or command not found)
-- `<unchanged_tools>` — installed version matches stored version exactly
+  Compare the output against the stored `version` field using simple string equality — "is it different?" is sufficient; no semver parsing required.
+
+  If `<command>` is not found (command fails), treat it as changed with a warning note.
+
+  Add to:
+  - `<changed_tools>` — installed version differs from stored version (or command not found)
+  - `<unchanged_tools>` — installed version matches stored version exactly
 </step>
 
 <step name="report-unchanged">
-For each tool in `<unchanged_tools>`, print:
+For each tool in `<unchanged_tools>`:
+
+If `<type>` is `rest`, `graphql`, or `mcp`, print:
+```
+⊘ <tool_name>: <type> tool — re-learning not applicable (capabilities are user-defined)
+```
+
+Otherwise (CLI tools), print:
 ```
 ⊘ <tool_name>: unchanged at <version> — skipped
 ```
@@ -122,6 +136,8 @@ Stop.
 </step>
 
 <step name="relearn-changed">
+Note: Re-learning is currently supported for CLI tools only. REST, GraphQL, and MCP tool capabilities are user-defined and not auto-learned.
+
 For each tool in `<changed_tools>`, apply the same learn-capabilities logic as add-tool.md's learn-capabilities step.
 
 Determine if the tool is well-known (gh, jira, kubectl) or unknown. For well-known tools, synthesize capabilities from training data. Do NOT parse --help for well-known tools.
