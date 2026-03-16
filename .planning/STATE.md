@@ -114,6 +114,7 @@ Recent decisions affecting current work:
 - Support non-CLI tools — APIs and MCP servers (tooling)
 - User-facing changelog for package updates (tooling)
 - Add a way to get help (general)
+- Generate user-facing pending TODOs list after phase execution (tooling)
 
 ### Roadmap Evolution
 
