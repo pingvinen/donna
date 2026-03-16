@@ -113,6 +113,7 @@ Recent decisions affecting current work:
 - Make changelog more compact and human friendly (tooling)
 - Support non-CLI tools — APIs and MCP servers (tooling)
 - User-facing changelog for package updates (tooling)
+- Add a way to get help (general)
 
 ### Roadmap Evolution
 
