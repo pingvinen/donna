@@ -12,7 +12,7 @@ const CHANGELOG = {
             "donna:help — conversational troubleshooting and diagnostics",
             "donna:contribute-idea — submit feature ideas via GitHub Issues",
         ],
-        "Improvements": [
+        Improvements: [
             "CONTRIBUTING.md developer guide added",
             "Upgrade changelog shown during version bumps",
         ],
@@ -45,8 +45,8 @@ function semverGt(a, b) {
  */
 function displayChangelog(fromVersion, toVersion) {
     const versionsToShow = Object.keys(CHANGELOG)
-        .filter(v => semverGt(v, fromVersion) && !semverGt(v, toVersion))
-        .sort((a, b) => semverGt(a, b) ? 1 : -1);
+        .filter((v) => semverGt(v, fromVersion) && !semverGt(v, toVersion))
+        .sort((a, b) => (semverGt(a, b) ? 1 : -1));
 
     if (versionsToShow.length === 0) return;
 

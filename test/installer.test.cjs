@@ -510,6 +510,9 @@ describe("changelog - displayChangelog", () => {
         }
         // CHANGELOG has a 0.5.0 entry, so upgrading from 0.4.0 should show "What's new:"
         const combined = lines.join("\n");
-        assert.ok(combined.includes("What's new:"), "should print header when changelog has entries in range");
+        assert.ok(
+            combined.includes("What's new:"),
+            "should print header when changelog has entries in range",
+        );
     });
 });

@@ -933,7 +933,10 @@ describe("stub: stubs/claude-code/donna/help.md", () => {
     it('has YAML frontmatter with name "donna:help"', () => {
         const content = fs.readFileSync(helpStubPath, "utf8");
         assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
-        assert.ok(content.includes("name: donna:help"), "Should have name: donna:help in frontmatter");
+        assert.ok(
+            content.includes("name: donna:help"),
+            "Should have name: donna:help in frontmatter",
+        );
     });
 
     it("has description field in frontmatter", () => {
@@ -953,7 +956,10 @@ describe("stub: stubs/claude-code/donna/help.md", () => {
 
     it("has AskUserQuestion in allowed-tools", () => {
         const content = fs.readFileSync(helpStubPath, "utf8");
-        assert.ok(content.includes("- AskUserQuestion"), "Should have AskUserQuestion in allowed-tools");
+        assert.ok(
+            content.includes("- AskUserQuestion"),
+            "Should have AskUserQuestion in allowed-tools",
+        );
     });
 
     it("does NOT have Write in allowed-tools (read-only skill)", () => {
@@ -1137,10 +1143,7 @@ const installerPath = path.join(projectRoot, "src", "installer.cjs");
 describe("cross-cutting: installer skill list (new skills)", () => {
     it('success message includes "help"', () => {
         const content = fs.readFileSync(installerPath, "utf8");
-        assert.ok(
-            content.includes("help"),
-            "Installer success message should include help skill",
-        );
+        assert.ok(content.includes("help"), "Installer success message should include help skill");
     });
 
     it('success message includes "contribute-idea"', () => {
