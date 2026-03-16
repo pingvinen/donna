@@ -115,6 +115,7 @@ Recent decisions affecting current work:
 - User-facing changelog for package updates (tooling)
 - Add a way to get help (general)
 - Generate user-facing pending TODOs list after phase execution (tooling)
+- Add adjust-tool skill for iterative tool configuration refinement (tooling)
 
 ### Roadmap Evolution
 
