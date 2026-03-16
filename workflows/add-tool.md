@@ -54,6 +54,20 @@ git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "
 
 If `auto_push` is true in config, also push.
 
+**`backfill-tool-type`:** Add `type: cli` to existing tool sections in tools.md.
+
+Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not exist or has no tool sections, skip this handler.
+
+For each tool section (starting with `## <tool_name>`), check if a `- type:` line exists between `- command:` and `- version:`. If the `- type:` line is missing, insert `- type: cli` immediately after the `- command:` line.
+
+Write the updated file back with the Write tool. If any changes were made, commit:
+```bash
+git -C <storage_repo> add -A
+git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill type: cli on existing tools"
+```
+
+If `auto_push` is true in config, also push.
+
 After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
 ```markdown
 ---
@@ -207,6 +221,7 @@ Upsert (not overwrite) the tool's section. Each tool section has this format:
 ## <tool_name>
 
 - command: <command>
+- type: cli
 - version: <version>
 - learned: <today's date YYYY-MM-DD>
 - auth_test: <auth_test_command or "none">
