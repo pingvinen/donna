@@ -8,6 +8,7 @@ const output = require("./output.cjs");
 const version = require("./version.cjs");
 const migrator = require("./migrator.cjs");
 const providers = require("./providers/index.cjs");
+const changelog = require("./changelog.cjs");
 
 /**
  * Main installer orchestration.
@@ -50,6 +51,7 @@ async function run(options = {}) {
     // If upgrading (current version exists but differs)
     if (currentVersion && currentVersion !== packageVersion) {
         output.upgradeHeader(currentVersion, packageVersion);
+        changelog.displayChangelog(currentVersion, packageVersion);
     }
 
     // Run migrations
@@ -77,7 +79,7 @@ async function run(options = {}) {
         for (const provider of detected) {
             fs.cpSync(provider.stubSource, provider.stubTarget, { recursive: true });
             output.success(
-                `Copied donna skills (setup, add-task, done, set-role, begin-the-day, add-tool, relearn-tools, run-tools) to ${provider.stubTarget}`,
+                `Copied donna skills (setup, add-task, done, set-role, begin-the-day, add-tool, relearn-tools, run-tools, help, contribute-idea) to ${provider.stubTarget}`,
             );
         }
     } else {

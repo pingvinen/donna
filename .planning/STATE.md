@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Phase 1 context gathered
-last_updated: "2026-03-16T16:01:37.321Z"
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-03-16T17:25:44.231Z"
 progress:
   total_phases: 1
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  completed_phases: 1
+  total_plans: 4
+  completed_plans: 4
 ---
 
 # Project State
@@ -32,6 +32,12 @@ Next: `/gsd:new-milestone` to start v1.1
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Good).
+- [Phase 01]: CHANGELOG intentionally empty at initial creation — populated when next version ships
+- [Phase 01]: changelog.cjs delegates output to output.cjs for consistent formatting
+- [Phase 01]: displayChangelog called after upgradeHeader and before migrations in upgrade block
+- [Phase 01]: donna:help and donna:contribute-idea skills: both read-only, use AskUserQuestion for interactive workflows, contribute-idea uses gh api with @base64d for cross-platform STATE.md fetching
+- [Phase 01]: test assertion for help workflow git commit check uses literal 'git commit' substring to avoid false positive on 'uncommitted changes' text
+- [Phase 01]: displayChangelog unit test updated: test imported real CHANGELOG constant (not isolated empty state), so assertion had to flip from 'no output' to 'shows output' after 0.5.0 entry was populated
 
 ### Pending Todos
 
@@ -55,6 +61,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-16T16:01:37.319Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-low-hanging-documentation-stuff-for-users-and-alpha-testers/01-CONTEXT.md
+Last session: 2026-03-16T17:22:34.965Z
+Stopped at: Completed 01-04-PLAN.md
+Resume file: None

@@ -24,6 +24,6 @@
     }
   ],
   "files": {
-    "ignore": [".planning/**", "node_modules/**", "package.json"]
+    "ignore": [".planning/**", "node_modules/**", "package.json", "CLAUDE.md", "CONTRIBUTING.md"]
   }
 }

@@ -435,3 +435,84 @@ describe("bin/donna-assistant", () => {
         assert.ok(isExecutable, "should be executable");
     });
 });
+
+describe("installer - changelog integration on upgrade", () => {
+    let env;
+
+    beforeEach(() => {
+        env = makeTempHome({
+            withClaude: true,
+            withVersion: { version: "0.0.1", lastMigration: 0 },
+        });
+    });
+
+    afterEach(() => {
+        env.cleanup();
+    });
+
+    it("calls changelog display during upgrade without throwing", async () => {
+        const { run } = require("../src/installer.cjs");
+        const lines = await captureOutput(() => run({ homeDir: env.homeDir }));
+        const out = lines.join("\n");
+        // CHANGELOG now has a 0.5.0 entry, so upgrading from 0.0.1 should show "What's new:".
+        assert.ok(out.includes("Upgrading"), "should show upgrade header");
+        assert.ok(out.includes("What's new:"), "should show changelog when upgrading to 0.5.0");
+    });
+
+    it("does not show What's new on fresh install", async () => {
+        const freshEnv = makeTempHome({ withClaude: true });
+        try {
+            const { run } = require("../src/installer.cjs");
+            const lines = await captureOutput(() => run({ homeDir: freshEnv.homeDir }));
+            const out = lines.join("\n");
+            assert.ok(!out.includes("What's new:"), "fresh install should not show changelog");
+        } finally {
+            freshEnv.cleanup();
+        }
+    });
+});
+
+describe("changelog - semverGt", () => {
+    const { semverGt } = require("../src/changelog.cjs");
+
+    it("returns true when a > b", () => {
+        assert.equal(semverGt("0.5.0", "0.4.0"), true);
+    });
+
+    it("returns false when a < b", () => {
+        assert.equal(semverGt("0.4.0", "0.5.0"), false);
+    });
+
+    it("returns false when a === b", () => {
+        assert.equal(semverGt("0.5.0", "0.5.0"), false);
+    });
+
+    it("handles major version differences", () => {
+        assert.equal(semverGt("1.0.0", "0.9.9"), true);
+    });
+
+    it("handles patch version differences", () => {
+        assert.equal(semverGt("0.5.1", "0.5.0"), true);
+    });
+});
+
+describe("changelog - displayChangelog", () => {
+    const { displayChangelog } = require("../src/changelog.cjs");
+
+    it("shows What's new for versions in range", () => {
+        const lines = [];
+        const orig = console.log;
+        console.log = (...a) => lines.push(a.join(" "));
+        try {
+            displayChangelog("0.4.0", "0.5.0");
+        } finally {
+            console.log = orig;
+        }
+        // CHANGELOG has a 0.5.0 entry, so upgrading from 0.4.0 should show "What's new:"
+        const combined = lines.join("\n");
+        assert.ok(
+            combined.includes("What's new:"),
+            "should print header when changelog has entries in range",
+        );
+    });
+});

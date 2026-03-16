@@ -123,6 +123,8 @@ Most commands are safe to run again. Want to update your role? Run `/donna:set-r
 | `/donna:add-tool` | Register an external CLI tool |
 | `/donna:run-tools` | Refresh tool data mid-day |
 | `/donna:relearn-tools` | Update tool knowledge after upgrades |
+| `/donna:help` | Conversational troubleshooting for config, storage, or skill issues |
+| `/donna:contribute-idea` | Submit a feature idea or bug report via GitHub Issues |
 
 ## License
 

@@ -26,4 +26,9 @@ function migrationLine(desc) {
     console.log(`  \u2713 ${desc}`);
 }
 
-module.exports = { banner, success, fail, info, upgradeHeader, migrationLine };
+function changelogHeader() {
+    console.log("");
+    console.log("  What's new:");
+}
+
+module.exports = { banner, success, fail, info, upgradeHeader, migrationLine, changelogHeader };
