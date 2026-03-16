@@ -111,6 +111,7 @@ Recent decisions affecting current work:
 - Document how a developer of Donna can test things locally (docs)
 - Evaluate natural language input as alternative to slash commands (general)
 - Make changelog more compact and human friendly (tooling)
+- Support non-CLI tools — APIs and MCP servers (tooling)
 - User-facing changelog for package updates (tooling)
 
 ### Roadmap Evolution
