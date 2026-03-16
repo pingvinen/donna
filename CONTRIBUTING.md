@@ -32,6 +32,8 @@ Thanks for your interest in contributing! This guide covers local setup, project
    Or, if the link is not in your PATH yet: `npx donna-assistant`
 
    This copies skill stubs from your local `stubs/` to `~/.claude/commands/donna/` and workflows from `workflows/` to `~/.donna/workflows/`.
+   
+   You can force donna to install despite being the newest version using the `--force` flag.
 
 5. **Iterate on a skill**
    - Edit the workflow file in `workflows/`
@@ -57,6 +59,30 @@ npm test
 ```
 
 Runs `node --test 'test/*.test.cjs'`. All tests must pass before merging.
+
+## Development Workflow
+
+### GSD (Get Shit Done) planning framework
+
+Donna uses the GSD planning framework for all development. Work is organized into **phases**, each broken into numbered **plans**. Plans are researched, executed, and verified using GSD orchestrator commands invoked in Claude Code:
+
+```
+/gsd:new-phase    — start a new phase
+/gsd:execute      — run a plan autonomously
+/gsd:verify       — verify a completed plan
+```
+
+Phase artifacts live in `.planning/phases/`. Before contributing a significant feature, read the existing phase summaries (`*-SUMMARY.md`) to understand prior decisions and the overall arc of the project.
+
+### Backlog-driven, no formal milestones
+
+Development follows a backlog rather than fixed release trains. Three core principles from `CLAUDE.md` govern how work is prioritized:
+
+- **Deployment first** — Build the full packaging/distribution/CI pipeline before adding real features. Every phase must produce distributable artifacts.
+- **Real skills, not throwaway dummies** — When a placeholder is needed to prove the pipeline, stub a real skill rather than creating a dummy that will need cleanup later.
+- **No formal milestones** — Work from a backlog, ship when enough value has accumulated. Releases happen organically. Archive completed phase artifacts periodically for context hygiene, not as milestone ceremony.
+
+New contributors should start by reading `CLAUDE.md` (project conventions) and the latest phase summaries in `.planning/phases/` to understand the current direction before picking up a backlog item.
 
 ## Adding a New Skill
 
