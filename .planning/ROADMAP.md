@@ -28,3 +28,15 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 | 3. Role Awareness and Daily Rhythm | v1.0 | 2/2 | Complete | 2026-03-15 |
 | 3.1 Standing Files Subfolder | v1.0 | 4/4 | Complete | 2026-03-15 |
 | 4. External Tool Enrichment | v1.0 | 3/3 | Complete | 2026-03-15 |
+
+### Phase 1: Low-hanging documentation stuff for users and alpha testers
+
+**Goal:** Add developer documentation (CONTRIBUTING.md), human-friendly upgrade changelog in the installer, and two new skills (donna:help for troubleshooting, donna:contribute-idea for feedback via GitHub Issues)
+**Requirements**: DOC-01 (CONTRIBUTING.md), DOC-02 (installer changelog), DOC-03 (donna:help skill), DOC-04 (donna:contribute-idea skill)
+**Depends on:** Phase 0
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — CONTRIBUTING.md and installer changelog system
+- [ ] 01-02-PLAN.md — donna:help and donna:contribute-idea skills (stubs + workflows)
+- [ ] 01-03-PLAN.md — Integration wiring (README, installer skill list, test coverage)
