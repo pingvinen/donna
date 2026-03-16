@@ -140,16 +140,19 @@ timeout 10 <cli_invocation> 2>&1
 ```
 
 **On success (exit 0):**
-Parse the output into task entries. The link text should be a descriptive identifier — NOT the tool name.
+Parse the output into task entries. Every task line MUST include both a tool tag and a descriptive link.
+
+CRITICAL — tool tag format: Every tool task line MUST start with `(<tool_name>)` after the checkbox, where `<tool_name>` is the `## <tool_name>` section header from tools.md (e.g., `gh`, `jira`, `kubectl`). This tag identifies which tool sourced the task. Example: if processing the `## gh` section, every task line starts with `- [ ] (gh) `.
 
 For `gh` JSON output (`--json number,title,url`): parse the JSON array. Extract `<owner>/<repo>` from the `url` field (e.g., `https://github.com/acme/api/pull/42` → `acme/api`). For each item, create:
-`- [ ] <title> [<owner/repo>#<number>](<url>)`
+`- [ ] (gh) <title> [<owner/repo>#<number>](<url>)`
 
 For `jira` plain output: parse each row. For each issue, create:
-`- [ ] <summary> [<key>](https://<jira_host>/browse/<key>)`
-Note: jira plain output may not include URLs — if the URL is not available, use the issue key only: `- [ ] <summary> [<key>](<key>)`
+`- [ ] (jira) <summary> [<key>](https://<jira_host>/browse/<key>)`
+Note: jira plain output may not include URLs — if the URL is not available, use the issue key only: `- [ ] (jira) <summary> [<key>](<key>)`
 
-For other tools: use Claude's understanding to extract task-like items from the output. Format with a descriptive identifier as the link text and URL if available.
+For other tools: use Claude's understanding to extract task-like items from the output. Format with a descriptive identifier as the link text and URL if available:
+`- [ ] (<tool_name>) <description> [<identifier>](<url>)`
 
 **On failure (non-zero exit):**
 Determine the failure type from the exit code and output:
@@ -173,7 +176,7 @@ If the file does not exist, `<existing_tasks>` is an empty list.
 <step name="deduplicate">
 Assemble the full task list using a single-pass deduplication to ensure idempotency:
 
-**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` [<text>](<url>)` suffix (tool source link, matching the pattern ` \[[^\]]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
+**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any leading `(<tool>) ` prefix (tool tag, matching the pattern `\(\w+\) `), strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` [<text>](<url>)` suffix (tool source link, matching the pattern ` \[[^\]]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
 
 1. Start with `<existing_tasks>` — both open and closed tasks take priority. Add them all to the final list.
 
@@ -185,7 +188,7 @@ Assemble the full task list using a single-pass deduplication to ensure idempote
 
 CRITICAL: A closed task `- [x] Review PRs` must block a recurring `- [ ] Review PRs` from being re-added. Both open AND closed existing tasks count for deduplication.
 
-CRITICAL: A closed task `- [x] Review PR #42 [acme/api#42](https://...)` must block a tool task `- [ ] Review PR #42 [acme/api#42](https://...)` from being re-added. The normalization (strip source link) ensures both normalize to "review pr #42".
+CRITICAL: A closed task `- [x] (gh) Review PR #42 [acme/api#42](https://...)` must block a tool task `- [ ] (gh) Review PR #42 [acme/api#42](https://...)` from being re-added. The normalization (strip tool tag + source link) ensures both normalize to "review pr #42".
 
 CRITICAL: If a carried-forward task already exists in today's file (from a previous run of begin-the-day today), do not re-add it or re-increment its counter. The normalization (strip suffix) ensures this.
 
@@ -282,8 +285,8 @@ If there are recurring tasks due today (tasks from `<recurring_tasks>` that were
 If there are tool tasks (tasks from `<tool_tasks>` that were added to the final list), print:
 ```
 ## From Tools
-- [ ] Review PR #42 [org/repo#42](https://github.com/org/repo/pull/42)
-- [ ] Implement AUTH-07 [AUTH-07](https://company.atlassian.net/browse/AUTH-07)
+- [ ] (gh) Review PR #42 [org/repo#42](https://github.com/org/repo/pull/42)
+- [ ] (jira) Implement AUTH-07 [AUTH-07](https://company.atlassian.net/browse/AUTH-07)
 ```
 
 If there are tool warnings (`<tool_warnings>` is not empty), print:

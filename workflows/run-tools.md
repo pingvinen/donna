@@ -95,7 +95,7 @@ Read today's daily file with the Read tool.
 
 Extract all lines from the `## From Tools` section and the `## Resolved` section.
 
-For each line, extract the embedded URL from the `[tool](url)` pattern — this URL is the stable identifier for matching. Store as `<existing_tool_lines>`: a map of URL to full line (including its checkbox state `[ ]` or `[x]`).
+For each line, extract the embedded URL from the `[<text>](<url>)` pattern — this URL is the stable identifier for matching. Store as `<existing_tool_lines>`: a map of URL to full line (including its checkbox state `[ ]` or `[x]` and tool tag).
 
 If the `## From Tools` section does not exist in today's file, set `<existing_tool_lines>` to an empty map. The section will be created during smart-merge.
 </step>
@@ -108,21 +108,23 @@ Run the capability command via Bash with a 10-second timeout:
 timeout 10 <capability_command> 2>&1
 ```
 
-**On success (exit 0):** Parse the output into task entries. The link text should be a descriptive identifier — NOT the tool name.
+**On success (exit 0):** Parse the output into task entries. Every task line MUST include both a tool tag and a descriptive link.
+
+CRITICAL — tool tag format: Every tool task line MUST start with `(<tool_name>)` after the checkbox, where `<tool_name>` is the `## <tool_name>` section header from tools.md (e.g., `gh`, `jira`, `kubectl`). This tag identifies which tool sourced the task. Example: if processing the `## gh` section, every task line starts with `- [ ] (gh) `.
 
 For gh JSON output, extract `number`, `title`, `url` fields from each JSON object. Use the `url` field as the stable identifier. Extract `<owner>/<repo>` from the URL (e.g., `https://github.com/acme/api/pull/42` → `acme/api`). Format:
 ```
-- [ ] <title> [<owner/repo>#<number>](<url>)
+- [ ] (gh) <title> [<owner/repo>#<number>](<url>)
 ```
 
 For jira plain output, extract the issue key and summary from each line. Format:
 ```
-- [ ] <summary> [<issue_key>](https://jira.company.com/browse/<issue_key>)
+- [ ] (jira) <summary> [<issue_key>](https://jira.company.com/browse/<issue_key>)
 ```
 
-For other tools: use Claude's understanding to extract task-like items. Format with a descriptive identifier as the link text and URL if available:
+For other tools: use Claude's understanding to extract task-like items from the output. Format with a descriptive identifier as the link text and URL if available:
 ```
-- [ ] <description> [<identifier>](<url>)
+- [ ] (<tool_name>) <description> [<identifier>](<url>)
 ```
 
 **On failure (exit non-zero, including exit 124 for timeout):** Add a warning:
@@ -147,7 +149,7 @@ For each URL in `<existing_tool_lines>`:
 2. If the line is `[ ]` AND the URL exists in `<fresh_tool_tasks>`: **KEEP OPEN** — item is still active (Rule 2).
 3. If the line is `[ ]` AND the URL is NOT in `<fresh_tool_tasks>`: the item was removed from the tool (reassigned, deleted, or closed).
    - For gh items: check if the PR/issue was closed or merged via Bash: `timeout 10 gh pr view <number> --json state --jq '.state' 2>/dev/null || timeout 10 gh issue view <number> --json state --jq '.state' 2>/dev/null`
-   - If closed or merged: change to `- [x] <description> [<tool>](<url>) (<reason>)` and move to `## Resolved` (Rule 3a).
+   - If closed or merged: change to `- [x] (<tool>) <description> [<identifier>](<url>) (<reason>)` and move to `## Resolved` (Rule 3a).
    - If status check fails or item simply no longer appears: move to `## Resolved` with `(removed)` (Rule 3b).
 
 **Add new items** (from `<fresh_tool_tasks>`):
