@@ -31,8 +31,10 @@ Documentation, developer experience, and lightweight skills that help users and 
 
 ### `/donna:contribute-idea` skill
 - Interactive skill that helps users submit feature ideas or feedback
-- Checks existing GitHub Issues in pingvinen/donna for duplicates before creating
-- If duplicate found: links to the existing issue
+- Checks TWO sources for duplicates before creating a new issue:
+  1. Existing GitHub Issues in pingvinen/donna
+  2. GSD's pending todos in `.planning/STATE.md` (the "Pending Todos" section)
+- If duplicate found in either source: links to the existing issue or shows the matching todo
 - If new: helps the user create (or helps create) a GitHub Issue on pingvinen/donna
 - Replaces the original "generate pending TODOs file" idea — GitHub Issues is the right home for feedback
 
