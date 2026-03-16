@@ -7,17 +7,16 @@ const output = require("./output.cjs");
  * Each entry has categories as keys and arrays of change descriptions as values.
  */
 const CHANGELOG = {
-    // Entries will be added as versions are released.
-    // Example format:
-    // "0.6.0": {
-    //     "New skills": [
-    //         "donna:help — conversational troubleshooting",
-    //         "donna:contribute-idea — submit feature ideas and feedback",
-    //     ],
-    //     "Improvements": [
-    //         "Changelog shown during upgrades",
-    //     ],
-    // },
+    "0.5.0": {
+        "New skills": [
+            "donna:help — conversational troubleshooting and diagnostics",
+            "donna:contribute-idea — submit feature ideas via GitHub Issues",
+        ],
+        "Improvements": [
+            "CONTRIBUTING.md developer guide added",
+            "Upgrade changelog shown during version bumps",
+        ],
+    },
 };
 
 /**

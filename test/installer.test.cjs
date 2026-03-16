@@ -454,9 +454,9 @@ describe("installer - changelog integration on upgrade", () => {
         const { run } = require("../src/installer.cjs");
         const lines = await captureOutput(() => run({ homeDir: env.homeDir }));
         const out = lines.join("\n");
-        // Changelog module is called but CHANGELOG is empty, so no "What's new:" appears.
-        // This confirms no error is thrown when changelog is integrated.
+        // CHANGELOG now has a 0.5.0 entry, so upgrading from 0.0.1 should show "What's new:".
         assert.ok(out.includes("Upgrading"), "should show upgrade header");
+        assert.ok(out.includes("What's new:"), "should show changelog when upgrading to 0.5.0");
     });
 
     it("does not show What's new on fresh install", async () => {
@@ -499,7 +499,7 @@ describe("changelog - semverGt", () => {
 describe("changelog - displayChangelog", () => {
     const { displayChangelog } = require("../src/changelog.cjs");
 
-    it("does not throw with empty CHANGELOG", () => {
+    it("shows What's new for versions in range", () => {
         const lines = [];
         const orig = console.log;
         console.log = (...a) => lines.push(a.join(" "));
@@ -508,8 +508,8 @@ describe("changelog - displayChangelog", () => {
         } finally {
             console.log = orig;
         }
-        // Empty CHANGELOG = no output
+        // CHANGELOG has a 0.5.0 entry, so upgrading from 0.4.0 should show "What's new:"
         const combined = lines.join("\n");
-        assert.ok(!combined.includes("What's new:"), "should not print header for empty changelog");
+        assert.ok(combined.includes("What's new:"), "should print header when changelog has entries in range");
     });
 });
