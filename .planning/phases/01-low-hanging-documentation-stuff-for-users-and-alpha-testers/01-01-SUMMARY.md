@@ -106,6 +106,10 @@ None — no external service configuration required.
 - changelog.cjs is wired into the installer and ready to show entries when the next version ships — just add an entry to CHANGELOG in src/changelog.cjs
 - All 30 installer tests pass
 
+## Self-Check: PASSED
+
+All files verified present. All commits verified in git log.
+
 ---
 *Phase: 01-low-hanging-documentation-stuff-for-users-and-alpha-testers*
 *Completed: 2026-03-16*
