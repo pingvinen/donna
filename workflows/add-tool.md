@@ -1,7 +1,7 @@
 # Donna Add-Tool Workflow
 
 <objective>
-Declare an external CLI tool, verify its installation and authentication, learn its capabilities, and persist the result to tools.md in the storage repo.
+Declare an external tool (CLI, REST API, GraphQL API, or MCP server), verify its connectivity, learn its capabilities, and persist the result to tools.md in the storage repo.
 </objective>
 
 <step name="read-config">
@@ -98,17 +98,39 @@ What tool would you like to add? (e.g. gh, jira, kubectl)
 ```
 
 Store the answer as `<tool_name>`.
+</step>
 
-Resolve the CLI command — default to the tool name itself. If the tool name is in `<noted_tools>`, pre-fill any context from set-role notes. Use AskUserQuestion to confirm or override the CLI command:
+<step name="ask-tool-type">
+Use AskUserQuestion:
+```
+What type of tool is <tool_name>?
 
+1. CLI — runs shell commands (e.g., gh, jira, kubectl)
+2. REST API — HTTP endpoints (e.g., GitHub API, Slack API)
+3. GraphQL API — GraphQL endpoint (e.g., Linear, GitHub GraphQL)
+4. MCP server — Claude Code MCP tool (e.g., linear, postgres)
+```
+
+Store the answer as `<tool_type>`: one of `cli`, `rest`, `graphql`, `mcp`.
+
+**If type is `cli`:** Use AskUserQuestion to confirm or override the CLI command:
 ```
 CLI command for <tool_name>? (default: <tool_name>)
 ```
+If the tool name is in `<noted_tools>`, pre-fill any context from set-role notes. If the user presses enter without typing, use the default. Store the confirmed CLI command as `<command>`.
 
-If the user presses enter without typing, use the default. Store the confirmed CLI command as `<command>`.
+**If type is `rest` or `graphql`:** Use AskUserQuestion:
+```
+Base URL for <tool_name>? (e.g., https://api.github.com)
+```
+Store as `<base_url>`. Set `<command>` to `<base_url>` (for display purposes).
+
+**If type is `mcp`:** Skip the command question. Set `<command>` to `mcp`.
 </step>
 
 <step name="verify-installation">
+If `<tool_type>` is not `cli`, skip this step.
+
 Run via Bash:
 ```bash
 which <command> && echo "INSTALLED=true" || echo "INSTALLED=false"
@@ -129,6 +151,8 @@ Store the output as `<version>`. If the command does not support `--version`, st
 </step>
 
 <step name="auth-test">
+**If `<tool_type>` is `cli`:**
+
 For well-known tools, run the appropriate auth test via Bash with a 10-second timeout:
 
 - `gh`: `timeout 10 gh api user --jq '.login' 2>&1`
@@ -146,9 +170,62 @@ Fix instructions per tool:
 - `kubectl` → check your kubeconfig
 
 Continue (do not stop — user may want to save the tool despite auth issues).
+
+**If `<tool_type>` is `rest` or `graphql`:**
+
+Use AskUserQuestion to ask for the auth header name:
+```
+Auth header for <tool_name>? (e.g., Authorization, X-API-Key) Default: Authorization
+```
+Store as `<auth_header>` (default: `Authorization` if blank).
+
+Use AskUserQuestion to ask for the secret key name:
+```
+Secret key name in secrets.md for <tool_name>? (e.g., GITHUB_TOKEN, SLACK_TOKEN)
+```
+Store as `<auth_secret>`.
+
+**Set up secrets.md:**
+Read `<storage_repo>/donna/secrets.md` with the Read tool. If the file does not exist, create it with:
+```markdown
+---
+# secrets.md -- managed by user, never by donna
+# Auto-added to .gitignore
+---
+```
+
+Check if `<auth_secret>` already appears in secrets.md. If not, append a placeholder line:
+```
+<auth_secret>: REPLACE_WITH_YOUR_SECRET
+```
+
+Write the updated secrets.md.
+
+**Ensure secrets.md is gitignored:**
+Read `<storage_repo>/.gitignore` with the Read tool. If the file does not exist or does not contain `donna/secrets.md`, append `donna/secrets.md` to `.gitignore` and write back. If `.gitignore` does not exist, create it with `donna/secrets.md` as its sole content.
+
+**Validate API connectivity:**
+Read `<storage_repo>/donna/secrets.md` to get the current value for `<auth_secret>`. If the value is `REPLACE_WITH_YOUR_SECRET` or the key is absent, print:
+```
+! No secret set for <auth_secret> — edit donna/secrets.md before testing connectivity.
+```
+Skip validation.
+
+If a real secret value exists, run via Bash:
+```bash
+curl -s -o /dev/null -w "%{http_code}" -H "<auth_header>: <resolved_secret>" <base_url> 2>&1
+```
+- 200-299: print `✓ API reachable at <base_url>`
+- 401/403: print `! Authentication failed — check <auth_secret> in donna/secrets.md`
+- Other/timeout: print `! Could not reach <base_url>`
+
+**If `<tool_type>` is `mcp`:**
+Print `ℹ MCP server auth is managed in Claude Code settings. Skipping auth test.`
 </step>
 
 <step name="ask-scope">
+**If `<tool_type>` is `cli`:**
+
 Ask the user to define the scope/context for this tool. Different tools need different scope:
 
 - **gh**: Which GitHub orgs or repos to pull from (e.g., `mycompany`, `mycompany/api mycompany/web`)
@@ -163,10 +240,28 @@ What scope should Donna use for <tool_name>?
 Leave blank for no filtering.
 ```
 
+**If `<tool_type>` is `rest` or `graphql`:**
+
+Use AskUserQuestion:
+```
+What scope should Donna use for <tool_name>? (e.g., specific endpoints or resource filters to apply)
+Leave blank for no filtering.
+```
+
+**If `<tool_type>` is `mcp`:**
+
+Use AskUserQuestion:
+```
+What scope should Donna use for <tool_name>? (e.g., specific resources to monitor)
+Leave blank for no filtering.
+```
+
 Store the answer as `<scope>`. If blank, set to empty string.
 </step>
 
 <step name="learn-capabilities">
+**If `<tool_type>` is `cli`:**
+
 Determine if the tool is well-known (gh, jira, kubectl) or unknown. For well-known tools, synthesize capabilities from training data. Do NOT parse --help for well-known tools.
 
 **gh (GitHub CLI) — training data baseline:**
@@ -193,6 +288,47 @@ If `<scope>` is set, replace `--all-namespaces` with `-n <namespace>` for each n
 
 For **unknown tools**, run `<command> --help 2>&1 | head -80` via Bash and use Claude's understanding to identify 3–5 capabilities relevant to daily task management. If `<scope>` is set, incorporate the scope into the CLI invocations where appropriate. Format each as `name: <cli invocation>`.
 
+**If `<tool_type>` is `rest`:**
+
+Use AskUserQuestion:
+```
+Define capabilities for <tool_name>. Each capability is a name and HTTP method + path.
+Format: <name>: <METHOD> /path?params
+
+Examples:
+- list-issues: GET /repos/{owner}/{repo}/issues?state=open
+- my-profile: GET /user
+
+Enter capabilities (one per line, blank line when done):
+```
+
+**If `<tool_type>` is `graphql`:**
+
+Use AskUserQuestion:
+```
+Define capabilities for <tool_name>. Each capability is a name and a GraphQL query (single line).
+Format: <name>: query { ... }
+
+Examples:
+- my-issues: query { viewer { issues(first: 20, states: OPEN) { nodes { title url } } } }
+
+Enter capabilities (one per line, blank line when done):
+```
+
+**If `<tool_type>` is `mcp`:**
+
+Use AskUserQuestion:
+```
+Define capabilities for <tool_name>. Each capability is a name and an MCP tool reference.
+Format: <name>: mcp:<server_name>/<tool_name>
+
+Examples:
+- list-issues: mcp:linear/list_issues
+- search-docs: mcp:notion/search
+
+Enter capabilities (one per line, blank line when done):
+```
+
 Store the full list as `<available_capabilities>`.
 </step>
 
@@ -216,7 +352,9 @@ Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not ex
 ---
 ```
 
-Upsert (not overwrite) the tool's section. Each tool section has this format:
+Upsert (not overwrite) the tool's section. Each tool section has a type-specific format:
+
+**CLI tools:**
 ```markdown
 ## <tool_name>
 
@@ -229,6 +367,47 @@ Upsert (not overwrite) the tool's section. Each tool section has this format:
 
 ### Capabilities
 - <capability_name>: <cli_invocation>
+```
+
+**REST API tools:**
+```markdown
+## <tool_name>
+
+- type: rest
+- base_url: <base_url>
+- auth_header: <auth_header>
+- auth_secret: <auth_secret>
+- scope: <scope or "none">
+- learned: <today's date YYYY-MM-DD>
+
+### Capabilities
+- <capability_name>: <METHOD> /path
+```
+
+**GraphQL API tools:**
+```markdown
+## <tool_name>
+
+- type: graphql
+- base_url: <base_url>
+- auth_header: <auth_header>
+- auth_secret: <auth_secret>
+- scope: <scope or "none">
+- learned: <today's date YYYY-MM-DD>
+
+### Capabilities
+- <capability_name>: <graphql_query>
+```
+
+**MCP server tools:**
+```markdown
+## <tool_name>
+
+- type: mcp
+- learned: <today's date YYYY-MM-DD>
+
+### Capabilities
+- <capability_name>: mcp:<server>/<tool>
 ```
 
 If a section for this tool already exists in tools.md, replace it entirely. Write the full file back with the Write tool. Preserve all other tool sections unchanged.
@@ -259,6 +438,8 @@ git -C <storage_repo> push
 </step>
 
 <step name="confirm">
+**If `<tool_type>` is `cli`:**
+
 Print:
 ```
 ✓ Added <tool_name> to tools registry
@@ -266,6 +447,29 @@ Print:
   Version: <version>
   Capabilities: <count> configured
 
+  Run /donna:begin-the-day to see tool data in your daily brief.
+```
+
+**If `<tool_type>` is `rest` or `graphql`:**
+
+Print:
+```
+✓ Added <tool_name> to tools registry (type: <tool_type>)
+  Base URL: <base_url>
+  Capabilities: <count> configured
+  Secrets: Edit donna/secrets.md to set <auth_secret>
+
+  Run /donna:begin-the-day to see tool data in your daily brief.
+```
+
+**If `<tool_type>` is `mcp`:**
+
+Print:
+```
+✓ Added <tool_name> to tools registry (type: mcp)
+  Capabilities: <count> configured
+
+  Ensure the MCP server is configured in Claude Code settings.
   Run /donna:begin-the-day to see tool data in your daily brief.
 ```
 
