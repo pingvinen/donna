@@ -11,9 +11,9 @@
 - Daily files go in a flat folder (e.g., `daily/`) — Obsidian Calendar plugin is folder-sensitive.
 
 ## Development Approach
-- **Deployment first:** Build the full packaging/distribution/CI pipeline before adding real features. Every phase must produce distributable artifacts.
 - **Real skills, not throwaway dummies:** When a placeholder is needed to prove the pipeline, stub a real skill — don't create a dummy skill that needs cleanup later.
 - **No formal milestones:** Work from a backlog, ship what's important. Releases happen organically when enough value has accumulated. Archive completed phase artifacts periodically for context hygiene, not as milestone ceremony.
+- **Run code linting:** PR validation runs a linting check, so make sure to run `npm run lint:fix` before committing.
 
 ## Version & Dependency Checks
 - Never assume a dependency or tool version is "the latest" based on training data. Always verify against the authoritative source (GitHub releases, npm registry, etc.).
@@ -23,3 +23,4 @@
 - **No git commit/push from subagents:** Git operations that require signing (commit, push) must run in the main conversation context. Subagents can stage files but must leave committing to the orchestrator. (Commit signing tools like 1Password require interactive approval that hangs in subprocesses.)
 - **Push main before phase execution:** Planning/research artifacts are committed on main. Before creating a feature branch for execution, ensure main is pushed to origin so metadata is available remotely.
 - **PR assignment:** Always include `--assignee @me` when creating pull requests with `gh pr create`.
+- **PR titles:** Must follow conventional commits with `<type>(<scope>): <description>` where `scope` is the GSD phase number.
