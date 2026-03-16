@@ -10,7 +10,13 @@ const stubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "setup.
 const workflowPath = path.join(projectRoot, "workflows", "setup.md");
 const addToolStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "add-tool.md");
 const addToolWorkflowPath = path.join(projectRoot, "workflows", "add-tool.md");
-const relearnToolsStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "relearn-tools.md");
+const relearnToolsStubPath = path.join(
+    projectRoot,
+    "stubs",
+    "claude-code",
+    "donna",
+    "relearn-tools.md",
+);
 const relearnToolsWorkflowPath = path.join(projectRoot, "workflows", "relearn-tools.md");
 const runToolsStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "run-tools.md");
 const runToolsWorkflowPath = path.join(projectRoot, "workflows", "run-tools.md");
@@ -778,10 +784,7 @@ describe("workflow: workflows/run-tools.md", () => {
 
     it("contains smart-merge step", () => {
         const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
-        assert.ok(
-            content.includes("smart-merge"),
-            "Should contain smart-merge step",
-        );
+        assert.ok(content.includes("smart-merge"), "Should contain smart-merge step");
     });
 
     it('references "## From Tools" section format', () => {
@@ -794,10 +797,7 @@ describe("workflow: workflows/run-tools.md", () => {
 
     it('references "## Resolved" section format', () => {
         const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
-        assert.ok(
-            content.includes("## Resolved"),
-            "Should reference ## Resolved section format",
-        );
+        assert.ok(content.includes("## Resolved"), "Should reference ## Resolved section format");
     });
 
     it("contains timeout for failure isolation", () => {
@@ -908,10 +908,7 @@ describe("cross-cutting: add-tool scope", () => {
 
     it("stores scope in tools.md", () => {
         const content = fs.readFileSync(addToolWorkflowPath, "utf8");
-        assert.ok(
-            content.includes("- scope:"),
-            "add-tool should persist scope field in tools.md",
-        );
+        assert.ok(content.includes("- scope:"), "add-tool should persist scope field in tools.md");
     });
 });
 
