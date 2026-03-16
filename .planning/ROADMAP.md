@@ -24,7 +24,7 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1. Packaging and Distribution | 4/4 | Complete   | 2026-03-16 | 2026-03-14 |
-| 2. Foundation and Capture | v1.0 | 2/2 | Complete | 2026-03-14 |
+| 2. Foundation and Capture | 1/4 | In Progress|  | 2026-03-14 |
 | 3. Role Awareness and Daily Rhythm | v1.0 | 2/2 | Complete | 2026-03-15 |
 | 3.1 Standing Files Subfolder | v1.0 | 4/4 | Complete | 2026-03-15 |
 | 4. External Tool Enrichment | v1.0 | 3/3 | Complete | 2026-03-15 |
@@ -47,7 +47,7 @@ Plans:
 **Goal:** Expand the tool system — parallelize tool capability commands for faster data pulls, add an adjust-tool skill for iterative tool configuration refinement, and support non-CLI tools (APIs and MCP servers)
 **Requirements**: TOOL-01 (parallel execution), TOOL-02 (type field + migration), TOOL-03 (REST API support), TOOL-04 (GraphQL API support), TOOL-05 (MCP server support), TOOL-06 (secrets.md), TOOL-07 (adjust-tool skill), TOOL-08 (installer + tests)
 **Depends on:** Phase 1
-**Plans:** 4 plans
+**Plans:** 1/4 plans executed
 
 Plans:
 - [ ] 02-01-PLAN.md — Schema foundation: migration 003 + type field backfill handler in workflows

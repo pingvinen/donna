@@ -20,6 +20,14 @@ const relearnToolsStubPath = path.join(
 const relearnToolsWorkflowPath = path.join(projectRoot, "workflows", "relearn-tools.md");
 const runToolsStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "run-tools.md");
 const runToolsWorkflowPath = path.join(projectRoot, "workflows", "run-tools.md");
+const adjustToolStubPath = path.join(
+    projectRoot,
+    "stubs",
+    "claude-code",
+    "donna",
+    "adjust-tool.md",
+);
+const adjustToolWorkflowPath = path.join(projectRoot, "workflows", "adjust-tool.md");
 
 describe("stub: stubs/claude-code/donna/setup.md", () => {
     it("exists", () => {
@@ -1193,6 +1201,58 @@ describe("cross-cutting: installer skill list", () => {
         assert.ok(
             content.includes("run-tools"),
             "Installer success message should include run-tools skill",
+        );
+    });
+
+    it('success message includes "adjust-tool"', () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("adjust-tool"),
+            "Installer success message should include adjust-tool skill",
+        );
+    });
+});
+
+describe("stub: stubs/claude-code/donna/adjust-tool.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(adjustToolStubPath), "Stub file should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:adjust-tool"', () => {
+        const content = fs.readFileSync(adjustToolStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:adjust-tool"),
+            "Should have name: donna:adjust-tool in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(adjustToolStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field in frontmatter");
+    });
+
+    it("contains @~/.donna/workflows/adjust-tool.md reference", () => {
+        const content = fs.readFileSync(adjustToolStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/adjust-tool.md"),
+            "Should reference @~/.donna/workflows/adjust-tool.md",
+        );
+    });
+});
+
+describe("workflow: workflows/adjust-tool.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(adjustToolWorkflowPath), "Workflow file should exist");
+    });
+
+    it("has step structure", () => {
+        const content = fs.readFileSync(adjustToolWorkflowPath, "utf8");
+        assert.ok(content.includes('step name="read-config"'), "Should have read-config step");
+        assert.ok(content.includes('step name="select-tool"'), "Should have select-tool step");
+        assert.ok(
+            content.includes('step name="ask-what-to-change"'),
+            "Should have ask-what-to-change step",
         );
     });
 });

@@ -117,6 +117,14 @@ describe("installer - fresh install", () => {
         assert.ok(output.includes("\u2713"), "should print success checkmarks");
     });
 
+    it("mentions adjust-tool in success output", async () => {
+        const { run } = require("../src/installer.cjs");
+        const lines = await captureOutput(() => run({ homeDir: env.homeDir }));
+        const skillLine = lines.find((l) => l.includes("Copied donna skills"));
+        assert.ok(skillLine, "Should have a skill copy success line");
+        assert.ok(skillLine.includes("adjust-tool"), "Should mention adjust-tool in skill list");
+    });
+
     it("migration 002 creates state.md with pending_migrations", async () => {
         const { run } = require("../src/installer.cjs");
         await captureOutput(() => run({ homeDir: env.homeDir }));
