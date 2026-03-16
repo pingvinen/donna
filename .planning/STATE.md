@@ -116,6 +116,7 @@ Recent decisions affecting current work:
 - Interactive help skill with troubleshooting and issue reporting (general)
 - Generate user-facing pending TODOs list after phase execution (tooling)
 - Add adjust-tool skill for iterative tool configuration refinement (tooling)
+- Add task priority and sorting configuration for daily briefs (general)
 
 ### Roadmap Evolution
 
