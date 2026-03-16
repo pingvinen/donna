@@ -41,3 +41,13 @@ Plans:
 - [x] 01-02-PLAN.md — donna:help and donna:contribute-idea skills (stubs + workflows)
 - [x] 01-03-PLAN.md — Integration wiring (README, installer skill list, test coverage)
 - [ ] 01-04-PLAN.md — Gap closure: GSD workflow in CONTRIBUTING.md + populate 0.5.0 changelog
+
+### Phase 2: Tooling Improvements
+
+**Goal:** Harden the upgrade and release pipeline — clean up removed files on upgrade, comment on PRs after release with version number, add daily version check with state tracking, and parallelize tool capability commands for faster data pulls
+**Requirements**: TBD
+**Depends on:** Phase 1
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 2 to break down)
