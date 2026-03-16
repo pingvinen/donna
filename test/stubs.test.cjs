@@ -912,9 +912,245 @@ describe("cross-cutting: add-tool scope", () => {
     });
 });
 
+// ─── help stub ────────────────────────────────────────────────────────────────
+
+const helpStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "help.md");
+const helpWorkflowPath = path.join(projectRoot, "workflows", "help.md");
+const contributeIdeaStubPath = path.join(
+    projectRoot,
+    "stubs",
+    "claude-code",
+    "donna",
+    "contribute-idea.md",
+);
+const contributeIdeaWorkflowPath = path.join(projectRoot, "workflows", "contribute-idea.md");
+
+describe("stub: stubs/claude-code/donna/help.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(helpStubPath), "help stub should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:help"', () => {
+        const content = fs.readFileSync(helpStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(content.includes("name: donna:help"), "Should have name: donna:help in frontmatter");
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(helpStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field");
+    });
+
+    it("has Read in allowed-tools", () => {
+        const content = fs.readFileSync(helpStubPath, "utf8");
+        assert.ok(content.includes("- Read"), "Should have Read in allowed-tools");
+    });
+
+    it("has Bash in allowed-tools", () => {
+        const content = fs.readFileSync(helpStubPath, "utf8");
+        assert.ok(content.includes("- Bash"), "Should have Bash in allowed-tools");
+    });
+
+    it("has AskUserQuestion in allowed-tools", () => {
+        const content = fs.readFileSync(helpStubPath, "utf8");
+        assert.ok(content.includes("- AskUserQuestion"), "Should have AskUserQuestion in allowed-tools");
+    });
+
+    it("does NOT have Write in allowed-tools (read-only skill)", () => {
+        const content = fs.readFileSync(helpStubPath, "utf8");
+        assert.ok(!content.includes("- Write"), "Should NOT have Write — help is read-only");
+    });
+
+    it("contains @~/.donna/workflows/help.md reference", () => {
+        const content = fs.readFileSync(helpStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/help.md"),
+            "Should reference @~/.donna/workflows/help.md",
+        );
+    });
+});
+
+describe("workflow: workflows/help.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(helpWorkflowPath), "help workflow should exist");
+    });
+
+    it("contains Donna banner reference", () => {
+        const content = fs.readFileSync(helpWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("Donna") && content.includes("Help"),
+            "Should contain Donna Help banner",
+        );
+    });
+
+    it("references config/donna/config.md", () => {
+        const content = fs.readFileSync(helpWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("config/donna/config.md"),
+            "Should reference config/donna/config.md",
+        );
+    });
+
+    it("uses AskUserQuestion for interactive diagnostics", () => {
+        const content = fs.readFileSync(helpWorkflowPath, "utf8");
+        assert.ok(content.includes("AskUserQuestion"), "Should use AskUserQuestion");
+    });
+
+    it("inspects donna tools.md for tool diagnostics", () => {
+        const content = fs.readFileSync(helpWorkflowPath, "utf8");
+        assert.ok(content.includes("tools.md"), "Should reference tools.md for diagnostics");
+    });
+
+    it("does NOT contain git commit (read-only skill)", () => {
+        const content = fs.readFileSync(helpWorkflowPath, "utf8");
+        assert.ok(
+            !content.includes("git commit"),
+            "Should NOT contain git commit — help is read-only",
+        );
+    });
+});
+
+// ─── contribute-idea stub ─────────────────────────────────────────────────────
+
+describe("stub: stubs/claude-code/donna/contribute-idea.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(contributeIdeaStubPath), "contribute-idea stub should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:contribute-idea"', () => {
+        const content = fs.readFileSync(contributeIdeaStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:contribute-idea"),
+            "Should have name: donna:contribute-idea in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(contributeIdeaStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field");
+    });
+
+    it("has Read in allowed-tools", () => {
+        const content = fs.readFileSync(contributeIdeaStubPath, "utf8");
+        assert.ok(content.includes("- Read"), "Should have Read in allowed-tools");
+    });
+
+    it("has Bash in allowed-tools", () => {
+        const content = fs.readFileSync(contributeIdeaStubPath, "utf8");
+        assert.ok(content.includes("- Bash"), "Should have Bash in allowed-tools");
+    });
+
+    it("has AskUserQuestion in allowed-tools", () => {
+        const content = fs.readFileSync(contributeIdeaStubPath, "utf8");
+        assert.ok(
+            content.includes("- AskUserQuestion"),
+            "Should have AskUserQuestion in allowed-tools",
+        );
+    });
+
+    it("does NOT have Write in allowed-tools (read-only skill)", () => {
+        const content = fs.readFileSync(contributeIdeaStubPath, "utf8");
+        assert.ok(
+            !content.includes("- Write"),
+            "Should NOT have Write — contribute-idea is read-only",
+        );
+    });
+
+    it("contains @~/.donna/workflows/contribute-idea.md reference", () => {
+        const content = fs.readFileSync(contributeIdeaStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/contribute-idea.md"),
+            "Should reference @~/.donna/workflows/contribute-idea.md",
+        );
+    });
+});
+
+describe("workflow: workflows/contribute-idea.md", () => {
+    it("exists", () => {
+        assert.ok(
+            fs.existsSync(contributeIdeaWorkflowPath),
+            "contribute-idea workflow should exist",
+        );
+    });
+
+    it("contains Donna banner reference", () => {
+        const content = fs.readFileSync(contributeIdeaWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("Donna") && content.includes("Contribute"),
+            "Should contain Donna Contribute Idea banner",
+        );
+    });
+
+    it("checks gh auth status", () => {
+        const content = fs.readFileSync(contributeIdeaWorkflowPath, "utf8");
+        assert.ok(content.includes("gh auth status"), "Should check gh auth status");
+    });
+
+    it("searches GitHub Issues for duplicates", () => {
+        const content = fs.readFileSync(contributeIdeaWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("gh issue list") && content.includes("pingvinen/donna"),
+            "Should search GitHub Issues in pingvinen/donna",
+        );
+    });
+
+    it("fetches STATE.md from GitHub for pending todos", () => {
+        const content = fs.readFileSync(contributeIdeaWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("gh api repos/pingvinen/donna"),
+            "Should fetch STATE.md via gh api",
+        );
+    });
+
+    it("uses jq @base64d for decoding (avoids platform base64 issues)", () => {
+        const content = fs.readFileSync(contributeIdeaWorkflowPath, "utf8");
+        assert.ok(content.includes("@base64d"), "Should use jq @base64d for decoding");
+    });
+
+    it("creates issues via gh issue create", () => {
+        const content = fs.readFileSync(contributeIdeaWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("gh issue create") && content.includes("pingvinen/donna"),
+            "Should create issues in pingvinen/donna",
+        );
+    });
+
+    it("uses AskUserQuestion for interactive flow", () => {
+        const content = fs.readFileSync(contributeIdeaWorkflowPath, "utf8");
+        assert.ok(content.includes("AskUserQuestion"), "Should use AskUserQuestion");
+    });
+
+    it("does NOT contain git commit (read-only skill)", () => {
+        const content = fs.readFileSync(contributeIdeaWorkflowPath, "utf8");
+        assert.ok(
+            !(content.includes("git") && content.includes("commit")),
+            "Should NOT contain git commit — contribute-idea is read-only",
+        );
+    });
+});
+
 // ─── cross-cutting: installer skill list ─────────────────────────────────────
 
 const installerPath = path.join(projectRoot, "src", "installer.cjs");
+
+describe("cross-cutting: installer skill list (new skills)", () => {
+    it('success message includes "help"', () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("help"),
+            "Installer success message should include help skill",
+        );
+    });
+
+    it('success message includes "contribute-idea"', () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("contribute-idea"),
+            "Installer success message should include contribute-idea skill",
+        );
+    });
+});
 
 describe("cross-cutting: installer skill list", () => {
     it('success message includes "set-role"', () => {
