@@ -43,16 +43,13 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 - Clean up removed files on upgrade (tooling)
 - Comment on PRs after release with version number (tooling)
-- Document how a developer of Donna can test things locally (docs)
 - Evaluate natural language input as alternative to slash commands (general)
-- Make changelog more compact and human friendly (tooling)
+- Handle timezone changes in daily files (general)
 - Support non-CLI tools — APIs and MCP servers (tooling)
-- User-facing changelog for package updates (tooling)
-- Interactive help skill with troubleshooting and issue reporting (general)
-- Generate user-facing pending TODOs list after phase execution (tooling)
+- Parallelize tool capability commands for faster data pulls (tooling)
 - Add adjust-tool skill for iterative tool configuration refinement (tooling)
 - Add task priority and sorting configuration for daily briefs (general)
-- Bug: set-role noted-tools not persisted to disk — add-tool batch-configure mode never triggers (bug)
+- Check for new Donna version once per day (tooling)
 
 ### Roadmap Evolution
 
