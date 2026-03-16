@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: resolved
 phase: 01-low-hanging-documentation-stuff-for-users-and-alpha-testers
 source: 01-01-SUMMARY.md, 01-02-SUMMARY.md, 01-03-SUMMARY.md
 started: 2026-03-16T17:00:00Z
-updated: 2026-03-16T17:10:00Z
+updated: 2026-03-16T18:00:00Z
 ---
 
 ## Current Test
@@ -51,7 +51,7 @@ skipped: 0
 ## Gaps
 
 - truth: "CONTRIBUTING.md covers all aspects of contributing including GSD workflow and no-milestones approach"
-  status: failed
+  status: resolved
   reason: "User reported: It looks good, but it completely ignores GSD, which is kind of a core tool for this project. It should cover that this project makes heavy use of GSD and that we do not use milestones."
   severity: major
   test: 1
@@ -65,7 +65,7 @@ skipped: 0
   debug_session: ".planning/debug/contributing-missing-gsd.md"
 
 - truth: "Installer upgrade path shows 'What's new:' changelog section when upgrading between versions"
-  status: failed
+  status: resolved
   reason: "User reported: Did not do what you said it should: upgrade output shows skill list but no 'What's new:' changelog section on upgrade from 0.4.0 → 0.5.0"
   severity: major
   test: 3
