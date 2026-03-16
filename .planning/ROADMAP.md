@@ -23,7 +23,7 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 1. Packaging and Distribution | 3/3 | Complete   | 2026-03-16 | 2026-03-14 |
+| 1. Packaging and Distribution | 4/4 | Complete   | 2026-03-16 | 2026-03-14 |
 | 2. Foundation and Capture | v1.0 | 2/2 | Complete | 2026-03-14 |
 | 3. Role Awareness and Daily Rhythm | v1.0 | 2/2 | Complete | 2026-03-15 |
 | 3.1 Standing Files Subfolder | v1.0 | 4/4 | Complete | 2026-03-15 |
@@ -34,7 +34,7 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 **Goal:** Add developer documentation (CONTRIBUTING.md), human-friendly upgrade changelog in the installer, and two new skills (donna:help for troubleshooting, donna:contribute-idea for feedback via GitHub Issues)
 **Requirements**: DOC-01 (CONTRIBUTING.md), DOC-02 (installer changelog), DOC-03 (donna:help skill), DOC-04 (donna:contribute-idea skill)
 **Depends on:** Phase 0
-**Plans:** 4 plans (3 complete + 1 gap closure)
+**Plans:** 4/4 plans complete
 
 Plans:
 - [x] 01-01-PLAN.md — CONTRIBUTING.md and installer changelog system

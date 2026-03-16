@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-03-16T16:49:44.937Z"
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-03-16T17:22:34.967Z"
 progress:
   total_phases: 1
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 4
+  completed_plans: 4
 ---
 
 # Project State
@@ -37,6 +37,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - [Phase 01]: displayChangelog called after upgradeHeader and before migrations in upgrade block
 - [Phase 01]: donna:help and donna:contribute-idea skills: both read-only, use AskUserQuestion for interactive workflows, contribute-idea uses gh api with @base64d for cross-platform STATE.md fetching
 - [Phase 01]: test assertion for help workflow git commit check uses literal 'git commit' substring to avoid false positive on 'uncommitted changes' text
+- [Phase 01]: displayChangelog unit test updated: test imported real CHANGELOG constant (not isolated empty state), so assertion had to flip from 'no output' to 'shows output' after 0.5.0 entry was populated
 
 ### Pending Todos
 
@@ -60,6 +61,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-16T16:44:10.809Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-03-16T17:22:34.965Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None
