@@ -435,3 +435,81 @@ describe("bin/donna-assistant", () => {
         assert.ok(isExecutable, "should be executable");
     });
 });
+
+describe("installer - changelog integration on upgrade", () => {
+    let env;
+
+    beforeEach(() => {
+        env = makeTempHome({
+            withClaude: true,
+            withVersion: { version: "0.0.1", lastMigration: 0 },
+        });
+    });
+
+    afterEach(() => {
+        env.cleanup();
+    });
+
+    it("calls changelog display during upgrade without throwing", async () => {
+        const { run } = require("../src/installer.cjs");
+        const lines = await captureOutput(() => run({ homeDir: env.homeDir }));
+        const out = lines.join("\n");
+        // Changelog module is called but CHANGELOG is empty, so no "What's new:" appears.
+        // This confirms no error is thrown when changelog is integrated.
+        assert.ok(out.includes("Upgrading"), "should show upgrade header");
+    });
+
+    it("does not show What's new on fresh install", async () => {
+        const freshEnv = makeTempHome({ withClaude: true });
+        try {
+            const { run } = require("../src/installer.cjs");
+            const lines = await captureOutput(() => run({ homeDir: freshEnv.homeDir }));
+            const out = lines.join("\n");
+            assert.ok(!out.includes("What's new:"), "fresh install should not show changelog");
+        } finally {
+            freshEnv.cleanup();
+        }
+    });
+});
+
+describe("changelog - semverGt", () => {
+    const { semverGt } = require("../src/changelog.cjs");
+
+    it("returns true when a > b", () => {
+        assert.equal(semverGt("0.5.0", "0.4.0"), true);
+    });
+
+    it("returns false when a < b", () => {
+        assert.equal(semverGt("0.4.0", "0.5.0"), false);
+    });
+
+    it("returns false when a === b", () => {
+        assert.equal(semverGt("0.5.0", "0.5.0"), false);
+    });
+
+    it("handles major version differences", () => {
+        assert.equal(semverGt("1.0.0", "0.9.9"), true);
+    });
+
+    it("handles patch version differences", () => {
+        assert.equal(semverGt("0.5.1", "0.5.0"), true);
+    });
+});
+
+describe("changelog - displayChangelog", () => {
+    const { displayChangelog } = require("../src/changelog.cjs");
+
+    it("does not throw with empty CHANGELOG", () => {
+        const lines = [];
+        const orig = console.log;
+        console.log = (...a) => lines.push(a.join(" "));
+        try {
+            displayChangelog("0.4.0", "0.5.0");
+        } finally {
+            console.log = orig;
+        }
+        // Empty CHANGELOG = no output
+        const combined = lines.join("\n");
+        assert.ok(!combined.includes("What's new:"), "should not print header for empty changelog");
+    });
+});
