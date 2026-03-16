@@ -45,9 +45,12 @@ Plans:
 ### Phase 2: Tool System Enhancements
 
 **Goal:** Expand the tool system — parallelize tool capability commands for faster data pulls, add an adjust-tool skill for iterative tool configuration refinement, and support non-CLI tools (APIs and MCP servers)
-**Requirements**: TBD
+**Requirements**: TOOL-01 (parallel execution), TOOL-02 (type field + migration), TOOL-03 (REST API support), TOOL-04 (GraphQL API support), TOOL-05 (MCP server support), TOOL-06 (secrets.md), TOOL-07 (adjust-tool skill), TOOL-08 (installer + tests)
 **Depends on:** Phase 1
-**Plans:** 0 plans
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 2 to break down)
+- [ ] 02-01-PLAN.md — Schema foundation: migration 003 + type field backfill handler in workflows
+- [ ] 02-02-PLAN.md — adjust-tool skill: stub, workflow, installer registration, tests
+- [ ] 02-03-PLAN.md — Non-CLI tool registration: REST/GraphQL/MCP in add-tool + secrets.md
+- [ ] 02-04-PLAN.md — Parallel execution + type-aware runtime in begin-the-day/run-tools + README
