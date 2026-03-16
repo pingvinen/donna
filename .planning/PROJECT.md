@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A suite of Claude Code skills that act as a personal assistant for professionals. The system is role-aware (job role and recurring responsibilities configured via a setup skill), stores all state in markdown files in a user-chosen GitHub repository, and helps the user stay on top of tasks that fall outside of Jira — 1:1 follow-ups, stakeholder asks, async nudges, and self-initiated work that would otherwise be forgotten.
+A suite of Claude Code skills that act as a personal assistant for professionals. Donna is role-aware (job role and recurring responsibilities configured via interactive setup), stores all state in markdown files in a user-chosen GitHub repository, and helps users stay on top of tasks that fall outside of Jira — 1:1 follow-ups, stakeholder asks, async nudges, and self-initiated work that would otherwise be forgotten. It includes 8 skills covering setup, task capture, role definition, daily planning, and external tool integration, distributed as an npm package with a full CI/CD pipeline.
 
 ## Core Value
 
@@ -12,37 +12,47 @@ Never forget an important task again — the assistant knows your role, surfaces
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ npm package with installer (`npx @pingvinen/donna-assistant`) — v1.0
+- ✓ Version tracking and cumulative migration system — v1.0
+- ✓ `/donna:setup` skill — interactive config, storage repo init, bootstrap config — v1.0
+- ✓ `/donna:set-role` skill — role definition with web research agent, recurring task suggestions, tool suggestions — v1.0
+- ✓ `/donna:add-tool` skill — declare CLI tools, auto-learn capabilities, store in tools.md — v1.0
+- ✓ `/donna:begin-the-day` skill — carry-forward, recurring tasks, external tool data, idempotent — v1.0
+- ✓ `/donna:add-task` skill — quick task capture with git commit — v1.0
+- ✓ `/donna:done` skill — mark tasks complete with fuzzy matching — v1.0
+- ✓ `/donna:relearn-tools` skill — version-aware tool re-learning — v1.0
+- ✓ `/donna:refresh-tools` skill — pull fresh data from configured tools — v1.0
+- ✓ Recurring task engine surfaced by begin-the-day — v1.0
+- ✓ Hybrid storage (daily journals + standing files in donna/ subfolder) — v1.0
+- ✓ Git-backed persistence — every skill commits after writing — v1.0
+- ✓ User-declared tools with auto-learning (no hardcoded integrations) — v1.0
+- ✓ CI/CD pipeline — PR validation, release creation, npm publish with OIDC provenance — v1.0
+- ✓ Standing files subfolder with seamless migration for existing users — v1.0
 
 ### Active
 
-- [ ] npm package with installer (`npx donna-install`) — detects providers, copies stubs + shared runtime
-- [ ] Version tracking (`~/.donna/version.md`) and migration system — upgrades from any previous version
-- [ ] `/donna:setup` skill — first-time configuration: link git repo, initialize file structure
-- [ ] `/donna:set-role` skill — define job role, trigger research agent to surface typical responsibilities and commonly used tools, propose recurring tasks and tools for approval, store research as reference
-- [ ] `/donna:add-tool` skill — declare available tools by name; Claude learns the tool (reads help output or uses training data) and stores knowledge in `tools.md`
-- [ ] `/donna:begin-the-day` skill — morning routine: carry forward unfinished tasks from yesterday, surface recurring tasks due today, spawn parallel agents to pull data from each configured tool
-- [ ] `/donna:add-task` skill — quickly capture a task, follow-up, or note
-- [ ] Recurring task engine — tasks with interval definitions (e.g. "refine backlog every Monday"), surfaced by `begin-the-day`
-- [ ] Hybrid storage structure — daily journal files (`daily/YYYY-MM-DD.md`) + standing files (`role.md`, `role-research.md`, `recurring.md`, `tools.md`, `people.md`, `config.md`)
-- [ ] Git-backed persistence — all state committed to user's chosen GitHub repo after each skill run
-- [ ] User-declared tools — user tells Donna which CLI tools are available; Donna learns them and invokes them as needed (no hardcoded integrations)
+- [ ] `/donna:log-meeting` — capture meeting participants, decisions, and follow-ups
+- [ ] `/donna:next` — AI-reasoned recommendation of what to work on now
+- [ ] `/donna:end-the-day` — close out the day, mark remaining tasks as carried forward
+- [ ] Advanced recurring tasks with named intervals and completion tracking
+- [ ] People tracking (`people.md`) for 1:1 follow-up management
 
 ### Out of Scope
 
 - Hardcoded job roles — the role is always user-defined, never assumed
 - Real-time notifications — this is a pull model (user invokes skills), not push
-- A UI or web interface — Claude Code terminal only
+- A UI or web interface — Claude Code terminal only (Obsidian provides free UI for storage repo)
 - Replacing Jira — this complements ticketing systems, doesn't compete with them
-- `/donna:log-meeting` — deferred; may return in a future milestone
-- `/donna:next` — deferred; requires accumulated data to be valuable
+- Natural language date parsing — explicit intervals are simpler and more reliable
 
 ## Context
 
-- Directly inspired by the get-shit-done (GSD) Claude Code skill suite — same philosophy: slash commands that do one thing well, stored state that survives context resets, research agents, structured markdown output
-- Target user is a professional whose job generates many obligations outside of formal task tracking (1:1 follow-ups, stakeholder requests, recurring process work)
-- Storage is a git repo of the user's choice — could be private, could be shared — giving durability and version history
-- The role research pattern mirrors GSD's project researcher: spawn an agent, search the web for "what does a [role] actually do day-to-day?", synthesize findings, propose recurring tasks, store research for reference
+Shipped v1.0 with ~4,278 LOC across 46 files (TypeScript/CJS + workflow markdown).
+Tech stack: Node.js CJS modules, GitHub Actions CI/CD, OIDC npm publishing.
+8 skills: setup, set-role, add-task, done, begin-the-day, add-tool, relearn-tools, refresh-tools.
+Storage: hybrid daily journals + standing files in user's git repo.
+Distribution: `npx @pingvinen/donna-assistant` with cumulative migration system.
+Alpha testers using the package. Developed on personal machine, deployed to work laptop.
 
 ## Constraints
 
@@ -50,27 +60,31 @@ Never forget an important task again — the assistant knows your role, surfaces
 - **Storage**: Markdown files in git — no databases, no external services beyond what the user already has
 - **Dependencies**: No required external tools — user declares tools via `/donna:add-tool`, all are optional
 - **Style**: Follow GSD's aesthetic and structural patterns — banners, AskUserQuestion for interactive flows, agent spawning indicators, committed state at each step
-- **SSH signing**: User has commit signing and SSH via 1Password — git commits and pushes trigger an interactive unlock prompt. All git operations (commit, push) must happen in the main conversation context where the user can interact with the prompt, never from subagents or background processes
-- **Token resilience**: Sessions can be interrupted by token exhaustion mid-work. Skills should stage changes (`git add`) early and often so work is recoverable. Commits should happen at natural checkpoints, not only at the end of a skill run
+- **Obsidian compatibility**: All files must be plain markdown with YAML frontmatter in standard folders — users can open as Obsidian vaults for free UI
+- **SSH signing**: Git commits/pushes trigger 1Password unlock — must run in main context, never from subagents
+- **Token resilience**: Stage changes early and often; commit at natural checkpoints, not only at the end
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|----------|
-| Skill prefix `donna:` | Namespaced like GSD's `gsd:` to avoid collisions and signal the suite | — Pending |
-| Hybrid storage (daily + standing files) | Daily files capture the running log; standing files capture durable context (role, recurring tasks, people) | — Pending |
-| Role research via web agent | User's role drives recurring task suggestions — research grounds them in reality rather than just user assumption | — Pending |
-| User-declared tools, not hardcoded integrations | Tools are taught by the user, not baked in — keeps the system generic and extensible | — Pending |
-| Parallel tool agents in begin-the-day | Each configured tool gets its own agent during daily brief — isolates tool logic and scales naturally | — Pending |
-| XML tags for skill prompt structure | Follow GSD's pattern of using `<purpose>`, `<process>`, `<step>`, `<success_criteria>` etc. — Claude treats these as clear semantic boundaries, better than markdown headers for separating instructions | — Pending |
-| Stub-workflow split | Thin provider-specific stubs reference shared workflow files — write logic once, install for multiple providers | — Pending |
-| Provider-agnostic design | Installer asks which providers to install for (Claude Code, OpenCode, Gemini, Codex) and copies stubs to provider-specific directories | — Pending |
-| Shared runtime at ~/.donna/ | Workflows, templates, and references live in a provider-agnostic location; stubs reference them via `@` paths | — Pending |
-| Distribution-first development | Build full packaging/CI/CD with stub implementation first, then add real features — complexity rises gradually | — Pending |
-| Migration from any version | Installer must migrate from any previous version to current — users may skip intermediate updates | — Pending |
-| donna:setup as hello-world | Use real skill with stub implementation to prove pipeline, not a throwaway dummy skill | — Pending |
-| No git operations from subagents | SSH signing via 1Password requires interactive unlock — git commits/pushes must run in main context | — Pending |
-| Stage early, commit at checkpoints | Token exhaustion can interrupt sessions — `git add` preserves work; commit at natural milestones, not just at the end | — Pending |
+| Skill prefix `donna:` | Namespaced like GSD's `gsd:` to avoid collisions and signal the suite | ✓ Good |
+| Hybrid storage (daily + standing files) | Daily files capture the running log; standing files capture durable context | ✓ Good |
+| Role research via web agent | Research grounds recurring task suggestions in reality | ✓ Good |
+| User-declared tools, not hardcoded integrations | Keeps the system generic and extensible | ✓ Good |
+| Parallel tool agents in begin-the-day | Each tool gets its own agent — isolates tool logic and scales naturally | ✓ Good |
+| XML tags for skill prompt structure | Claude treats these as clear semantic boundaries | ✓ Good |
+| Stub-workflow split | Write logic once, install for multiple providers | ✓ Good |
+| Provider-agnostic design | Installer copies stubs to provider-specific directories | ✓ Good |
+| Shared runtime at ~/.donna/ | Workflows/templates live in provider-agnostic location | ✓ Good |
+| Distribution-first development | Build packaging/CI/CD first, then real features | ✓ Good — caught CI issues early |
+| Migration from any version | Users may skip intermediate updates | ✓ Good |
+| donna:setup as hello-world | Real skill with stub proves pipeline, not throwaway | ✓ Good |
+| No git operations from subagents | SSH signing requires interactive unlock | ✓ Good — enforced by design |
+| Stage early, commit at checkpoints | Token exhaustion protection | ✓ Good |
+| Standing files in donna/ subfolder | User owns repo root for their own notes | ✓ Good — clean separation |
+| Carry-forward counter pattern | "(N times)" suffix tracks how long tasks have been open | ✓ Good — visible urgency signal |
+| Tool-tagged tasks preserve suffix | `[tool](url)` kept on completed tasks for traceability | ✓ Good |
 
 ---
-*Last updated: 2026-03-14 after adding SSH signing and token resilience constraints*
+*Last updated: 2026-03-16 after v1.0 milestone*
