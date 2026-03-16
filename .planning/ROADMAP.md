@@ -42,9 +42,9 @@ Plans:
 - [x] 01-03-PLAN.md — Integration wiring (README, installer skill list, test coverage)
 - [ ] 01-04-PLAN.md — Gap closure: GSD workflow in CONTRIBUTING.md + populate 0.5.0 changelog
 
-### Phase 2: Tooling Improvements
+### Phase 2: Tool System Enhancements
 
-**Goal:** Harden the upgrade and release pipeline — clean up removed files on upgrade, comment on PRs after release with version number, add daily version check with state tracking, and parallelize tool capability commands for faster data pulls
+**Goal:** Expand the tool system — parallelize tool capability commands for faster data pulls, add an adjust-tool skill for iterative tool configuration refinement, and support non-CLI tools (APIs and MCP servers)
 **Requirements**: TBD
 **Depends on:** Phase 1
 **Plans:** 0 plans
