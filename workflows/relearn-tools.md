@@ -109,16 +109,24 @@ If `<type>` is `rest` or `mcp`:
 If `<type>` is `graphql`:
   Run a GraphQL introspection query to detect schema changes.
 
-  1. Read `<storage_repo>/donna/secrets.md` with the Read tool. Resolve the `auth_secret` key to get the actual secret value. If missing or placeholder, add to `<unchanged_tools>` with note "skipped — no secret configured" and continue.
+  1. Attempt to read `<storage_repo>/donna/secrets.md` with the Read tool. If the file exists and contains the `auth_secret` key with a value that is not a placeholder (does not contain "REPLACE_WITH"), set `<resolved_secret>` to that value. Otherwise, set `<resolved_secret>` to empty (no auth).
 
-  2. Run via Bash with a 15-second timeout:
-     ```bash
-     timeout 15 curl -s -X POST \
-       -H "<auth_header>: <resolved_secret>" \
-       -H "Content-Type: application/json" \
-       -d '{"query":"{ __schema { types { name fields { name type { name } } } } }"}' \
-       "<base_url>" 2>&1
-     ```
+  2. Run via Bash with a 15-second timeout. Include the auth header only when a real secret was resolved:
+     - If `<resolved_secret>` is non-empty:
+       ```bash
+       timeout 15 curl -s -X POST \
+         -H "<auth_header>: <resolved_secret>" \
+         -H "Content-Type: application/json" \
+         -d '{"query":"{ __schema { types { name fields { name type { name } } } } }"}' \
+         "<base_url>" 2>&1
+       ```
+     - If `<resolved_secret>` is empty (public API or no secret configured):
+       ```bash
+       timeout 15 curl -s -X POST \
+         -H "Content-Type: application/json" \
+         -d '{"query":"{ __schema { types { name fields { name type { name } } } } }"}' \
+         "<base_url>" 2>&1
+       ```
 
   3. If the request fails (non-zero exit, timeout, or error response), add to `<unchanged_tools>` with note "introspection failed — skipped" and continue.
 
@@ -160,7 +168,7 @@ If `<type>` is `graphql`, print using the skip reason from check-versions:
 ```
 ⊘ <tool_name>: graphql tool — <skip_reason>
 ```
-Where `<skip_reason>` is "no schema changes detected", "skipped — no secret configured", or "introspection failed — skipped".
+Where `<skip_reason>` is "no schema changes detected" or "introspection failed — skipped".
 
 Otherwise (CLI tools), print:
 ```
