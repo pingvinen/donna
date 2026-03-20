@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed all 4 plans for phase 02
-last_updated: "2026-03-20T16:36:02.772Z"
+stopped_at: Completed 02-07-PLAN.md
+last_updated: "2026-03-20T17:55:27.949Z"
 progress:
   total_phases: 2
   completed_phases: 2
-  total_plans: 10
-  completed_plans: 10
+  total_plans: 11
+  completed_plans: 11
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-16)
 
 ## Current Position
 
-Phase: 02
-Plan: Not started
+Phase: 02 (tool-system-enhancements) — EXECUTING
+Plan: 2 of 7
 
 ## Accumulated Context
 
@@ -40,6 +40,8 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - [Phase 01]: displayChangelog unit test updated: test imported real CHANGELOG constant (not isolated empty state), so assertion had to flip from 'no output' to 'shows output' after 0.5.0 entry was populated
 - [Phase 02]: adjust-tool workflow includes both move-standing-files and backfill-tool-type migration handlers to stay in sync with all other tool workflows
 - [Phase 02]: Capabilities editing loop uses open-ended AskUserQuestion allowing remove/add/edit commands until user says done
+- [Phase 02]: Capability examples moved outside AskUserQuestion as print-before-ask prose blocks to avoid Claude Code picker menu rendering
+- [Phase 02]: GraphQL introspection proceeds unconditionally; auth header conditionally included only when a real (non-placeholder) secret is resolved
 
 ### Pending Todos
 
@@ -61,6 +63,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-16T22:34:07.240Z
-Stopped at: Completed all 4 plans for phase 02
+Last session: 2026-03-20T17:55:27.947Z
+Stopped at: Completed 02-07-PLAN.md
 Resume file: None

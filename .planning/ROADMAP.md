@@ -54,5 +54,5 @@ Plans:
 - [x] 02-02-PLAN.md — adjust-tool skill: stub, workflow, installer registration, tests
 - [x] 02-03-PLAN.md — Non-CLI tool registration: REST/GraphQL/MCP in add-tool + secrets.md
 - [x] 02-04-PLAN.md — Parallel execution + type-aware runtime in begin-the-day/run-tools + README
-- [ ] 02-05-PLAN.md — Gap closure: smart backfill heuristics + add-tool URL entry UX fix
-- [ ] 02-06-PLAN.md — Gap closure: GraphQL introspection in relearn-tools + adjust-tool format repair
+- [x] 02-05-PLAN.md — Gap closure: smart backfill heuristics + add-tool URL entry UX fix
+- [x] 02-06-PLAN.md — Gap closure: GraphQL introspection in relearn-tools + adjust-tool format repair
