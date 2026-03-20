@@ -54,13 +54,6 @@ git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "
 
 If `auto_push` is true in config, also push.
 
-After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
-```markdown
----
-pending_migrations: []
----
-```
-
 **`backfill-tool-type`:** Backfill `type` on existing tool sections in tools.md using heuristic detection.
 
 Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not exist or has no tool sections, skip this handler.
