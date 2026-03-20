@@ -54,16 +54,22 @@ git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "
 
 If `auto_push` is true in config, also push.
 
-**`backfill-tool-type`:** Add `type: cli` to existing tool sections in tools.md.
+**`backfill-tool-type`:** Backfill `type` on existing tool sections in tools.md using heuristic detection.
 
 Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not exist or has no tool sections, skip this handler.
 
-For each tool section (starting with `## <tool_name>`), check if a `- type:` line exists between `- command:` and `- version:`. If the `- type:` line is missing, insert `- type: cli` immediately after the `- command:` line.
+For each tool section (starting with `## <tool_name>`), check if a `- type:` line already exists. If the `- type:` line is missing, detect the correct type:
+
+1. If the tool section contains a `- command:` line where the value starts with `mcp:` (e.g., `- command: mcp:linear`), insert `- type: mcp` immediately after the `- command:` line.
+2. Else, if the tool section contains a `- base_url:` line:
+   - If the capabilities section contains entries that look like GraphQL queries (contain `query {` or `mutation {`), insert `- type: graphql` immediately after `## <tool_name>` (REST/GraphQL tools have no `- command:` line).
+   - Otherwise, insert `- type: rest` immediately after `## <tool_name>`.
+3. Else (no `mcp:` prefix, no `base_url` field), insert `- type: cli` immediately after the `- command:` line.
 
 Write the updated file back with the Write tool. If any changes were made, commit:
 ```bash
 git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill type: cli on existing tools"
+git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill tool types on existing tools"
 ```
 
 If `auto_push` is true in config, also push.

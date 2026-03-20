@@ -54,16 +54,22 @@ git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "
 
 If `auto_push` is true in config, also push.
 
-**`backfill-tool-type`:** Add `type: cli` to existing tool sections in tools.md.
+**`backfill-tool-type`:** Backfill `type` on existing tool sections in tools.md using heuristic detection.
 
 Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not exist or has no tool sections, skip this handler.
 
-For each tool section (starting with `## <tool_name>`), check if a `- type:` line exists between `- command:` and `- version:`. If the `- type:` line is missing, insert `- type: cli` immediately after the `- command:` line.
+For each tool section (starting with `## <tool_name>`), check if a `- type:` line already exists. If the `- type:` line is missing, detect the correct type:
+
+1. If the tool section contains a `- command:` line where the value starts with `mcp:` (e.g., `- command: mcp:linear`), insert `- type: mcp` immediately after the `- command:` line.
+2. Else, if the tool section contains a `- base_url:` line:
+   - If the capabilities section contains entries that look like GraphQL queries (contain `query {` or `mutation {`), insert `- type: graphql` immediately after `## <tool_name>` (REST/GraphQL tools have no `- command:` line).
+   - Otherwise, insert `- type: rest` immediately after `## <tool_name>`.
+3. Else (no `mcp:` prefix, no `base_url` field), insert `- type: cli` immediately after the `- command:` line.
 
 Write the updated file back with the Write tool. If any changes were made, commit:
 ```bash
 git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill type: cli on existing tools"
+git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill tool types on existing tools"
 ```
 
 If `auto_push` is true in config, also push.
@@ -119,9 +125,13 @@ CLI command for <tool_name>? (default: <tool_name>)
 ```
 If the tool name is in `<noted_tools>`, pre-fill any context from set-role notes. If the user presses enter without typing, use the default. Store the confirmed CLI command as `<command>`.
 
-**If type is `rest` or `graphql`:** Use AskUserQuestion:
+**If type is `rest` or `graphql`:**
+
+The base URL is the root API endpoint (for example, https://api.github.com for GitHub REST or https://api.linear.app/graphql for Linear). Guide the user if they seem unsure, but do not include examples in the AskUserQuestion prompt text — inline examples render as picker options in Claude Code.
+
+Use AskUserQuestion:
 ```
-Base URL for <tool_name>? (e.g., https://api.github.com)
+What is the base URL for <tool_name>?
 ```
 Store as `<base_url>`. Set `<command>` to `<base_url>` (for display purposes).
 
@@ -173,15 +183,19 @@ Continue (do not stop — user may want to save the tool despite auth issues).
 
 **If `<tool_type>` is `rest` or `graphql`:**
 
+Common auth headers include Authorization (for Bearer tokens) and X-API-Key. Do not include examples in the prompt text.
+
 Use AskUserQuestion to ask for the auth header name:
 ```
-Auth header for <tool_name>? (e.g., Authorization, X-API-Key) Default: Authorization
+What auth header does <tool_name> use? Default: Authorization
 ```
 Store as `<auth_header>` (default: `Authorization` if blank).
 
+The key name should match the service convention (e.g., GITHUB_TOKEN, SLACK_TOKEN, LINEAR_API_KEY). Guide the user if needed but keep examples out of the prompt.
+
 Use AskUserQuestion to ask for the secret key name:
 ```
-Secret key name in secrets.md for <tool_name>? (e.g., GITHUB_TOKEN, SLACK_TOKEN)
+What should the secret key be called in secrets.md for <tool_name>?
 ```
 Store as `<auth_secret>`.
 
