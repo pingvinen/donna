@@ -304,43 +304,46 @@ For **unknown tools**, run `<command> --help 2>&1 | head -80` via Bash and use C
 
 **If `<tool_type>` is `rest`:**
 
+Print to user:
+```
+Each capability is a name and HTTP method + path.
+Format: <name>: <METHOD> /path?params
+Example: list-issues: GET /repos/{owner}/{repo}/issues?state=open
+Example: my-profile: GET /user
+```
+
 Use AskUserQuestion:
 ```
-Define capabilities for <tool_name>. Each capability is a name and HTTP method + path.
-Format: <name>: <METHOD> /path?params
-
-Examples:
-- list-issues: GET /repos/{owner}/{repo}/issues?state=open
-- my-profile: GET /user
-
-Enter capabilities (one per line, blank line when done):
+Enter capabilities for <tool_name> (one per line, blank line when done):
 ```
 
 **If `<tool_type>` is `graphql`:**
 
+Print to user:
+```
+Each capability is a name and a GraphQL query (single line).
+Format: <name>: query { ... }
+Example: my-issues: query { viewer { issues(first: 20, states: OPEN) { nodes { title url } } } }
+```
+
 Use AskUserQuestion:
 ```
-Define capabilities for <tool_name>. Each capability is a name and a GraphQL query (single line).
-Format: <name>: query { ... }
-
-Examples:
-- my-issues: query { viewer { issues(first: 20, states: OPEN) { nodes { title url } } } }
-
-Enter capabilities (one per line, blank line when done):
+Enter capabilities for <tool_name> (one per line, blank line when done):
 ```
 
 **If `<tool_type>` is `mcp`:**
 
+Print to user:
+```
+Each capability is a name and an MCP tool reference.
+Format: <name>: mcp:<server_name>/<tool_name>
+Example: list-issues: mcp:linear/list_issues
+Example: search-docs: mcp:notion/search
+```
+
 Use AskUserQuestion:
 ```
-Define capabilities for <tool_name>. Each capability is a name and an MCP tool reference.
-Format: <name>: mcp:<server_name>/<tool_name>
-
-Examples:
-- list-issues: mcp:linear/list_issues
-- search-docs: mcp:notion/search
-
-Enter capabilities (one per line, blank line when done):
+Enter capabilities for <tool_name> (one per line, blank line when done):
 ```
 
 Store the full list as `<available_capabilities>`.
