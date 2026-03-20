@@ -56,3 +56,14 @@ Plans:
 - [x] 02-04-PLAN.md — Parallel execution + type-aware runtime in begin-the-day/run-tools + README
 - [x] 02-05-PLAN.md — Gap closure: smart backfill heuristics + add-tool URL entry UX fix
 - [x] 02-06-PLAN.md — Gap closure: GraphQL introspection in relearn-tools + adjust-tool format repair
+
+## Backlog
+
+### Phase 999.1: Tool system architecture evolution (BACKLOG)
+
+**Goal:** Store GraphQL schemas for real diff-based relearn, restructure tools data format (per-tool files or richer YAML instead of flat markdown), and run each tool in its own agent with clean context during run-tools/begin-the-day
+**Requirements:** TBD
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (promote with /gsd:review-backlog when ready)
