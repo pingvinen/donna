@@ -90,10 +90,13 @@ Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not ex
 Stop.
 
 Parse each tool section (starting with `## <tool_name>`). For each tool, extract:
-- `command` — the CLI command to run
+- `command` — the CLI command to run (CLI/MCP tools only)
 - `type` — the tool type field (if absent, treat as "cli")
-- `version` — the stored version string
+- `version` — the stored version string (CLI tools only)
 - `learned` — the date capabilities were last learned
+- `base_url` — the API endpoint (REST/GraphQL tools only)
+- `auth_header` — the auth header name, if present (REST/GraphQL tools only)
+- `auth_secret` — the secret key name, if present (REST/GraphQL tools only)
 - capabilities list under `### Capabilities`
 
 Store the parsed tools as `<registered_tools>`.
@@ -109,7 +112,9 @@ If `<type>` is `rest` or `mcp`:
 If `<type>` is `graphql`:
   Run a GraphQL introspection query to detect schema changes.
 
-  1. Attempt to read `<storage_repo>/donna/secrets.md` with the Read tool. If the file exists and contains the `auth_secret` key with a value that is not a placeholder (does not contain "REPLACE_WITH"), set `<resolved_secret>` to that value. Otherwise, set `<resolved_secret>` to empty (no auth).
+  **IMPORTANT: Auth is OPTIONAL for GraphQL tools. Public APIs work without any secret. You MUST always attempt introspection regardless of whether auth is configured. NEVER skip a GraphQL tool just because it has no auth_secret.**
+
+  1. Attempt to read `<storage_repo>/donna/secrets.md` with the Read tool. If the file exists and contains the `auth_secret` key with a value that is not a placeholder (does not contain "REPLACE_WITH"), set `<resolved_secret>` to that value. Otherwise, set `<resolved_secret>` to empty (no auth). **An empty resolved_secret is perfectly valid — proceed to step 2 regardless.**
 
   2. Run via Bash with a 15-second timeout. Include the auth header only when a real secret was resolved:
      - If `<resolved_secret>` is non-empty:
