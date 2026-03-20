@@ -174,8 +174,50 @@ For type=rest|graphql: Print `Edit your secrets in <storage_repo>/donna/secrets.
 For type=mcp: Print `MCP server auth is managed in Claude Code settings, not in Donna.`
 
 **5. type:**
-Use AskUserQuestion: `New type for <tool_name>? (cli, rest, graphql, mcp) (current: <type>)`. Store new value.
-Warn if changing from cli to api/mcp: `Changing type will require updating capabilities format. Proceed? (yes/no)`.
+Use AskUserQuestion:
+```
+What is the correct type for <tool_name>? (cli, rest, graphql, mcp) Current: <type>
+```
+Store new value as `<new_type>`.
+
+If `<new_type>` differs from `<type>`, check for capability format mismatches:
+
+**Detect format mismatches:**
+For each capability line (`- <name>: <invocation>`), check if the invocation matches the expected format for `<new_type>`:
+- `cli`: invocation should be a shell command (no `mcp:` prefix, no `GET /` or `POST /` pattern, no `query {` pattern)
+- `rest`: invocation should match `<METHOD> /path` pattern (e.g., `GET /repos/...`)
+- `graphql`: invocation should contain `query {` or `mutation {`
+- `mcp`: invocation should match `mcp:<server>/<tool>` pattern
+
+If ANY capability does not match the expected format for `<new_type>`, print:
+
+```
+⚠ Capability format mismatch detected. Current capabilities are in <type> format but type is changing to <new_type>.
+
+Mismatched capabilities:
+<list each mismatched capability with its current invocation>
+```
+
+Use AskUserQuestion:
+```
+How would you like to fix the capabilities?
+```
+Suggest these options:
+1. Re-enter capabilities manually (interactive editor)
+2. Clear all capabilities (start fresh with adjust-tool later)
+3. Keep as-is (may cause runtime errors)
+
+If option 1: Present the same interactive capabilities editing loop (show numbered list, accept "remove N", "add name: invocation", "edit N new_invocation", "done"). Pre-populate with existing capability NAMES but empty invocations so the user only needs to type the new format.
+
+If option 2: Clear the capabilities section entirely. Print `✓ Capabilities cleared. Run /donna:adjust-tool <tool_name> to add new capabilities.`
+
+If option 3: Print `⚠ Keeping mismatched capabilities — runtime errors may occur.`
+
+**Update structural fields when type changes:**
+- Changing TO rest/graphql: ensure `base_url`, `auth_header`, `auth_secret` fields exist. If missing, prompt for them (same prompts as add-tool).
+- Changing TO mcp: remove `command`, `version`, `base_url`, `auth_header`, `auth_secret` fields if present.
+- Changing TO cli: ensure `command`, `version` fields exist. If missing, prompt for command and run version check.
+- Changing FROM rest/graphql: remove `base_url`, `auth_header`, `auth_secret` fields.
 </step>
 
 <step name="write-tools-md">

@@ -102,9 +102,36 @@ Store the parsed tools as `<registered_tools>`.
 <step name="check-versions">
 For each tool in `<registered_tools>`:
 
-If `<type>` is `rest`, `graphql`, or `mcp`:
-  Add to `<unchanged_tools>` — version checking is not applicable for non-CLI tools.
+If `<type>` is `rest` or `mcp`:
+  Add to `<unchanged_tools>` — version checking is not applicable for REST/MCP tools.
   Continue to next tool.
+
+If `<type>` is `graphql`:
+  Run a GraphQL introspection query to detect schema changes.
+
+  1. Read `<storage_repo>/donna/secrets.md` with the Read tool. Resolve the `auth_secret` key to get the actual secret value. If missing or placeholder, add to `<unchanged_tools>` with note "skipped — no secret configured" and continue.
+
+  2. Run via Bash with a 15-second timeout:
+     ```bash
+     timeout 15 curl -s -X POST \
+       -H "<auth_header>: <resolved_secret>" \
+       -H "Content-Type: application/json" \
+       -d '{"query":"{ __schema { types { name fields { name type { name } } } } }"}' \
+       "<base_url>" 2>&1
+     ```
+
+  3. If the request fails (non-zero exit, timeout, or error response), add to `<unchanged_tools>` with note "introspection failed — skipped" and continue.
+
+  4. If successful, compare the returned schema against stored capabilities:
+     - Extract field names and types from the introspection response for the types/queries relevant to stored capabilities.
+     - Check if any stored capability references fields that no longer exist in the schema (removed fields).
+     - Check if the schema has new fields on types used by stored capabilities that might be useful.
+
+  5. If no meaningful changes detected, add to `<unchanged_tools>`.
+
+  6. If changes detected, add to `<changed_tools>` with a `<schema_changes>` annotation listing:
+     - Removed fields (fields in stored capabilities no longer in schema)
+     - New fields (fields in schema not referenced by any stored capability)
 
 If `<type>` is `cli` (or absent; treat as `cli`):
   Run via Bash:
@@ -124,10 +151,16 @@ If `<type>` is `cli` (or absent; treat as `cli`):
 <step name="report-unchanged">
 For each tool in `<unchanged_tools>`:
 
-If `<type>` is `rest`, `graphql`, or `mcp`, print:
+If `<type>` is `rest` or `mcp`, print:
 ```
 ⊘ <tool_name>: <type> tool — re-learning not applicable (capabilities are user-defined)
 ```
+
+If `<type>` is `graphql`, print using the skip reason from check-versions:
+```
+⊘ <tool_name>: graphql tool — <skip_reason>
+```
+Where `<skip_reason>` is "no schema changes detected", "skipped — no secret configured", or "introspection failed — skipped".
 
 Otherwise (CLI tools), print:
 ```
@@ -141,8 +174,33 @@ If ALL tools are in `<unchanged_tools>` (no changes found), print:
 Stop.
 </step>
 
+<step name="relearn-graphql">
+For each graphql tool in `<changed_tools>`:
+
+Print:
+```
+⚠ <tool_name>: schema changes detected
+  Removed fields: <list or "none">
+  New fields: <list or "none">
+```
+
+Use AskUserQuestion:
+```
+Update capabilities for <tool_name>?
+```
+Suggest "yes" and "no" as options.
+
+If yes:
+  Show the current capabilities and the detected changes side by side. Use AskUserQuestion to let the user update capabilities interactively (same editing loop as adjust-tool: "remove <number>", "add <name>: <query>", "edit <number> <new_query>", "done").
+
+  Store the updated capabilities. Update `learned` date to today.
+
+If no:
+  Skip — keep existing capabilities unchanged. Update `learned` date to today (to avoid re-checking next run).
+</step>
+
 <step name="relearn-changed">
-Note: Re-learning is currently supported for CLI tools only. REST, GraphQL, and MCP tool capabilities are user-defined and not auto-learned.
+Note: Re-learning is supported for CLI tools (version-based) and GraphQL tools (schema introspection). REST and MCP tool capabilities are user-defined and not auto-learned.
 
 For each tool in `<changed_tools>`, apply the same learn-capabilities logic as add-tool.md's learn-capabilities step.
 
