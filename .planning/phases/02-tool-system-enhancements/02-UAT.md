@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 02-tool-system-enhancements
 source: [02-01-SUMMARY.md, 02-02-SUMMARY.md, 02-03-SUMMARY.md, 02-04-SUMMARY.md]
 started: 2026-03-17T12:00:00Z
@@ -59,9 +59,13 @@ skipped: 0
   reason: "User reported: The 'I'll enter it' option for URL entry has poor UX — tab doesn't extend text, leads to confusing menu with guessed value, 'aborting', and 'type something'. Typing something works but flow is not user friendly."
   severity: minor
   test: 3
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "AskUserQuestion prompt includes inline (e.g., https://api.github.com) example which Claude Code surfaces as a selectable option instead of plain free-text input. Tab navigates menu instead of extending text."
+  artifacts:
+    - path: "workflows/add-tool.md"
+      issue: "Lines 123-124: Base URL prompt contains e.g. example that AskUserQuestion treats as a candidate answer"
+  missing:
+    - "Remove inline e.g. from AskUserQuestion prompt text — move example to workflow prose visible only to Claude"
+    - "Simplify prompt to plain question like 'What is the base URL for <tool_name>?'"
   debug_session: ""
 
 - truth: "relearn-tools re-introspects non-CLI tools to detect schema changes"
@@ -69,7 +73,17 @@ skipped: 0
   reason: "User reported: GraphQL tool just says 're-learning not applicable' but the add flow can introspect the API schema, so relearn should at least check for removed or changed fields and new useful fields."
   severity: minor
   test: 4
-  root_cause: ""
-  artifacts: []
-  missing: []
+  root_cause: "relearn-tools.md hard-codes all non-CLI tools into skip path at lines 99-101 (routes graphql to unchanged_tools) and line 139 (note: non-CLI capabilities are user-defined). This was a deliberate deferral, not an oversight. Note: add-tool also has no automatic GraphQL introspection — capabilities are user-typed — so introspection would need to be built from scratch."
+  artifacts:
+    - path: "workflows/relearn-tools.md"
+      issue: "Lines 99-101: Hard routes graphql to unchanged_tools with no introspection path"
+    - path: "workflows/relearn-tools.md"
+      issue: "Lines 121-124: Emits 're-learning not applicable' message"
+    - path: "workflows/add-tool.md"
+      issue: "Lines 305-316: GraphQL capabilities are user-typed, no introspection query exists to reuse"
+  missing:
+    - "Add GraphQL schema introspection query via curl against base_url with stored auth"
+    - "Diff returned schema against stored capabilities to detect new/removed fields"
+    - "Surface schema changes to user and offer interactive capability update"
+    - "REST and MCP can continue to skip — only graphql has introspection support"
   debug_session: ""
