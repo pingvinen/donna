@@ -44,11 +44,23 @@ result: pass
 expected: Running `node --test test/migrator.test.cjs` passes all tests including the 003-tool-type-backfill migration test. The migration file exists at `migrations/003-tool-type-backfill.cjs`.
 result: pass
 
+### 8. Migration handles pre-existing non-CLI tools
+expected: The backfill-tool-type migration correctly identifies tools that were already registered as non-CLI (e.g., MCP server) and preserves their type instead of blindly stamping `type: cli` on all tools missing a type field.
+result: issue
+reported: "Alpha tester had previously registered an MCP server. Migration assumes all tools are CLI and backfilled type: cli on it, causing breakage."
+severity: major
+
+### 9. MCP tool works after manual fix
+expected: After correcting an MCP tool's type in tools.md from `type: cli` to `type: mcp`, run-tools executes it via native MCP invocation without errors.
+result: issue
+reported: "After fixing the MCP entry, Donna still complains: 'teams-outlook: MCP server — not executable as CLI tool (see donna/tools.md note)'"
+severity: major
+
 ## Summary
 
-total: 7
+total: 9
 passed: 5
-issues: 2
+issues: 4
 pending: 0
 skipped: 0
 
@@ -86,4 +98,40 @@ skipped: 0
     - "Diff returned schema against stored capabilities to detect new/removed fields"
     - "Surface schema changes to user and offer interactive capability update"
     - "REST and MCP can continue to skip — only graphql has introspection support"
+  debug_session: ""
+
+- truth: "backfill-tool-type migration preserves existing non-CLI tool types"
+  status: failed
+  reason: "Alpha tester had an MCP server registered before the migration. backfill-tool-type blindly inserts type: cli on all tools missing a type line, overwriting the implicit MCP type."
+  severity: major
+  test: 8
+  root_cause: "backfill-tool-type handler (line 61 in all workflows containing it) does 'if type: line missing, insert type: cli' — it has no logic to detect pre-existing non-CLI tools. Before the type field existed, tools had no type marker, but some users had already registered MCP/REST tools via manual editing or earlier experiments. The migration should check for MCP/REST indicators (e.g., command field containing mcp: prefix, or base_url field) before defaulting to cli."
+  artifacts:
+    - path: "workflows/run-tools.md"
+      issue: "Line 61: backfill inserts type: cli unconditionally when type line is missing"
+    - path: "workflows/begin-the-day.md"
+      issue: "Line 61: same backfill logic duplicated"
+    - path: "workflows/add-tool.md"
+      issue: "Line 61: same backfill logic duplicated"
+    - path: "workflows/relearn-tools.md"
+      issue: "Line 61: same backfill logic duplicated"
+    - path: "workflows/adjust-tool.md"
+      issue: "Line 64: same backfill logic duplicated"
+  missing:
+    - "Add type detection heuristics: check command field for mcp: prefix → type: mcp, check for base_url field → type: rest or graphql, default to cli only if no indicators found"
+    - "Update backfill handler in all 5 workflow files"
+  debug_session: ""
+
+- truth: "MCP tools execute correctly via native MCP invocation after type correction"
+  status: failed
+  reason: "Alpha tester reports 'teams-outlook: MCP server — not executable as CLI tool (see donna/tools.md note)' even after manually fixing type to mcp in tools.md"
+  severity: major
+  test: 9
+  root_cause: "Downstream symptom of gap 8. Most likely cause: the tester fixed the type field but run-tools still failed because (a) the capability format was wrong — MCP capabilities need format 'name: mcp:<server>/<tool>' but the backfill left them in CLI format, or (b) Claude cached the old tool state and the error message is stale from before the fix. The workflow itself (run-tools.md lines 196-203) handles type: mcp correctly — the issue is the tool data in tools.md was corrupted by the bad backfill and only partially fixed."
+  artifacts:
+    - path: "workflows/run-tools.md"
+      issue: "Lines 196-203: MCP execution path is correct, but depends on capability format being mcp:<server>/<tool>"
+  missing:
+    - "Fix gap 8 first (correct backfill), which prevents this cascade"
+    - "Add a recovery/repair step in adjust-tool that can detect and fix capability format mismatches for a given tool type"
   debug_session: ""
