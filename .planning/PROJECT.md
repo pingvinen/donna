@@ -94,4 +94,4 @@ Alpha testers using the package. Developed on personal machine, deployed to work
 | Tool-tagged tasks preserve suffix | `[tool](url)` kept on completed tasks for traceability | ✓ Good |
 
 ---
-*Last updated: 2026-03-20 after Phase 02 tool-system-enhancements*
+*Last updated: 2026-03-21 after Phase 03 prioritized-now-view — donna:focus skill added*
