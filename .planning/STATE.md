@@ -63,6 +63,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Phase 03.1 inserted after Phase 3: Standing Files Subfolder (completed)
 - Phase 1 added: Low-hanging documentation stuff for users and alpha testers
 - Phase 2 added: Tool System Enhancements (parallel tool commands, adjust-tool skill, non-CLI tool support)
+- Phase 3 added: Prioritized now view — distill daily file to focus items
 
 ## Session Continuity
 

@@ -57,6 +57,16 @@ Plans:
 - [x] 02-05-PLAN.md — Gap closure: smart backfill heuristics + add-tool URL entry UX fix
 - [x] 02-06-PLAN.md — Gap closure: GraphQL introspection in relearn-tools + adjust-tool format repair
 
+### Phase 3: Prioritized now view — distill daily file to focus items
+
+**Goal:** Add a skill that reads today's daily file and produces a short, prioritized summary of the most important items to focus on right now
+**Requirements**: TBD
+**Depends on:** Phase 2
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 3 to break down)
+
 ## Backlog
 
 ### Phase 999.1: Tool system architecture evolution (BACKLOG)
