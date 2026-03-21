@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-16T21:33:42.856Z"
+status: unknown
+stopped_at: Completed 02-07-PLAN.md
+last_updated: "2026-03-20T22:12:09.108Z"
 progress:
-  total_phases: 2
-  completed_phases: 1
-  total_plans: 4
-  completed_plans: 4
+  total_phases: 3
+  completed_phases: 2
+  total_plans: 11
+  completed_plans: 11
 ---
 
 # Project State
@@ -19,25 +19,29 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Never forget an important task again -- the assistant knows your role, surfaces what needs attention each day, and captures everything that falls through the cracks outside your ticketing system.
-**Current focus:** Planning next milestone
+**Current focus:** Phase 02 — tool-system-enhancements
 
 ## Current Position
 
-Milestone: v1.0 MVP — SHIPPED 2026-03-16
-Status: Complete
-Next: `/gsd:new-milestone` to start v1.1
+Phase: 02
+Plan: Not started
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Good).
+
 - [Phase 01]: CHANGELOG intentionally empty at initial creation — populated when next version ships
 - [Phase 01]: changelog.cjs delegates output to output.cjs for consistent formatting
 - [Phase 01]: displayChangelog called after upgradeHeader and before migrations in upgrade block
 - [Phase 01]: donna:help and donna:contribute-idea skills: both read-only, use AskUserQuestion for interactive workflows, contribute-idea uses gh api with @base64d for cross-platform STATE.md fetching
 - [Phase 01]: test assertion for help workflow git commit check uses literal 'git commit' substring to avoid false positive on 'uncommitted changes' text
 - [Phase 01]: displayChangelog unit test updated: test imported real CHANGELOG constant (not isolated empty state), so assertion had to flip from 'no output' to 'shows output' after 0.5.0 entry was populated
+- [Phase 02]: adjust-tool workflow includes both move-standing-files and backfill-tool-type migration handlers to stay in sync with all other tool workflows
+- [Phase 02]: Capabilities editing loop uses open-ended AskUserQuestion allowing remove/add/edit commands until user says done
+- [Phase 02]: Capability examples moved outside AskUserQuestion as print-before-ask prose blocks to avoid Claude Code picker menu rendering
+- [Phase 02]: GraphQL introspection proceeds unconditionally; auth header conditionally included only when a real (non-placeholder) secret is resolved
 
 ### Pending Todos
 
@@ -59,6 +63,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-16T21:33:42.854Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-tool-system-enhancements/02-CONTEXT.md
+Last session: 2026-03-20T17:55:27.947Z
+Stopped at: Completed 02-07-PLAN.md
+Resume file: None

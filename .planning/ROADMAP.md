@@ -24,7 +24,7 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1. Packaging and Distribution | 4/4 | Complete   | 2026-03-16 | 2026-03-14 |
-| 2. Foundation and Capture | v1.0 | 2/2 | Complete | 2026-03-14 |
+| 2. Foundation and Capture | 4/4 | Complete   | 2026-03-16 | 2026-03-14 |
 | 3. Role Awareness and Daily Rhythm | v1.0 | 2/2 | Complete | 2026-03-15 |
 | 3.1 Standing Files Subfolder | v1.0 | 4/4 | Complete | 2026-03-15 |
 | 4. External Tool Enrichment | v1.0 | 3/3 | Complete | 2026-03-15 |
@@ -47,10 +47,23 @@ Plans:
 **Goal:** Expand the tool system — parallelize tool capability commands for faster data pulls, add an adjust-tool skill for iterative tool configuration refinement, and support non-CLI tools (APIs and MCP servers)
 **Requirements**: TOOL-01 (parallel execution), TOOL-02 (type field + migration), TOOL-03 (REST API support), TOOL-04 (GraphQL API support), TOOL-05 (MCP server support), TOOL-06 (secrets.md), TOOL-07 (adjust-tool skill), TOOL-08 (installer + tests)
 **Depends on:** Phase 1
-**Plans:** 4 plans
+**Plans:** 6 plans (4 complete + 2 gap closure)
 
 Plans:
-- [ ] 02-01-PLAN.md — Schema foundation: migration 003 + type field backfill handler in workflows
-- [ ] 02-02-PLAN.md — adjust-tool skill: stub, workflow, installer registration, tests
-- [ ] 02-03-PLAN.md — Non-CLI tool registration: REST/GraphQL/MCP in add-tool + secrets.md
-- [ ] 02-04-PLAN.md — Parallel execution + type-aware runtime in begin-the-day/run-tools + README
+- [x] 02-01-PLAN.md — Schema foundation: migration 003 + type field backfill handler in workflows
+- [x] 02-02-PLAN.md — adjust-tool skill: stub, workflow, installer registration, tests
+- [x] 02-03-PLAN.md — Non-CLI tool registration: REST/GraphQL/MCP in add-tool + secrets.md
+- [x] 02-04-PLAN.md — Parallel execution + type-aware runtime in begin-the-day/run-tools + README
+- [x] 02-05-PLAN.md — Gap closure: smart backfill heuristics + add-tool URL entry UX fix
+- [x] 02-06-PLAN.md — Gap closure: GraphQL introspection in relearn-tools + adjust-tool format repair
+
+## Backlog
+
+### Phase 999.1: Tool system architecture evolution (BACKLOG)
+
+**Goal:** Store GraphQL schemas for real diff-based relearn, restructure tools data format (per-tool files or richer YAML instead of flat markdown), and run each tool in its own agent with clean context during run-tools/begin-the-day
+**Requirements:** TBD
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (promote with /gsd:review-backlog when ready)

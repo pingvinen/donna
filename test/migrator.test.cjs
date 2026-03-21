@@ -109,6 +109,13 @@ describe("migrator", () => {
         assert.equal(results[0].error, undefined);
     });
 
+    it("migration 003 exists and exports required fields", () => {
+        const migration003 = require("../migrations/003-tool-type-backfill.cjs");
+        assert.ok(migration003.version, "Should have version field");
+        assert.ok(migration003.description, "Should have description field");
+        assert.equal(typeof migration003.up, "function", "Should export up function");
+    });
+
     it("migration up() receives ctx with donnaDir, fs, path, os", () => {
         fs.writeFileSync(
             path.join(migrationsDir, "001-ctx.cjs"),

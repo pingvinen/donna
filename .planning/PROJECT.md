@@ -28,6 +28,13 @@ Never forget an important task again — the assistant knows your role, surfaces
 - ✓ User-declared tools with auto-learning (no hardcoded integrations) — v1.0
 - ✓ CI/CD pipeline — PR validation, release creation, npm publish with OIDC provenance — v1.0
 - ✓ Standing files subfolder with seamless migration for existing users — v1.0
+- ✓ Multi-type tool system — REST API, GraphQL API, MCP server support alongside CLI tools — Phase 02
+- ✓ Parallel tool execution in begin-the-day and run-tools — Phase 02
+- ✓ Tool type field with heuristic backfill migration — Phase 02
+- ✓ `/donna:adjust-tool` skill — edit tool config (scope, capabilities, auth, command, type) — Phase 02
+- ✓ Secrets management via secrets.md for API auth — Phase 02
+- ✓ GraphQL schema introspection in relearn-tools — Phase 02
+- ✓ Capability format repair on type change in adjust-tool — Phase 02
 
 ### Active
 
@@ -49,7 +56,7 @@ Never forget an important task again — the assistant knows your role, surfaces
 
 Shipped v1.0 with ~4,278 LOC across 46 files (TypeScript/CJS + workflow markdown).
 Tech stack: Node.js CJS modules, GitHub Actions CI/CD, OIDC npm publishing.
-8 skills: setup, set-role, add-task, done, begin-the-day, add-tool, relearn-tools, refresh-tools.
+9 skills: setup, set-role, add-task, done, begin-the-day, add-tool, adjust-tool, relearn-tools, refresh-tools.
 Storage: hybrid daily journals + standing files in user's git repo.
 Distribution: `npx @pingvinen/donna-assistant` with cumulative migration system.
 Alpha testers using the package. Developed on personal machine, deployed to work laptop.
@@ -87,4 +94,4 @@ Alpha testers using the package. Developed on personal machine, deployed to work
 | Tool-tagged tasks preserve suffix | `[tool](url)` kept on completed tasks for traceability | ✓ Good |
 
 ---
-*Last updated: 2026-03-16 after v1.0 milestone*
+*Last updated: 2026-03-20 after Phase 02 tool-system-enhancements*

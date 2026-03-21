@@ -73,7 +73,14 @@ Re-pulls data from all configured tools. New items appear, resolved items get cl
 
 ## External tools
 
-Donna can pull tasks and status from CLI tools you already have installed. Register them with:
+Donna can pull tasks and status from external tools you already use. She supports four tool types:
+
+- **CLI tools** — shell commands like `gh`, `jira`, `kubectl`
+- **REST APIs** — HTTP endpoints like GitHub API, Slack API
+- **GraphQL APIs** — GraphQL endpoints like Linear, GitHub GraphQL
+- **MCP servers** — Claude Code MCP tools like linear, postgres
+
+Register a tool with:
 
 ```
 /donna:add-tool gh
@@ -81,9 +88,17 @@ Donna can pull tasks and status from CLI tools you already have installed. Regis
 
 Or call it without arguments — Donna will check your role and suggest tools typically associated with your job.
 
-Donna verifies the tool is installed and authenticated, learns its capabilities, and asks what scope to query (which repos, projects, namespaces). Any CLI tool can be added — Donna uses the AI model's knowledge of well-known tools and parses `--help` output for everything else.
+For CLI tools, Donna verifies installation and authentication, learns capabilities, and asks what scope to query. For REST and GraphQL APIs, Donna sets up secure secret management (via a gitignored `secrets.md` file) and validates API connectivity. MCP servers are configured through Claude Code settings.
 
-If a tool version is newer than what the AI model knows, Donna will inspect it to learn its current capabilities. You can also re-learn tools at any time:
+When multiple tools are registered, Donna runs them in parallel — one agent per tool — so your morning brief stays fast regardless of how many tools you have.
+
+Edit a tool's configuration (scope, capabilities, auth, command, type) at any time:
+
+```
+/donna:adjust-tool
+```
+
+If a CLI tool version is newer than what the AI model knows, Donna will re-learn its capabilities:
 
 ```
 /donna:relearn-tools
@@ -120,9 +135,10 @@ Most commands are safe to run again. Want to update your role? Run `/donna:set-r
 | `/donna:begin-the-day` | Morning brief with carry-forward, recurring tasks, tool data |
 | `/donna:add-task` | Capture a task instantly |
 | `/donna:done` | Mark a task complete |
-| `/donna:add-tool` | Register an external CLI tool |
+| `/donna:add-tool` | Register an external tool (CLI, REST API, GraphQL API, MCP server) |
+| `/donna:adjust-tool` | Edit a tool's configuration (scope, capabilities, auth, command, type) |
 | `/donna:run-tools` | Refresh tool data mid-day |
-| `/donna:relearn-tools` | Update tool knowledge after upgrades |
+| `/donna:relearn-tools` | Update CLI tool knowledge after upgrades |
 | `/donna:help` | Conversational troubleshooting for config, storage, or skill issues |
 | `/donna:contribute-idea` | Submit a feature idea or bug report via GitHub Issues |
 

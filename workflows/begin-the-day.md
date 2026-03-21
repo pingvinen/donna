@@ -54,6 +54,26 @@ git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "
 
 If `auto_push` is true in config, also push.
 
+**`backfill-tool-type`:** Backfill `type` on existing tool sections in tools.md using heuristic detection.
+
+Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not exist or has no tool sections, skip this handler.
+
+For each tool section (starting with `## <tool_name>`), check if a `- type:` line already exists. If the `- type:` line is missing, detect the correct type:
+
+1. If the tool section contains a `- command:` line where the value starts with `mcp:` (e.g., `- command: mcp:linear`), insert `- type: mcp` immediately after the `- command:` line.
+2. Else, if the tool section contains a `- base_url:` line:
+   - If the capabilities section contains entries that look like GraphQL queries (contain `query {` or `mutation {`), insert `- type: graphql` immediately after `## <tool_name>` (REST/GraphQL tools have no `- command:` line).
+   - Otherwise, insert `- type: rest` immediately after `## <tool_name>`.
+3. Else (no `mcp:` prefix, no `base_url` field), insert `- type: cli` immediately after the `- command:` line.
+
+Write the updated file back with the Write tool. If any changes were made, commit:
+```bash
+git -C <storage_repo> add -A
+git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill tool types on existing tools"
+```
+
+If `auto_push` is true in config, also push.
+
 After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
 ```markdown
 ---
@@ -132,9 +152,33 @@ Read `<storage_repo>/donna/tools.md` with the Read tool.
 
 If the file does not exist or has no tool sections (no `## ` headers after the frontmatter), set `<tool_tasks>` to an empty list and `<tool_warnings>` to an empty list. Continue to the next step. Do NOT print any error — tools are optional.
 
-For each tool section in tools.md, parse the `command` field and the `### Capabilities` entries. For each capability entry (format: `- <name>: <cli_invocation>`):
+Parse each tool section (starting with `## <tool_name>`). For each tool, extract the `type` field (if absent, treat as "cli"), the `command` field (or `base_url` for rest/graphql), and the capabilities list under `### Capabilities`.
 
-Run the CLI invocation via Bash with a 10-second timeout:
+Store the parsed tools and their capabilities as `<registered_tools>`.
+
+**If only one tool is registered**, run it directly (no Task spawning needed) using the type-aware execution logic below.
+
+**If multiple tools are registered**, spawn one Task agent per tool. Each agent receives:
+
+- The tool name, type, and its capabilities list
+- For REST/GraphQL tools: the base_url, auth_header, and auth_secret fields
+- For MCP tools: the capability names with mcp: prefix
+- Instructions to execute all capabilities and return results as a structured list
+- Instructions to NEVER write to any file or run git commands
+
+**CRITICAL constraints for Task agents:**
+- Agents return raw task lists and warnings ONLY
+- Agents must NOT write to any file (no Write tool calls to daily file)
+- Agents must NOT run git commands (SSH signing constraint from CLAUDE.md)
+- All file writing happens in the main workflow after agents return
+
+**Global timeout:** Wait for all Task agents to complete, up to 2 minutes total. After 2 minutes, collect whatever results have been returned and treat non-responding tools as failed with warning: `! <tool_name>: timed out (2-minute batch limit)`.
+
+**Type-aware execution within each agent (or direct execution for single tool):**
+
+For `type: cli` capabilities (format: `<name>: <cli_invocation>`):
+
+Run via Bash with a 10-second timeout:
 ```bash
 timeout 10 <cli_invocation> 2>&1
 ```
@@ -161,7 +205,44 @@ Determine the failure type from the exit code and output:
 - Exit 127 or "not found" in output: `! <tool_name>: command not found — install <command> first`
 - Other: `! <tool_name>: <first line of stderr>`
 
-Add the warning to `<tool_warnings>`. Continue to next capability/tool. Never retry. Tool failures must never block manual tasks, carry-forward, or recurring task processing.
+Add the warning to `<tool_warnings>`. Continue to next capability/tool. Never retry.
+
+For `type: rest` capabilities (format: `<name>: <METHOD> /path`):
+1. Read `<storage_repo>/donna/secrets.md` with the Read tool. Parse key-value pairs from under the frontmatter.
+2. Resolve the `auth_secret` key to get the actual secret value. If the key is not found in secrets.md or the value is `REPLACE_WITH_YOUR_SECRET`, add warning `! <tool_name>: missing secret <auth_secret> — edit donna/secrets.md` and skip this tool.
+3. For each capability, run via Bash with a 10-second timeout:
+```bash
+timeout 10 curl -s -H "<auth_header>: <resolved_secret>" "<base_url><path>" 2>&1
+```
+4. Parse the JSON response using Claude's understanding to extract task-like items. Format:
+`- [ ] (<tool_name>) <description> [<identifier>](<url>)`
+
+**On any failure** (non-zero exit, timeout, missing secret):
+Add a warning: `! <tool_name>: <error_description>`
+Continue. Never retry.
+
+For `type: graphql` capabilities (format: `<name>: <graphql_query>`):
+1. Same secrets resolution as REST.
+2. For each capability, run via Bash with a 10-second timeout:
+```bash
+timeout 10 curl -s -X POST -H "<auth_header>: <resolved_secret>" -H "Content-Type: application/json" -d '{"query":"<graphql_query>"}' "<base_url>" 2>&1
+```
+3. Parse the JSON response to extract task-like items. Same format as REST.
+
+**On any failure** (non-zero exit, timeout, missing secret):
+Add a warning: `! <tool_name>: <error_description>`
+Continue. Never retry.
+
+For `type: mcp` capabilities (format: `<name>: mcp:<server>/<tool>`):
+1. Invoke the MCP tool directly using Claude's native MCP tool invocation (NOT via Bash).
+2. Parse the MCP tool's response using Claude's understanding of the tool to extract task-like items. Format:
+`- [ ] (<tool_name>) <description> [<identifier>](<url>)`
+
+**On any failure:**
+Add a warning: `! <tool_name>: <error_description>`
+Continue. Never retry.
+
+Tool failures must never block manual tasks, carry-forward, or recurring task processing.
 
 Collect all task entries as `<tool_tasks>`.
 Collect all warning messages as `<tool_warnings>`.
