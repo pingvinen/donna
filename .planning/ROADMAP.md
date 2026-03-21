@@ -25,7 +25,7 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 |-------|-----------|----------------|--------|-----------|
 | 1. Packaging and Distribution | 4/4 | Complete   | 2026-03-16 | 2026-03-14 |
 | 2. Foundation and Capture | 4/4 | Complete   | 2026-03-16 | 2026-03-14 |
-| 3. Role Awareness and Daily Rhythm | v1.0 | 1/2 | In Progress|  |
+| 3. Role Awareness and Daily Rhythm | v1.0 | 2/2 | Complete   | 2026-03-21 |
 | 3.1 Standing Files Subfolder | v1.0 | 4/4 | Complete | 2026-03-15 |
 | 4. External Tool Enrichment | v1.0 | 3/3 | Complete | 2026-03-15 |
 
@@ -62,11 +62,11 @@ Plans:
 **Goal:** Add a `/donna:focus` skill that reads today's daily file, enriches items by re-querying relevant tools, and produces a short prioritized summary of the most important items to focus on right now
 **Requirements**: FOCUS-01 (stub), FOCUS-02 (workflow), FOCUS-03 (parse open tasks), FOCUS-04 (text-analysis signals), FOCUS-05 (tool enrichment), FOCUS-06 (dynamic focus list), FOCUS-07 (focus.md output), FOCUS-08 (terminal output), FOCUS-09 (installer), FOCUS-10 (README), FOCUS-11 (tests)
 **Depends on:** Phase 2
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 03-01-PLAN.md — Core skill: stub, workflow, installer registration, README entry
-- [ ] 03-02-PLAN.md — Test coverage for focus stub and workflow
+- [x] 03-02-PLAN.md — Test coverage for focus stub and workflow
 
 ## Backlog
 
