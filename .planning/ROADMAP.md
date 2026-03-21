@@ -59,13 +59,14 @@ Plans:
 
 ### Phase 3: Prioritized now view — distill daily file to focus items
 
-**Goal:** Add a skill that reads today's daily file and produces a short, prioritized summary of the most important items to focus on right now
-**Requirements**: TBD
+**Goal:** Add a `/donna:focus` skill that reads today's daily file, enriches items by re-querying relevant tools, and produces a short prioritized summary of the most important items to focus on right now
+**Requirements**: FOCUS-01 (stub), FOCUS-02 (workflow), FOCUS-03 (parse open tasks), FOCUS-04 (text-analysis signals), FOCUS-05 (tool enrichment), FOCUS-06 (dynamic focus list), FOCUS-07 (focus.md output), FOCUS-08 (terminal output), FOCUS-09 (installer), FOCUS-10 (README), FOCUS-11 (tests)
 **Depends on:** Phase 2
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 3 to break down)
+- [ ] 03-01-PLAN.md — Core skill: stub, workflow, installer registration, README entry
+- [ ] 03-02-PLAN.md — Test coverage for focus stub and workflow
 
 ## Backlog
 
