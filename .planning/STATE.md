@@ -54,6 +54,9 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Add adjust-tool skill for iterative tool configuration refinement (tooling)
 - Add task priority and sorting configuration for daily briefs (general)
 - Check for new Donna version once per day (tooling)
+- Skip setup prompt when Donna is already configured (tooling)
+- Simplify adjust-tool — remove type change support (tooling)
+- Prioritized now view — distill daily file to focus items (general)
 
 ### Roadmap Evolution
 
