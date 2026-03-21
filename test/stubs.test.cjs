@@ -28,6 +28,8 @@ const adjustToolStubPath = path.join(
     "adjust-tool.md",
 );
 const adjustToolWorkflowPath = path.join(projectRoot, "workflows", "adjust-tool.md");
+const focusStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "focus.md");
+const focusWorkflowPath = path.join(projectRoot, "workflows", "focus.md");
 
 describe("stub: stubs/claude-code/donna/setup.md", () => {
     it("exists", () => {
@@ -1211,6 +1213,14 @@ describe("cross-cutting: installer skill list", () => {
             "Installer success message should include adjust-tool skill",
         );
     });
+
+    it('success message includes "focus"', () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("focus"),
+            "Installer success message should include focus skill",
+        );
+    });
 });
 
 describe("stub: stubs/claude-code/donna/adjust-tool.md", () => {
@@ -1253,6 +1263,59 @@ describe("workflow: workflows/adjust-tool.md", () => {
         assert.ok(
             content.includes('step name="ask-what-to-change"'),
             "Should have ask-what-to-change step",
+        );
+    });
+});
+
+describe("stub: stubs/claude-code/donna/focus.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(focusStubPath), "Stub file should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:focus"', () => {
+        const content = fs.readFileSync(focusStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:focus"),
+            "Should have name: donna:focus in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(focusStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field");
+    });
+
+    it("contains @~/.donna/workflows/focus.md reference", () => {
+        const content = fs.readFileSync(focusStubPath, "utf8");
+        assert.ok(content.includes("@~/.donna/workflows/focus.md"), "Should reference workflow");
+    });
+
+    it("does not have AskUserQuestion — focus is non-interactive", () => {
+        const content = fs.readFileSync(focusStubPath, "utf8");
+        assert.ok(!content.includes("AskUserQuestion"), "Should NOT have AskUserQuestion");
+    });
+});
+
+describe("workflow: workflows/focus.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(focusWorkflowPath), "Workflow file should exist");
+    });
+
+    it("has step structure", () => {
+        const content = fs.readFileSync(focusWorkflowPath, "utf8");
+        assert.ok(content.includes('step name="read-config"'), "Should have read-config step");
+        assert.ok(
+            content.includes('step name="read-daily-file"'),
+            "Should have read-daily-file step",
+        );
+        assert.ok(
+            content.includes('step name="score-and-rank"'),
+            "Should have score-and-rank step",
+        );
+        assert.ok(
+            content.includes('step name="write-focus-file"'),
+            "Should have write-focus-file step",
         );
     });
 });
