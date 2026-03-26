@@ -168,7 +168,7 @@ if (require.main === module) {
 
         // Close with comment (D-11) — atomic comment+close per RESEARCH anti-patterns
         const result = runGh(
-            `issue close ${issueNum} --repo pingvinen/donna --reason "completed" --comment "Resolved in v${version}"`,
+            `issue close ${issueNum} --repo pingvinen/donna --reason "completed" --comment "Resolved in [v${version}](https://github.com/pingvinen/donna/releases/tag/v${version})"`,
         );
 
         if (result !== null) {
@@ -192,7 +192,7 @@ if (require.main === module) {
 
     for (const prNum of prNumbers) {
         const result = runGh(
-            `pr comment ${prNum} --repo pingvinen/donna --body "Released in v${version}"`,
+            `pr comment ${prNum} --repo pingvinen/donna --body "Released in [v${version}](https://github.com/pingvinen/donna/releases/tag/v${version})"`,
         );
         if (result !== null) {
             console.log(`Commented on PR #${prNum}`);
