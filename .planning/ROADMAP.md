@@ -77,4 +77,4 @@ Plans:
 
 Plans:
 - [x] 04-01-PLAN.md — Ingestion skill: gsd-custom:ingest-issues command file + tests
-- [ ] 04-02-PLAN.md — Release-time closure: post-release-comments.cjs script + release.yml step + tests
+- [x] 04-02-PLAN.md — Release-time closure: post-release-comments.cjs script + release.yml step + tests
