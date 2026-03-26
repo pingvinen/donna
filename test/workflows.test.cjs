@@ -72,6 +72,16 @@ describe("release.yml", () => {
     it("creates a GitHub release with gh", () => {
         assert.ok(content.includes("gh release create"));
     });
+
+    it("runs post-release-comments.cjs script", () => {
+        assert.ok(content.includes("node scripts/post-release-comments.cjs"));
+    });
+
+    it("passes version to post-release-comments script", () => {
+        assert.ok(
+            content.includes("post-release-comments.cjs ${{ steps.bump.outputs.new_version }}"),
+        );
+    });
 });
 
 describe("deploy.yml", () => {

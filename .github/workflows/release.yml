@@ -53,3 +53,8 @@ jobs:
             --title "v${{ steps.bump.outputs.new_version }}" \
             --notes-file CHANGELOG_RELEASE.md \
             dist/*.tgz
+
+      - name: Post release comments and close resolved issues
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+        run: node scripts/post-release-comments.cjs ${{ steps.bump.outputs.new_version }}
