@@ -1,6 +1,6 @@
 {
   "name": "@pingvinen/donna-assistant",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Donna - your AI powered personal assistant",
   "bin": {
     "donna-assistant": "./bin/donna-assistant"
