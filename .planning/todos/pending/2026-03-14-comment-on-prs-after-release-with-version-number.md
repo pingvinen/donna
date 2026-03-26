@@ -1,7 +1,8 @@
 ---
 created: 2026-03-14T15:37:32.079Z
-title: Comment on PRs after release with version number
+title: Comment on PRs after release with version number (ref: #21)
 area: tooling
+github_issue: 21
 files:
   - .github/workflows/release.yml
   - .github/workflows/deploy.yml
