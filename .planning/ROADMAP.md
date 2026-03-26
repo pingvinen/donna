@@ -71,10 +71,10 @@ Plans:
 ### Phase 4: Ingest GitHub issues into GSD
 
 **Goal:** Add internal skill to ingest GitHub issues into GSD — for each open issue without "ingested" label: classify, create TODOs with issue references, post comments, and apply labels. On release: check completed TODOs for issue provenance, post version comments, and close resolved issues with appropriate semantics. (ref: #21)
-**Requirements**: TBD
+**Requirements**: INGEST-01 (skill file), INGEST-02 (batch ingestion flow), INGEST-03 (release-time script), INGEST-04 (PR commenting), INGEST-05 (release.yml integration), INGEST-06 (test coverage)
 **Depends on:** Phase 3
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 4 to break down)
-
+- [ ] 04-01-PLAN.md — Ingestion skill: gsd-custom:ingest-issues command file + tests
+- [ ] 04-02-PLAN.md — Release-time closure: post-release-comments.cjs script + release.yml step + tests
