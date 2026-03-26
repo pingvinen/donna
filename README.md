@@ -141,6 +141,7 @@ Most commands are safe to run again. Want to update your role? Run `/donna:set-r
 | `/donna:relearn-tools` | Update CLI tool knowledge after upgrades |
 | `/donna:help` | Conversational troubleshooting for config, storage, or skill issues |
 | `/donna:contribute-idea` | Submit a feature idea or bug report via GitHub Issues |
+| `/donna:focus` | Distill today's tasks into a short prioritized focus list |
 
 ## License
 
