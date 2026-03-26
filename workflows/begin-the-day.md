@@ -117,7 +117,7 @@ CRITICAL: The `grep -v "$TODAY"` exclusion prevents a self-referencing loop. If 
 <step name="carry-forward">
 If the previous file result is "NONE", set `<carried_tasks>` to an empty list and continue to the next step.
 
-If a previous file was found, read it with the Read tool. Extract all open tasks — every line matching the pattern `- [ ] <description>`. For each open task:
+If a previous file was found, read it with the Read tool. Extract open tasks only from the `## Tasks` section — every line matching the pattern `- [ ] <description>` that appears between `## Tasks` and the next `## ` heading (or end of file). Tasks under `## From Tools`, `## Resolved`, or `## Warnings` must NOT be carried forward — tool-sourced tasks are re-pulled fresh each day. For each open task:
 - If the description ends with ` (N times)` (where N is any integer): extract N, increment to N+1, replace the suffix with ` (N+1 times)`. For example: `- [ ] Follow up with Sarah (2 times)` becomes `- [ ] Follow up with Sarah (3 times)`.
 - If the description has no such suffix: append ` (1 times)`. For example: `- [ ] Follow up with Sarah` becomes `- [ ] Follow up with Sarah (1 times)`.
 

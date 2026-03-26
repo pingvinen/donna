@@ -443,6 +443,15 @@ describe("workflow: workflows/begin-the-day.md", () => {
         );
     });
 
+    it("carry-forward excludes tasks from the From Tools section", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        // The carry-forward step must only extract tasks from ## Tasks, not ## From Tools
+        assert.ok(
+            content.includes("## Tasks") && content.includes("NOT be carried forward"),
+            "carry-forward should explicitly exclude From Tools section tasks",
+        );
+    });
+
     it("references recurring.md for due-today tasks", () => {
         const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
         assert.ok(
