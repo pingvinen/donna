@@ -68,13 +68,13 @@ Plans:
 - [x] 03-01-PLAN.md — Core skill: stub, workflow, installer registration, README entry
 - [x] 03-02-PLAN.md — Test coverage for focus stub and workflow
 
-## Backlog
+### Phase 4: Ingest GitHub issues into GSD
 
-### Phase 999.1: Tool system architecture evolution (BACKLOG)
-
-**Goal:** Store GraphQL schemas for real diff-based relearn, restructure tools data format (per-tool files or richer YAML instead of flat markdown), and run each tool in its own agent with clean context during run-tools/begin-the-day
-**Requirements:** TBD
+**Goal:** Add internal skill to ingest GitHub issues into GSD — for each open issue without "ingested" label: classify, create TODOs with issue references, post comments, and apply labels. On release: check completed TODOs for issue provenance, post version comments, and close resolved issues with appropriate semantics. (ref: #21)
+**Requirements**: TBD
+**Depends on:** Phase 3
 **Plans:** 0 plans
 
 Plans:
-- [ ] TBD (promote with /gsd:review-backlog when ready)
+- [ ] TBD (run /gsd:plan-phase 4 to break down)
+

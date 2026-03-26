@@ -51,15 +51,12 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Comment on PRs after release with version number (tooling)
 - Evaluate natural language input as alternative to slash commands (general)
 - Handle timezone changes in daily files (general)
-- Support non-CLI tools — APIs and MCP servers (tooling)
-- Parallelize tool capability commands for faster data pulls (tooling)
-- Add adjust-tool skill for iterative tool configuration refinement (tooling)
 - Add task priority and sorting configuration for daily briefs (general)
 - Check for new Donna version once per day (tooling)
 - Skip setup prompt when Donna is already configured (tooling)
 - Simplify adjust-tool — remove type change support (tooling)
-- Prioritized now view — distill daily file to focus items (general)
-- Do not carry-over tasks from the From Tools section (general)
+- Store GraphQL schemas for real diff-based relearn (tooling)
+- Restructure tools data format — per-tool files or richer YAML instead of flat markdown (tooling)
 
 ### Roadmap Evolution
 
@@ -67,6 +64,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Phase 1 added: Low-hanging documentation stuff for users and alpha testers
 - Phase 2 added: Tool System Enhancements (parallel tool commands, adjust-tool skill, non-CLI tool support)
 - Phase 3 added: Prioritized now view — distill daily file to focus items
+- Phase 4 added: Ingest GitHub issues into GSD (ref: #21)
 
 ## Session Continuity
 

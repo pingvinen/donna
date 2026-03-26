@@ -10,9 +10,24 @@
 - All Donna runtime files (`~/.donna/` and storage repo) must be Obsidian-compatible: plain markdown with YAML frontmatter, standard folder structure. No proprietary formats.
 - Daily files go in a flat folder (e.g., `daily/`) — Obsidian Calendar plugin is folder-sensitive.
 
-## Development Approach
+## Development Workflow
+Work flows through a pipeline: **TODO → Phase → Execute → Ship**.
+
+1. **Capture work** — record needed work by adding TODOs, either directly (`/gsd:add-todo`) or by ingesting from GitHub issues.
+2. **Define a phase** — group one or more related TODOs into a phase (`/gsd:add-phase`).
+3. **Discuss, plan, research** — use `/gsd:discuss-phase`, `/gsd:plan-phase`, `/gsd:research-phase` as needed to prepare.
+4. **Prepare to execute** — ensure main is committed and pushed, then create a feature branch.
+5. **Execute the phase** — build it (`/gsd:execute-phase`).
+6. **Create a PR** — with `--assignee @me` and conventional commit title.
+7. **UAT** — verify the work meets acceptance criteria before merging. UAT must pass before merge.
+8. **Merge** — merge the PR.
+9. **Clean up state** — ensure completed TODOs are removed, decisions recorded, and STATE.md is up to date.
+10. *(Optional)* **Release** — trigger a release by running the "Create Release" workflow in GitHub Actions.
+
+Releases happen organically when enough value has accumulated — there are no formal milestones.
+
+## Development Conventions
 - **Real skills, not throwaway dummies:** When a placeholder is needed to prove the pipeline, stub a real skill — don't create a dummy skill that needs cleanup later.
-- **No formal milestones:** Work from a backlog, ship what's important. Releases happen organically when enough value has accumulated. Archive completed phase artifacts periodically for context hygiene, not as milestone ceremony.
 - **Run code linting:** PR validation runs a linting check, so make sure to run `npm run lint:fix` before committing.
 
 ## Version & Dependency Checks
