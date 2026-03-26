@@ -35,6 +35,8 @@ Never forget an important task again — the assistant knows your role, surfaces
 - ✓ Secrets management via secrets.md for API auth — Phase 02
 - ✓ GraphQL schema introspection in relearn-tools — Phase 02
 - ✓ Capability format repair on type change in adjust-tool — Phase 02
+- ✓ `/gsd-custom:ingest-issues` skill — batch-ingest GitHub issues into GSD TODOs with provenance tracking — Phase 04
+- ✓ Release-time issue closure and PR commenting (`post-release-comments.cjs`) — Phase 04
 
 ### Active
 
@@ -94,4 +96,4 @@ Alpha testers using the package. Developed on personal machine, deployed to work
 | Tool-tagged tasks preserve suffix | `[tool](url)` kept on completed tasks for traceability | ✓ Good |
 
 ---
-*Last updated: 2026-03-21 after Phase 03 prioritized-now-view — donna:focus skill added*
+*Last updated: 2026-03-26 after Phase 04 ingest-github-issues-into-gsd — issue ingestion skill + release-time comments*

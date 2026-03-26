@@ -1,19 +1,13 @@
 ---
 phase: 04-ingest-github-issues-into-gsd
 verified: 2026-03-26T22:00:00Z
-status: gaps_found
-score: 11/12 must-haves verified
+status: human_needed
+score: 12/12 must-haves verified
 re_verification: false
 gaps:
   - truth: "ROADMAP.md accurately reflects phase completion status"
-    status: failed
-    reason: "ROADMAP.md still marks 04-02-PLAN.md as incomplete ([ ]) even though all deliverables from that plan exist in the codebase and all tests pass"
-    artifacts:
-      - path: ".planning/ROADMAP.md"
-        issue: "Line 80: '- [ ] 04-02-PLAN.md' should be '- [x] 04-02-PLAN.md' and the Plans row should read '2/2 plans executed'"
-    missing:
-      - "Update ROADMAP.md line 76 to show '2/2 plans executed'"
-      - "Update ROADMAP.md line 80 to mark 04-02 as complete: '- [x] 04-02-PLAN.md'"
+    status: resolved
+    reason: "ROADMAP.md updated via roadmap update-plan-progress after verification"
 human_verification:
   - test: "Run gsd-custom:ingest-issues on a repo with open, unlabelled issues"
     expected: "Issues are classified, TODO files created with github_issue frontmatter and (ref: #N) in title, ingested label applied last, comment posted on each issue"
@@ -27,7 +21,7 @@ human_verification:
 
 **Phase Goal:** Ingest open GitHub issues into GSD as TODOs with provenance tracking; close resolved issues and comment on PRs at release time.
 **Verified:** 2026-03-26T22:00:00Z
-**Status:** gaps_found (1 documentation gap — ROADMAP.md not updated after 04-02 completion)
+**Status:** human_needed (all automated checks pass, 2 items need live environment testing)
 **Re-verification:** No — initial verification
 
 ## Goal Achievement
