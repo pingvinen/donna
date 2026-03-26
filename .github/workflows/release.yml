@@ -5,6 +5,8 @@ on:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   release:
@@ -56,5 +58,5 @@ jobs:
 
       - name: Post release comments and close resolved issues
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+          GH_TOKEN: ${{ github.token }}
         run: node scripts/post-release-comments.cjs ${{ steps.bump.outputs.new_version }}
