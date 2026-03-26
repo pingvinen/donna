@@ -27,7 +27,7 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 | 2. Foundation and Capture | 4/4 | Complete   | 2026-03-16 | 2026-03-14 |
 | 3. Role Awareness and Daily Rhythm | v1.0 | 2/2 | Complete   | 2026-03-21 |
 | 3.1 Standing Files Subfolder | v1.0 | 4/4 | Complete | 2026-03-15 |
-| 4. External Tool Enrichment | v1.0 | 3/3 | Complete | 2026-03-15 |
+| 4. External Tool Enrichment | v1.0 | 1/2 | In Progress|  |
 
 ### Phase 1: Low-hanging documentation stuff for users and alpha testers
 
@@ -73,8 +73,8 @@ Plans:
 **Goal:** Add internal skill to ingest GitHub issues into GSD — for each open issue without "ingested" label: classify, create TODOs with issue references, post comments, and apply labels. On release: check completed TODOs for issue provenance, post version comments, and close resolved issues with appropriate semantics. (ref: #21)
 **Requirements**: INGEST-01 (skill file), INGEST-02 (batch ingestion flow), INGEST-03 (release-time script), INGEST-04 (PR commenting), INGEST-05 (release.yml integration), INGEST-06 (test coverage)
 **Depends on:** Phase 3
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 04-01-PLAN.md — Ingestion skill: gsd-custom:ingest-issues command file + tests
+- [x] 04-01-PLAN.md — Ingestion skill: gsd-custom:ingest-issues command file + tests
 - [ ] 04-02-PLAN.md — Release-time closure: post-release-comments.cjs script + release.yml step + tests
