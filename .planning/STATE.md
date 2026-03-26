@@ -66,6 +66,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Make UAT easier with sandbox environment and test tools (testing, ref: #19)
 - Refactor skill bootstrap (config, migrations) into reusable module (tooling, ref: #30)
 - Stop wrapping commands in "timeout" if timeout is not installed (general, ref: #18)
+- Update STATE.md pending list when adding TODOs (planning)
 
 ### Roadmap Evolution
 
