@@ -21,8 +21,8 @@ Work flows through a pipeline: **TODO → Phase → Execute → Ship**.
 6. **Create a PR** — with `--assignee @me` and conventional commit title.
 7. **UAT** — verify the work meets acceptance criteria before merging. UAT must pass before merge.
 8. **Merge** — merge the PR.
-9. **Clean up state** — ensure completed TODOs are removed, decisions recorded, and STATE.md is up to date.
-10. *(Optional)* **Release** — trigger a release by running the "Create Release" workflow in GitHub Actions.
+9. **Clean up state** — move completed TODOs to `done/`, record decisions, and update STATE.md.
+10. *(Optional)* **Release** — trigger a release by running the "Create Release" workflow in GitHub Actions. The release workflow scans `done/` TODOs for `github_issue` fields to auto-close resolved issues.
 
 Releases happen organically when enough value has accumulated — there are no formal milestones.
 

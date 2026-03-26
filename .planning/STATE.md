@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-26T19:02:03.522Z"
+status: Milestone complete
+stopped_at: Completed 04-ingest-github-issues-into-gsd plan 01 (ingest-issues skill)
+last_updated: "2026-03-26T19:52:20.402Z"
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 13
-  completed_plans: 13
+  completed_phases: 4
+  total_plans: 15
+  completed_plans: 15
 ---
 
 # Project State
@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-03-16)
 
 ## Current Position
 
-Phase: 999.1
+Phase: 04
 Plan: Not started
 
 ## Accumulated Context
@@ -44,6 +44,9 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - [Phase 02]: GraphQL introspection proceeds unconditionally; auth header conditionally included only when a real (non-placeholder) secret is resolved
 - [Phase 03]: donna:focus is non-interactive (no AskUserQuestion) per D-02/D-03; workflow has 9 steps including check-pending-migrations
 - [Phase 03]: No additional test changes needed — Plan 01 proactively added all focus test blocks, making Plan 02 a verify-only step
+- [Phase 04-ingest-github-issues-into-gsd]: ingest-issues skill uses gsd-custom: prefix and inline workflow logic — not installed via Donna installer (D-13, D-14)
+- [Phase 04-ingest-github-issues-into-gsd]: ingested label applied as LAST step per issue for atomicity and safe retry on failure (D-05/pitfall 2)
+- [Phase 04-ingest-github-issues-into-gsd]: Skill stages TODO files with git add but does not commit — developer commits in main context (CLAUDE.md SSH signing constraint)
 
 ### Pending Todos
 
@@ -68,6 +71,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-26T19:02:03.520Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-ingest-github-issues-into-gsd/04-CONTEXT.md
+Last session: 2026-03-26T19:46:19.909Z
+Stopped at: Completed 04-ingest-github-issues-into-gsd plan 01 (ingest-issues skill)
+Resume file: None
