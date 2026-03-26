@@ -59,6 +59,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Skip setup prompt when Donna is already configured (tooling)
 - Simplify adjust-tool — remove type change support (tooling)
 - Prioritized now view — distill daily file to focus items (general)
+- Do not carry-over tasks from the From Tools section (general)
 
 ### Roadmap Evolution
 
