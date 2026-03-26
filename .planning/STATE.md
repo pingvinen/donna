@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Milestone complete
-stopped_at: Completed 04-ingest-github-issues-into-gsd plan 01 (ingest-issues skill)
+stopped_at: "Completed 04-ingest-github-issues-into-gsd. State cleanup done."
 last_updated: "2026-03-26T19:52:20.402Z"
 progress:
   total_phases: 4
@@ -51,15 +51,21 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 ### Pending Todos
 
 - Clean up removed files on upgrade (tooling)
-- Comment on PRs after release with version number (tooling)
 - Evaluate natural language input as alternative to slash commands (general)
 - Handle timezone changes in daily files (general)
 - Add task priority and sorting configuration for daily briefs (general)
 - Check for new Donna version once per day (tooling)
 - Skip setup prompt when Donna is already configured (tooling)
 - Simplify adjust-tool — remove type change support (tooling)
-- Store GraphQL schemas for real diff-based relearn (tooling)
-- Restructure tools data format — per-tool files or richer YAML instead of flat markdown (tooling)
+- Add ASCII art branding to Donna's output banners (general, ref: #13)
+- Add GitHub workflow that blocks merging if UAT not finalized (ci, ref: #27)
+- Document why automated periodic run-tools invocations are not supported (docs, ref: #23)
+- Extract possible tasks from meeting notes and transcripts (tooling, ref: #25)
+- Make the skills list in README easier to comprehend with grouping (docs, ref: #22)
+- Enhance tool learning to read source code, docs, and API schemas (tooling, ref: #20)
+- Make UAT easier with sandbox environment and test tools (testing, ref: #19)
+- Refactor skill bootstrap (config, migrations) into reusable module (tooling, ref: #30)
+- Stop wrapping commands in "timeout" if timeout is not installed (general, ref: #18)
 
 ### Roadmap Evolution
 
@@ -69,8 +75,14 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Phase 3 added: Prioritized now view — distill daily file to focus items
 - Phase 4 added: Ingest GitHub issues into GSD (ref: #21)
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260326-ux1 | move completed todos to done | 2026-03-26 | dce26bf | [260326-ux1-move-completed-todos-to-done](./quick/260326-ux1-move-completed-todos-to-done/) |
+
 ## Session Continuity
 
 Last session: 2026-03-26T19:46:19.909Z
-Stopped at: Completed 04-ingest-github-issues-into-gsd plan 01 (ingest-issues skill)
+Stopped at: 2026-03-26 - Completed quick task 260326-ux1: move completed todos to done
 Resume file: None
