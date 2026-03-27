@@ -76,6 +76,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Phase 3 added: Prioritized now view — distill daily file to focus items
 - Phase 4 added: Ingest GitHub issues into GSD (ref: #21)
 - Phase 5 added: Fix the constant timeout warnings
+- Phase 6 added: Polish and harden — version check, skip-setup guard, simplify adjust-tool, UAT merge gate, docs/README improvements, enhance tool learning, refactor skill bootstrap
 
 ### Quick Tasks Completed
 

@@ -88,3 +88,13 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md — Remove timeout binary from workflows + update test assertions
+
+### Phase 6: Polish and harden — version check, skip-setup guard, simplify adjust-tool, UAT merge gate, docs and README improvements, enhance tool learning, refactor skill bootstrap
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 6 to break down)
