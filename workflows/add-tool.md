@@ -163,11 +163,11 @@ Store the output as `<version>`. If the command does not support `--version`, st
 <step name="auth-test">
 **If `<tool_type>` is `cli`:**
 
-For well-known tools, run the appropriate auth test via Bash with a 10-second timeout:
+For well-known tools, run the appropriate auth test via Bash (set the Bash tool's `timeout` parameter to `10000`):
 
-- `gh`: `timeout 10 gh api user --jq '.login' 2>&1`
-- `jira`: `timeout 10 jira me 2>&1`
-- `kubectl`: `timeout 10 kubectl auth whoami 2>&1`
+- `gh`: run `gh api user --jq '.login' 2>&1` via Bash with `timeout: 10000`
+- `jira`: run `jira me 2>&1` via Bash with `timeout: 10000`
+- `kubectl`: run `kubectl auth whoami 2>&1` via Bash with `timeout: 10000`
 - Other tools: skip auth test, print `ℹ No known auth test for <command>. Verify manually.`
 
 On success (exit 0): print `✓ Authenticated as <output>`.

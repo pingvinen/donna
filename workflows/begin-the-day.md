@@ -178,9 +178,9 @@ Store the parsed tools and their capabilities as `<registered_tools>`.
 
 For `type: cli` capabilities (format: `<name>: <cli_invocation>`):
 
-Run via Bash with a 10-second timeout:
+Run via Bash (set the Bash tool's `timeout` parameter to `10000`):
 ```bash
-timeout 10 <cli_invocation> 2>&1
+<cli_invocation> 2>&1
 ```
 
 **On success (exit 0):**
@@ -210,9 +210,9 @@ Add the warning to `<tool_warnings>`. Continue to next capability/tool. Never re
 For `type: rest` capabilities (format: `<name>: <METHOD> /path`):
 1. Read `<storage_repo>/donna/secrets.md` with the Read tool. Parse key-value pairs from under the frontmatter.
 2. Resolve the `auth_secret` key to get the actual secret value. If the key is not found in secrets.md or the value is `REPLACE_WITH_YOUR_SECRET`, add warning `! <tool_name>: missing secret <auth_secret> — edit donna/secrets.md` and skip this tool.
-3. For each capability, run via Bash with a 10-second timeout:
+3. For each capability, run via Bash (set the Bash tool's `timeout` parameter to `10000`):
 ```bash
-timeout 10 curl -s -H "<auth_header>: <resolved_secret>" "<base_url><path>" 2>&1
+curl -s -H "<auth_header>: <resolved_secret>" "<base_url><path>" 2>&1
 ```
 4. Parse the JSON response using Claude's understanding to extract task-like items. Format:
 `- [ ] (<tool_name>) <description> [<identifier>](<url>)`
@@ -223,9 +223,9 @@ Continue. Never retry.
 
 For `type: graphql` capabilities (format: `<name>: <graphql_query>`):
 1. Same secrets resolution as REST.
-2. For each capability, run via Bash with a 10-second timeout:
+2. For each capability, run via Bash (set the Bash tool's `timeout` parameter to `10000`):
 ```bash
-timeout 10 curl -s -X POST -H "<auth_header>: <resolved_secret>" -H "Content-Type: application/json" -d '{"query":"<graphql_query>"}' "<base_url>" 2>&1
+curl -s -X POST -H "<auth_header>: <resolved_secret>" -H "Content-Type: application/json" -d '{"query":"<graphql_query>"}' "<base_url>" 2>&1
 ```
 3. Parse the JSON response to extract task-like items. Same format as REST.
 
