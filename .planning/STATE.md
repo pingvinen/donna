@@ -67,7 +67,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Enhance tool learning to read source code, docs, and API schemas (tooling, ref: #20)
 - Make UAT easier with sandbox environment and test tools (testing, ref: #19)
 - Refactor skill bootstrap (config, migrations) into reusable module (tooling, ref: #30)
-- Stop wrapping commands in "timeout" if timeout is not installed (general, ref: #18)
 
 ### Roadmap Evolution
 
