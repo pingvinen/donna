@@ -57,7 +57,11 @@ If `<type>` is `graphql`:
 
   **IMPORTANT: Auth is OPTIONAL for GraphQL tools. Public APIs work without any secret. You MUST always attempt introspection regardless of whether auth is configured. NEVER skip a GraphQL tool just because it has no auth_secret.**
 
-  1. Attempt to read `<storage_repo>/donna/secrets.md` with the Read tool. If the file exists and contains the `auth_secret` key with a value that is not a placeholder (does not contain "REPLACE_WITH"), set `<resolved_secret>` to that value. Otherwise, set `<resolved_secret>` to empty (no auth). **An empty resolved_secret is perfectly valid — proceed to step 2 regardless.**
+  1. Resolve the auth secret via Bash:
+  ```bash
+  node ~/.donna/donna-tools.cjs resolve-secret <auth_secret>
+  ```
+  Parse the JSON response. If `error` is `"key_not_found"` or `"placeholder_value"`, set `<resolved_secret>` to empty (no auth). Otherwise extract the `value` field as `<resolved_secret>`. **An empty resolved_secret is perfectly valid — proceed to step 2 regardless.**
 
   2. Run via Bash with a 15-second timeout (set the Bash tool's `timeout` parameter to `15000`). Include the auth header only when a real secret was resolved:
      - If `<resolved_secret>` is non-empty:

@@ -162,7 +162,7 @@ Write the updated secrets.md.
 Read `<storage_repo>/.gitignore` with the Read tool. If the file does not exist or does not contain `donna/secrets.md`, append `donna/secrets.md` to `.gitignore` and write back. If `.gitignore` does not exist, create it with `donna/secrets.md` as its sole content.
 
 **Validate API connectivity:**
-Read `<storage_repo>/donna/secrets.md` to get the current value for `<auth_secret>`. If the value is `REPLACE_WITH_YOUR_SECRET` or the key is absent, print:
+Resolve the secret via Bash: `node ~/.donna/donna-tools.cjs resolve-secret <auth_secret>`. Parse the JSON response. If `error` is `"key_not_found"` or `"placeholder_value"`, print:
 ```
 ! No secret set for <auth_secret> — edit donna/secrets.md before testing connectivity.
 ```

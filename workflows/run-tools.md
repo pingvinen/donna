@@ -115,8 +115,11 @@ For other tools: use Claude's understanding to extract task-like items from the 
 Continue to the next capability. Never retry.
 
 For `type: rest` capabilities (format: `<name>: <METHOD> /path`):
-1. Read `<storage_repo>/donna/secrets.md` with the Read tool. Parse key-value pairs from under the frontmatter.
-2. Resolve the `auth_secret` key to get the actual secret value. If the key is not found in secrets.md or the value is `REPLACE_WITH_YOUR_SECRET`, add warning `! <tool_name>: missing secret <auth_secret> — edit donna/secrets.md` and skip this tool.
+1. Resolve the auth secret via Bash:
+```bash
+node ~/.donna/donna-tools.cjs resolve-secret <auth_secret>
+```
+2. Parse the JSON response. If `error` is `"key_not_found"` or `"placeholder_value"`, add warning `! <tool_name>: missing secret <auth_secret> — edit donna/secrets.md` and skip this tool. Otherwise extract the `value` field as `<resolved_secret>`.
 3. For each capability, run via Bash (set the Bash tool's `timeout` parameter to `10000`):
 ```bash
 curl -s -H "<auth_header>: <resolved_secret>" "<base_url><path>" 2>&1
