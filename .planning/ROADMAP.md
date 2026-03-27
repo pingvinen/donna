@@ -101,4 +101,4 @@ Plans:
 - [x] 06-02-PLAN.md — UAT merge gate, skip-setup guard, simplify adjust-tool
 - [x] 06-03-PLAN.md — README improvements: grouped skills list + automation docs
 - [x] 06-04-PLAN.md — Enhanced tool learning cascade in add-tool and relearn-tools
-- [ ] 06-05-PLAN.md — Workflow bootstrap refactor: replace inline bootstrap with donna-tools calls in all 9 workflows
+- [x] 06-05-PLAN.md — Workflow bootstrap refactor: replace inline bootstrap with donna-tools calls in all 9 workflows
