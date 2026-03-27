@@ -116,10 +116,10 @@ If `<type>` is `graphql`:
 
   1. Attempt to read `<storage_repo>/donna/secrets.md` with the Read tool. If the file exists and contains the `auth_secret` key with a value that is not a placeholder (does not contain "REPLACE_WITH"), set `<resolved_secret>` to that value. Otherwise, set `<resolved_secret>` to empty (no auth). **An empty resolved_secret is perfectly valid — proceed to step 2 regardless.**
 
-  2. Run via Bash with a 15-second timeout. Include the auth header only when a real secret was resolved:
+  2. Run via Bash with a 15-second timeout (set the Bash tool's `timeout` parameter to `15000`). Include the auth header only when a real secret was resolved:
      - If `<resolved_secret>` is non-empty:
        ```bash
-       timeout 15 curl -s -X POST \
+       curl -s -X POST \
          -H "<auth_header>: <resolved_secret>" \
          -H "Content-Type: application/json" \
          -d '{"query":"{ __schema { types { name fields { name type { name } } } } }"}' \
@@ -127,7 +127,7 @@ If `<type>` is `graphql`:
        ```
      - If `<resolved_secret>` is empty (public API or no secret configured):
        ```bash
-       timeout 15 curl -s -X POST \
+       curl -s -X POST \
          -H "Content-Type: application/json" \
          -d '{"query":"{ __schema { types { name fields { name type { name } } } } }"}' \
          "<base_url>" 2>&1

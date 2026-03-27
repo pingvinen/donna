@@ -143,9 +143,9 @@ If the `## From Tools` section does not exist in today's file, set `<existing_to
 
 For `type: cli` capabilities (format: `<name>: <cli_invocation>`):
 
-Run the capability command via Bash with a 10-second timeout:
+Run the capability command via Bash (set the Bash tool's `timeout` parameter to `10000`):
 ```bash
-timeout 10 <capability_command> 2>&1
+<capability_command> 2>&1
 ```
 
 **On success (exit 0):** Parse the output into task entries. Every task line MUST include both a tool tag and a descriptive link.
@@ -176,9 +176,9 @@ Continue to the next capability. Never retry.
 For `type: rest` capabilities (format: `<name>: <METHOD> /path`):
 1. Read `<storage_repo>/donna/secrets.md` with the Read tool. Parse key-value pairs from under the frontmatter.
 2. Resolve the `auth_secret` key to get the actual secret value. If the key is not found in secrets.md or the value is `REPLACE_WITH_YOUR_SECRET`, add warning `! <tool_name>: missing secret <auth_secret> — edit donna/secrets.md` and skip this tool.
-3. For each capability, run via Bash with a 10-second timeout:
+3. For each capability, run via Bash (set the Bash tool's `timeout` parameter to `10000`):
 ```bash
-timeout 10 curl -s -H "<auth_header>: <resolved_secret>" "<base_url><path>" 2>&1
+curl -s -H "<auth_header>: <resolved_secret>" "<base_url><path>" 2>&1
 ```
 4. Parse the JSON response using Claude's understanding to extract task-like items. Format:
 `- [ ] (<tool_name>) <description> [<identifier>](<url>)`
@@ -189,9 +189,9 @@ Continue. Never retry.
 
 For `type: graphql` capabilities (format: `<name>: <graphql_query>`):
 1. Same secrets resolution as REST.
-2. For each capability, run via Bash with a 10-second timeout:
+2. For each capability, run via Bash (set the Bash tool's `timeout` parameter to `10000`):
 ```bash
-timeout 10 curl -s -X POST -H "<auth_header>: <resolved_secret>" -H "Content-Type: application/json" -d '{"query":"<graphql_query>"}' "<base_url>" 2>&1
+curl -s -X POST -H "<auth_header>: <resolved_secret>" -H "Content-Type: application/json" -d '{"query":"<graphql_query>"}' "<base_url>" 2>&1
 ```
 3. Parse the JSON response to extract task-like items. Same format as REST.
 
@@ -223,7 +223,7 @@ For each URL in `<existing_tool_lines>`:
 1. If the line is `[x]` (user manually checked): **KEEP AS-IS** — user intent wins (Rule 1). Do not change regardless of tool state.
 2. If the line is `[ ]` AND the URL exists in `<fresh_tool_tasks>`: **KEEP OPEN** — item is still active (Rule 2).
 3. If the line is `[ ]` AND the URL is NOT in `<fresh_tool_tasks>`: the item was removed from the tool (reassigned, deleted, or closed).
-   - For gh items: check if the PR/issue was closed or merged via Bash: `timeout 10 gh pr view <number> --json state --jq '.state' 2>/dev/null || timeout 10 gh issue view <number> --json state --jq '.state' 2>/dev/null`
+   - For gh items: check if the PR/issue was closed or merged via Bash (set the Bash tool's `timeout` parameter to `10000`): `gh pr view <number> --json state --jq '.state' 2>/dev/null || gh issue view <number> --json state --jq '.state' 2>/dev/null`
    - If closed or merged: change to `- [x] (<tool>) <description> [<identifier>](<url>) (<reason>)` and move to `## Resolved` (Rule 3a).
    - If status check fails or item simply no longer appears: move to `## Resolved` with `(removed)` (Rule 3b).
 
