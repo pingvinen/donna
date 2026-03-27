@@ -94,11 +94,11 @@ Plans:
 **Goal:** Harden and polish the existing Donna skill suite: create donna-tools.cjs as a centralized CLI utility to eliminate bootstrap duplication across workflows, add a daily version check, suppress the setup prompt when already configured, simplify adjust-tool, add a UAT merge gate, improve README documentation, and enhance tool learning with cascading sources
 **Requirements**: D-01 (daily version check), D-02 (non-blocking update hint), D-03 (version check in init), D-04 (skip-setup guard), D-05 (simplify adjust-tool), D-06 (UAT merge gate), D-07 (README skills grouping), D-08 (automation docs), D-09 (cascading tool learning), D-10 (donna-tools.cjs entry point), D-11 (donna-tools subcommands), D-12 (workflow bootstrap refactor)
 **Depends on:** Phase 5
-**Plans:** 1/5 plans executed
+**Plans:** 4/5 plans executed
 
 Plans:
 - [x] 06-01-PLAN.md — donna-tools.cjs: centralized CLI utility with init, commit, daily-path, resolve-secret subcommands + version check
-- [ ] 06-02-PLAN.md — UAT merge gate, skip-setup guard, simplify adjust-tool
-- [ ] 06-03-PLAN.md — README improvements: grouped skills list + automation docs
-- [ ] 06-04-PLAN.md — Enhanced tool learning cascade in add-tool and relearn-tools
+- [x] 06-02-PLAN.md — UAT merge gate, skip-setup guard, simplify adjust-tool
+- [x] 06-03-PLAN.md — README improvements: grouped skills list + automation docs
+- [x] 06-04-PLAN.md — Enhanced tool learning cascade in add-tool and relearn-tools
 - [ ] 06-05-PLAN.md — Workflow bootstrap refactor: replace inline bootstrap with donna-tools calls in all 9 workflows
