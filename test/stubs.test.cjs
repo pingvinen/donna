@@ -819,11 +819,11 @@ describe("workflow: workflows/run-tools.md", () => {
         assert.ok(content.includes("## Resolved"), "Should reference ## Resolved section format");
     });
 
-    it("contains timeout for failure isolation", () => {
+    it("contains Bash tool timeout parameter for failure isolation", () => {
         const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
-            content.includes("timeout"),
-            "Should contain timeout for per-tool failure isolation",
+            content.includes("10000"),
+            "Should use Bash tool timeout parameter (10000ms) for per-tool failure isolation",
         );
     });
 
@@ -891,11 +891,11 @@ describe("cross-cutting: begin-the-day tool integration", () => {
         );
     });
 
-    it("includes timeout for failure isolation", () => {
+    it("includes Bash tool timeout parameter for failure isolation", () => {
         const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
         assert.ok(
-            content.includes("timeout 10") || content.includes("timeout"),
-            "begin-the-day should use timeout for tool command failure isolation",
+            content.includes("10000"),
+            "begin-the-day should use Bash tool timeout parameter (10000ms) for tool command failure isolation",
         );
     });
 
