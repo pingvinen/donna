@@ -300,7 +300,46 @@ If `<scope>` is set, replace `--all-namespaces` with `-n <namespace>` for each n
 - list-pods: `kubectl get pods --all-namespaces --field-selector=status.phase!=Succeeded -o wide`
 - list-failing: `kubectl get pods --all-namespaces --field-selector=status.phase=Failed -o wide`
 
-For **unknown tools**, run `<command> --help 2>&1 | head -80` via Bash and use Claude's understanding to identify 3–5 capabilities relevant to daily task management. If `<scope>` is set, incorporate the scope into the CLI invocations where appropriate. Format each as `name: <cli invocation>`.
+For **unknown tools**, use a cascading approach to learn capabilities. Each stage builds on the previous. Stop when 3-5 relevant capabilities have been identified.
+
+**Stage 1 — Local docs:**
+Attempt to find local documentation for the tool:
+```bash
+TOOL_PATH=$(which <command> 2>/dev/null)
+```
+If found, check for README or docs in the tool's package directory:
+```bash
+TOOL_DIR=$(dirname "$(dirname "$TOOL_PATH")")
+ls "$TOOL_DIR"/README* "$TOOL_DIR"/doc* "$TOOL_DIR"/docs* 2>/dev/null | head -5
+```
+If doc files exist, read up to 200 lines from the most relevant one (prefer README, then docs/). Use Claude's understanding to identify capabilities relevant to daily task management.
+
+**Stage 2 — CLI help (baseline):**
+Run `<command> --help 2>&1 | head -80` via Bash. Combine with any Stage 1 findings. Use Claude's understanding to identify 3-5 capabilities relevant to daily task management. If `<scope>` is set, incorporate the scope into CLI invocations.
+
+**Stage 3 — Web docs (if stages 1-2 found fewer than 3 capabilities):**
+If fewer than 3 capabilities identified so far, attempt to fetch the tool's documentation from the web. Use WebFetch on common doc URLs:
+- `https://<command>.dev` or `https://<command>.io`
+- The homepage URL from `<command> --help` output if one was printed
+
+If a docs page is found, extract additional capabilities.
+
+**Stage 4 — Source code analysis (user opt-in per D-09):**
+After stages 1-3, if the tool path was found in Stage 1, print the number of capabilities discovered and ask the user:
+
+Use AskUserQuestion:
+```
+Found <N> capabilities from docs and help output. Want me to analyze <command>'s source code for more?
+```
+
+If the user says yes:
+- Read up to 500 lines from the main entry point or lib/ directory of the tool
+- Identify additional capabilities from function names, subcommands, or API surface
+- Add any new relevant capabilities to the list
+
+If the user says no, continue with what was found.
+
+Format each capability as `name: <cli invocation>`.
 
 **If `<tool_type>` is `rest`:**
 
