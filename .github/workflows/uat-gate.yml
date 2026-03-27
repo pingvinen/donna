@@ -1,0 +1,25 @@
+name: UAT Gate
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  uat-gate:
+    name: UAT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for uat:pass label
+        run: |
+          LABELS='${{ toJson(github.event.pull_request.labels.*.name) }}'
+          echo "Labels: $LABELS"
+          if echo "$LABELS" | grep -qi '"uat:pass"'; then
+            echo "UAT passed -- uat:pass label present"
+          else
+            echo "UAT not finalized. Apply 'uat:pass' label to this PR to unblock merge."
+            exit 1
+          fi
