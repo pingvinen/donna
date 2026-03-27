@@ -97,9 +97,15 @@ async function run(options = {}) {
     version.writeVersion(donnaDir, packageVersion, lastSuccessful);
     output.success(`Version ${packageVersion} installed`);
 
-    // Final message
-    console.log("");
-    output.info("Run /donna:setup in Claude Code to get started.");
+    // Final message — suppress setup prompt if already configured (D-04)
+    const configPath = path.join(homeDir, ".config", "donna", "config.md");
+    const isConfigured =
+        fs.existsSync(configPath) && fs.readFileSync(configPath, "utf8").includes("storage_repo:");
+
+    if (!isConfigured) {
+        console.log("");
+        output.info("Run /donna:setup in Claude Code to get started.");
+    }
 }
 
 module.exports = { run };

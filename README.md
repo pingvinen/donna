@@ -92,7 +92,7 @@ For CLI tools, Donna verifies installation and authentication, learns capabiliti
 
 When multiple tools are registered, Donna runs them in parallel — one agent per tool — so your morning brief stays fast regardless of how many tools you have.
 
-Edit a tool's configuration (scope, capabilities, auth, command, type) at any time:
+Edit a tool's configuration (scope, capabilities, auth, command) at any time:
 
 ```
 /donna:adjust-tool
@@ -136,7 +136,7 @@ Most commands are safe to run again. Want to update your role? Run `/donna:set-r
 | `/donna:add-task` | Capture a task instantly |
 | `/donna:done` | Mark a task complete |
 | `/donna:add-tool` | Register an external tool (CLI, REST API, GraphQL API, MCP server) |
-| `/donna:adjust-tool` | Edit a tool's configuration (scope, capabilities, auth, command, type) |
+| `/donna:adjust-tool` | Edit a tool's configuration (scope, capabilities, auth, command) |
 | `/donna:run-tools` | Refresh tool data mid-day |
 | `/donna:relearn-tools` | Update CLI tool knowledge after upgrades |
 | `/donna:help` | Conversational troubleshooting for config, storage, or skill issues |
