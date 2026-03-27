@@ -4,57 +4,25 @@
 Define the user's job role, research recurring tasks and tools for that role using WebSearch, present findings for approval, and persist role definition and recurring tasks to the storage repo.
 </objective>
 
-<step name="read-config">
-Read `~/.config/donna/config.md`.
-
-If the file does not exist, print:
+<step name="init">
+Run via Bash:
+```bash
+INIT=$(node ~/.donna/donna-tools.cjs init)
 ```
-✗ Donna is not configured. Run /donna:setup first.
+
+Parse the JSON response. If the `error` field is `"not_configured"`, print:
+```
+x Donna is not configured. Run /donna:setup first.
 ```
 Stop.
 
-Extract the `storage_repo` and `auto_push` (default: false) fields from the YAML frontmatter.
-</step>
+Extract `storage_repo`, `daily_folder`, `auto_push` from the JSON.
 
-<step name="check-pending-migrations">
-Read `~/.donna/state.md` with the Read tool. If the file does not exist or has no `pending_migrations` field in its YAML frontmatter, skip this step.
-
-For each entry in `pending_migrations`:
-
-**`move-standing-files`:** Move standing files from storage repo root to donna/ subfolder.
-
-Run via Bash:
-```bash
-STORAGE_REPO="<storage_repo>"
-DONNA_DIR="$STORAGE_REPO/donna"
-MOVED=0
-
-mkdir -p "$DONNA_DIR"
-for FILE in role.md recurring.md role-research.md; do
-    if [ -f "$STORAGE_REPO/$FILE" ] && [ ! -f "$DONNA_DIR/$FILE" ]; then
-        mv "$STORAGE_REPO/$FILE" "$DONNA_DIR/$FILE"
-        echo "Moved $FILE to donna/$FILE"
-        MOVED=$((MOVED + 1))
-    fi
-done
-
-echo "MOVED=$MOVED"
+If `update_available` is non-null, print:
 ```
-
-If MOVED > 0, commit the move:
-```bash
-git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): move standing files to donna/ subfolder"
+Donna v<update_available> available -- run npx @pingvinen/donna-assistant to update
 ```
-
-If `auto_push` is true in config, also push.
-
-After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
-```markdown
----
-pending_migrations: []
----
-```
+Continue normally.
 </step>
 
 <step name="check-existing-role">
@@ -252,24 +220,7 @@ If this is a diff-update (user chose option 2 in rerun-menu):
 <step name="git-commit">
 Run via Bash:
 ```bash
-git -C <storage_repo> add -A
-```
-
-Check whether there is anything to commit:
-```bash
-git -C <storage_repo> status --porcelain
-```
-
-If the output is empty, skip the commit and continue.
-
-Otherwise, run:
-```bash
-git -C <storage_repo> commit -m "donna(set-role): define role as <job_title>"
-```
-
-If `auto_push` is true in config, also run:
-```bash
-git -C <storage_repo> push
+node ~/.donna/donna-tools.cjs commit "donna(role): updated role definition" --files donna/role.md donna/recurring.md
 ```
 </step>
 
