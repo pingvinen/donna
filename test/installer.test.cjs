@@ -480,6 +480,54 @@ describe("installer - changelog integration on upgrade", () => {
     });
 });
 
+describe("installer - skip-setup guard", () => {
+    afterEach(() => {
+        // Clear require cache so installer.cjs is re-evaluated fresh each time
+        for (const key of Object.keys(require.cache)) {
+            if (key.includes("installer")) {
+                delete require.cache[key];
+            }
+        }
+    });
+
+    it("shows setup message when config.md does not exist", async () => {
+        const env = makeTempHome({ withClaude: true });
+        try {
+            const { run } = require("../src/installer.cjs");
+            const lines = await captureOutput(() => run({ homeDir: env.homeDir }));
+            const out = lines.join("\n");
+            assert.ok(
+                out.includes("Run /donna:setup"),
+                "should show setup message on fresh install",
+            );
+        } finally {
+            env.cleanup();
+        }
+    });
+
+    it("suppresses setup message when config.md has storage_repo", async () => {
+        const env = makeTempHome({ withClaude: true });
+        try {
+            const configDir = path.join(env.homeDir, ".config", "donna");
+            fs.mkdirSync(configDir, { recursive: true });
+            fs.writeFileSync(
+                path.join(configDir, "config.md"),
+                "---\nstorage_repo: /tmp/test-repo\n---\n",
+                "utf8",
+            );
+            const { run } = require("../src/installer.cjs");
+            const lines = await captureOutput(() => run({ homeDir: env.homeDir }));
+            const out = lines.join("\n");
+            assert.ok(
+                !out.includes("Run /donna:setup"),
+                "should NOT show setup message when already configured",
+            );
+        } finally {
+            env.cleanup();
+        }
+    });
+});
+
 describe("changelog - semverGt", () => {
     const { semverGt } = require("../src/changelog.cjs");
 
