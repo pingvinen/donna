@@ -140,7 +140,9 @@ describe("donna-tools init - version check cache hit", () => {
         // But if the mock says update_available is null (cache hit, no network), it should stay null.
         // We just need to verify the cache IS used (no network call happens).
         // Inject a mock fetcher that throws to confirm it isn't called.
-        const mockFetch = () => { throw new Error("should not call network on cache hit"); };
+        const mockFetch = () => {
+            throw new Error("should not call network on cache hit");
+        };
         const result = await runInit([], { homeDir: env.homeDir, fetchLatestVersion: mockFetch });
         // 9.9.9 > current version, so update_available should be "9.9.9"
         assert.equal(result.update_available, "9.9.9");
@@ -160,7 +162,10 @@ describe("donna-tools init - version check cache miss", () => {
 
     it("calls fetcher when no cache file exists", async () => {
         let fetchCalled = false;
-        const mockFetch = async () => { fetchCalled = true; return null; };
+        const mockFetch = async () => {
+            fetchCalled = true;
+            return null;
+        };
         await runInit([], { homeDir: env.homeDir, fetchLatestVersion: mockFetch });
         assert.ok(fetchCalled, "fetcher should be called when no cache");
     });
@@ -172,7 +177,9 @@ describe("donna-tools init - version check cache miss", () => {
     });
 
     it("returns update_available null when fetcher throws", async () => {
-        const mockFetch = async () => { throw new Error("network error"); };
+        const mockFetch = async () => {
+            throw new Error("network error");
+        };
         const result = await runInit([], { homeDir: env.homeDir, fetchLatestVersion: mockFetch });
         assert.equal(result.update_available, null);
     });
@@ -220,20 +227,18 @@ describe("donna-tools commit", () => {
     it("commits staged files and returns committed true", async () => {
         const testFile = path.join(env.storageRepo, "test.md");
         fs.writeFileSync(testFile, "# Test\n");
-        const result = await runCommit(
-            ["test message", "--files", "test.md"],
-            { homeDir: env.homeDir },
-        );
+        const result = await runCommit(["test message", "--files", "test.md"], {
+            homeDir: env.homeDir,
+        });
         assert.equal(result.committed, true);
         assert.equal(result.message, "test message");
     });
 
     it("skips commit when porcelain is empty after staging files", async () => {
         // File exists and is tracked/unchanged — nothing to commit
-        const result = await runCommit(
-            ["test message", "--files", "README.md"],
-            { homeDir: env.homeDir },
-        );
+        const result = await runCommit(["test message", "--files", "README.md"], {
+            homeDir: env.homeDir,
+        });
         assert.equal(result.committed, false);
     });
 });
@@ -256,7 +261,10 @@ describe("donna-tools daily-path", () => {
     it("returns path with today's date in YYYY-MM-DD format", async () => {
         const result = await runDailyPath([], { homeDir: env.homeDir });
         const today = new Date().toISOString().slice(0, 10);
-        assert.ok(result.path.includes(today), `path should contain today's date ${today}, got: ${result.path}`);
+        assert.ok(
+            result.path.includes(today),
+            `path should contain today's date ${today}, got: ${result.path}`,
+        );
     });
 
     it("returns path ending in .md", async () => {
