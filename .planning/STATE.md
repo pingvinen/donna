@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Milestone complete
-stopped_at: "Completed 04-ingest-github-issues-into-gsd. State cleanup done."
-last_updated: "2026-03-26T19:52:20.402Z"
+stopped_at: Phase 5 context gathered
+last_updated: "2026-03-27T15:16:44.773Z"
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
   total_plans: 15
   completed_plans: 15
@@ -74,6 +74,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Phase 2 added: Tool System Enhancements (parallel tool commands, adjust-tool skill, non-CLI tool support)
 - Phase 3 added: Prioritized now view — distill daily file to focus items
 - Phase 4 added: Ingest GitHub issues into GSD (ref: #21)
+- Phase 5 added: Fix the constant timeout warnings
 
 ### Quick Tasks Completed
 
@@ -83,6 +84,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-26T19:46:19.909Z
-Stopped at: 2026-03-26 - Completed quick task 260326-ux1: move completed todos to done
-Resume file: None
+Last session: 2026-03-27T15:16:44.771Z
+Stopped at: Phase 5 context gathered
+Resume file: .planning/phases/05-fix-the-constant-timeout-warnings/05-CONTEXT.md
