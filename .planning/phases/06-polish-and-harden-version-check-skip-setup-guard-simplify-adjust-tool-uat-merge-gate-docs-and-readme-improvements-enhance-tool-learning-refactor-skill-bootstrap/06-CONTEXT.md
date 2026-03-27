@@ -16,7 +16,7 @@ Polish and harden the existing Donna skill suite: add a daily version check, sup
 ### Version check
 - **D-01:** Check npm registry once per day — first skill invocation of the day calls `npm view @pingvinen/donna-assistant version` via Bash with a short timeout. Cache result in `~/.donna/` so subsequent calls skip the check.
 - **D-02:** Non-blocking hint when update available — print a single line like "Donna vX.Y.Z available — run npx @pingvinen/donna-assistant to update" then continue with the skill normally.
-- **D-03:** Version check runs as part of the bootstrap module (see D-10). The bootstrap JSON response includes an `update_available` field; workflows print the hint if present.
+- **D-03:** Version check runs as part of `donna-tools init` (see D-10/D-11). The init JSON response includes an `update_available` field; workflows print the hint if present.
 
 ### Skip-setup guard
 - **D-04:** The installer (`installer.cjs`) currently always prints "Run /donna:setup in Claude Code to get started" at the end. When config.md (with a storage_repo path) already exists, suppress that message. No workflow-level guards needed — this is purely an installer UX fix.
@@ -38,15 +38,19 @@ Polish and harden the existing Donna skill suite: add a daily version check, sup
   3. Source code analysis if docs are insufficient — ask the user first: "Docs covered N capabilities. Want me to analyze the source code for more?"
   The current approach (--help for unknown CLIs, training data for well-known CLIs, GraphQL introspection) remains as the baseline. The cascade adds richer sources on top.
 
-### Bootstrap refactor
-- **D-10:** Extract the repeated per-workflow bootstrap into a CJS module (`src/bootstrap.cjs`), following the GSD `gsd-tools.cjs` pattern. Workflows call it via Bash; it returns JSON with config, migration status, setup check, and version check results.
-- **D-11:** The bootstrap module covers: config reading (storage_repo, daily_folder, auto_push), migration runner (move-standing-files, backfill-tool-type), Obsidian daily-notes sync, and the once-per-day version check (D-03).
-- **D-12:** Migrations move from markdown instructions to testable JavaScript inside bootstrap.cjs. Each workflow replaces its inline bootstrap steps with a single `node bootstrap.cjs` call.
+### donna-tools.cjs — centralized CLI utility
+- **D-10:** Create `src/donna-tools.cjs` as a single CLI entry point following the GSD `gsd-tools.cjs` pattern. Workflows call `node donna-tools.cjs <subcommand>` via Bash; subcommands return JSON. Internally delegates to focused modules in `src/` as it grows.
+- **D-11:** Initial subcommands:
+  - `donna-tools init` — config reading (storage_repo, daily_folder, auto_push), migration runner (move-standing-files, backfill-tool-type), Obsidian daily-notes sync, and once-per-day version check (D-03). Returns a single JSON object with all bootstrap state. Replaces the ~75 lines of identical bootstrap boilerplate in each workflow.
+  - `donna-tools commit <msg> --files f1 f2` — the git commit pattern: `git -C <storage_repo> add`, `status --porcelain`, `commit -m <msg>`, conditional `push` if auto_push. The LLM still crafts the message; donna-tools handles the mechanical git operations. Replaces ~12 lines of identical git boilerplate in 7 workflows.
+  - `donna-tools daily-path` — returns today's daily file path (`<storage_repo>/<daily_folder>/<YYYY-MM-DD>.md`), creating the directory if needed. Replaces ~5 lines in 5 workflows.
+  - `donna-tools resolve-secret <key>` — looks up a secret from `<storage_repo>/donna/secrets.md`, validates it's not a placeholder, returns the resolved value or an error. Replaces ~5 lines in 3 workflows.
+- **D-12:** Migrations move from markdown instructions to testable JavaScript inside donna-tools.cjs. Each workflow replaces its inline bootstrap steps with a single `node donna-tools.cjs init` call.
 
 ### Claude's Discretion
 - UAT merge gate implementation details (D-06)
 - Specific grouping categories for README skills list (D-07)
-- Bootstrap CJS module API shape and error handling
+- donna-tools.cjs internal module structure and error handling
 
 ### Folded Todos
 - **Check for new Donna version once per day** (tooling) — covered by D-01/D-02/D-03
@@ -68,7 +72,7 @@ Polish and harden the existing Donna skill suite: add a daily version check, sup
 ### Installer and bootstrap
 - `src/installer.cjs` — Current installer logic, including the setup prompt to suppress (D-04)
 - `src/version.cjs` — Version read/write utilities, relevant to version check caching (D-01)
-- `src/migrator.cjs` — Current migration runner, to be absorbed into bootstrap.cjs (D-12)
+- `src/migrator.cjs` — Current migration runner, to be absorbed into donna-tools.cjs (D-12)
 
 ### Workflows (bootstrap duplication)
 - `workflows/relearn-tools.md` — Canonical example of the repeated bootstrap pattern (read-config, check-pending-migrations, Obsidian sync)
@@ -95,16 +99,20 @@ Polish and harden the existing Donna skill suite: add a daily version check, sup
 
 ### Reusable Assets
 - `src/version.cjs` — readVersion/writeVersion functions for ~/.donna/version.md; can be reused for version check caching
-- `src/migrator.cjs` — runMigrations function; migration logic to be moved into bootstrap.cjs
+- `src/migrator.cjs` — runMigrations function; migration logic to be absorbed into donna-tools.cjs
 - `src/output.cjs` — Banner/info/success/fail formatting; use for version check hint output
 
 ### Established Patterns
-- **Stub + workflow split:** Skills have a stub (src/stubs/ or src/providers/) and a workflow (workflows/*.md). Bootstrap refactor should not break this pattern.
-- **GSD gsd-tools.cjs pattern:** CJS module called via Bash, returns JSON. Bootstrap.cjs should follow the same convention.
+- **Stub + workflow split:** Skills have a stub (src/stubs/ or src/providers/) and a workflow (workflows/*.md). donna-tools.cjs should not break this pattern — workflows still drive the logic, donna-tools handles mechanical operations.
+- **GSD gsd-tools.cjs pattern:** Single CJS CLI entry point with subcommands, called via Bash, returns JSON. donna-tools.cjs follows this exact convention.
 - **Migration system:** Cumulative migrations in migrations/ dir, tracked by version.md lastMigration counter
+- **Git commit pattern:** All 7 committing workflows use identical `git -C <storage_repo> add -A` / `status --porcelain` / `commit -m` / conditional `push` sequence — extracted into `donna-tools commit`
 
 ### Integration Points
-- Every workflow's `read-config` and `check-pending-migrations` steps will be replaced by a bootstrap.cjs call
+- Every workflow's `read-config` and `check-pending-migrations` steps replaced by `donna-tools init`
+- Every workflow's git commit block replaced by `donna-tools commit <msg> --files ...`
+- 5 workflows' daily path construction replaced by `donna-tools daily-path`
+- 3 workflows' secret resolution replaced by `donna-tools resolve-secret <key>`
 - `installer.cjs` line 102 is where the setup prompt message lives (D-04)
 - `.github/workflows/pr-validation.yml` (or similar) is where the UAT merge gate plugs in
 
@@ -113,7 +121,9 @@ Polish and harden the existing Donna skill suite: add a daily version check, sup
 <specifics>
 ## Specific Ideas
 
-- Bootstrap CJS module should follow the GSD `gsd-tools.cjs` pattern — user explicitly referenced this as the model to follow
+- `donna-tools.cjs` follows the GSD `gsd-tools.cjs` pattern — single CLI entry point with subcommands, internally delegating to focused modules in `src/` as it grows. User explicitly referenced gsd-tools as the model.
+- Naming: `donna-tools.cjs` not `bootstrap.cjs` — the module scope is broader than just bootstrap (also covers git commit, daily path, secret resolution). Chosen after discussing whether to use one orchestrator vs multiple small modules.
+- The LLM still crafts commit messages — donna-tools just handles the mechanical git operations. Same split as gsd-tools.
 - Tool learning cascade: local docs -> web docs -> source code analysis (with user opt-in for source code). User wants the option to "go really deep" into tool code.
 - Skip-setup guard is simpler than initially scoped — just suppress the installer's "Run /donna:setup" message, not a workflow-level guard
 
