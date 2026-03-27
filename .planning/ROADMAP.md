@@ -78,3 +78,13 @@ Plans:
 Plans:
 - [x] 04-01-PLAN.md — Ingestion skill: gsd-custom:ingest-issues command file + tests
 - [x] 04-02-PLAN.md — Release-time closure: post-release-comments.cjs script + release.yml step + tests
+
+### Phase 5: Fix the constant timeout warnings
+
+**Goal:** Remove all `timeout` binary usage from Donna workflows and replace with the Bash tool's native timeout parameter for cross-platform compatibility (ref: #18)
+**Requirements**: TBD
+**Depends on:** Phase 4
+**Plans:** 1 plan
+
+Plans:
+- [ ] 05-01-PLAN.md — Remove timeout binary from workflows + update test assertions
