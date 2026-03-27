@@ -96,4 +96,4 @@ Alpha testers using the package. Developed on personal machine, deployed to work
 | Tool-tagged tasks preserve suffix | `[tool](url)` kept on completed tasks for traceability | ✓ Good |
 
 ---
-*Last updated: 2026-03-26 after Phase 04 ingest-github-issues-into-gsd — issue ingestion skill + release-time comments*
+*Last updated: 2026-03-27 after Phase 05 fix-the-constant-timeout-warnings — replaced timeout binary with Bash tool native timeout parameter*
