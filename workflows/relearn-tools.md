@@ -232,9 +232,40 @@ Determine if the tool is well-known (gh, jira, kubectl) or unknown. For well-kno
 - list-pods: `kubectl get pods --all-namespaces --field-selector=status.phase!=Succeeded -o wide`
 - list-failing: `kubectl get pods --all-namespaces --field-selector=status.phase=Failed -o wide`
 
-For **unknown tools**, run `<command> --help 2>&1 | head -80` via Bash and use Claude's understanding to identify 3–5 capabilities relevant to daily task management.
+For **unknown tools**, use a cascading approach to re-learn capabilities. Each stage builds on the previous. The goal is to update CLI invocations for existing capability names — do NOT ask the user to re-select capabilities.
 
-Do NOT ask the user to re-select capabilities — keep the same capability names, update only the CLI invocations if the training data suggests changes.
+**Stage 1 — Local docs:**
+Attempt to find local documentation for the tool:
+```bash
+TOOL_PATH=$(which <command> 2>/dev/null)
+```
+If found, check for README or docs in the tool's package directory:
+```bash
+TOOL_DIR=$(dirname "$(dirname "$TOOL_PATH")")
+ls "$TOOL_DIR"/README* "$TOOL_DIR"/doc* "$TOOL_DIR"/docs* 2>/dev/null | head -5
+```
+If doc files exist, read up to 200 lines from the most relevant one. Use to update invocations for existing capability names.
+
+**Stage 2 — CLI help (baseline):**
+Run `<command> --help 2>&1 | head -80` via Bash. Combine with Stage 1 findings. Update invocations for existing capability names based on any changes to flags, subcommands, or output formats.
+
+**Stage 3 — Web docs (if invocations could not be updated from stages 1-2):**
+If any existing capability's invocation could not be validated from local docs or help output, attempt to fetch the tool's web documentation. Use WebFetch on common doc URLs:
+- `https://<command>.dev` or `https://<command>.io`
+- The homepage URL from `<command> --help` output if one was printed
+
+**Stage 4 — Source code analysis (user opt-in per D-09):**
+After stages 1-3, if the tool path was found, ask the user:
+
+Use AskUserQuestion:
+```
+Updated <N> capability invocations from docs and help output. Want me to analyze <command>'s source code for additional capabilities?
+```
+
+If yes: read up to 500 lines from the main entry point or lib/ directory of the tool, identify new capabilities, and add to the list.
+If no: continue with updated invocations.
+
+Do NOT ask the user to re-select capabilities — keep the same capability names, update only the CLI invocations. The cascade's Stage 4 is the only place where NEW capabilities might be added (with user opt-in).
 
 Get the new installed version:
 ```bash
