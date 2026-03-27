@@ -19,7 +19,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Never forget an important task again -- the assistant knows your role, surfaces what needs attention each day, and captures everything that falls through the cracks outside your ticketing system.
-**Current focus:** Phase 03 — prioritized-now-view-distill-daily-file-to-focus-items
+**Current focus:** Phase 05 — fix-the-constant-timeout-warnings
 
 ## Current Position
 
