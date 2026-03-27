@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: "Phase 05 shipped — PR #35"
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-27T15:52:38.571Z"
+stopped_at: Completed 06-03-PLAN.md
+last_updated: "2026-03-27T19:06:31.523Z"
 progress:
   total_phases: 5
   completed_phases: 5
@@ -49,6 +49,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - [Phase 04-ingest-github-issues-into-gsd]: Skill stages TODO files with git add but does not commit — developer commits in main context (CLAUDE.md SSH signing constraint)
 - [Phase 05]: Use Bash tool native timeout parameter (ms) instead of external timeout binary — cross-platform, no coreutils required on macOS
 - [Phase 05]: Same timeout durations preserved: 10s (10000ms) for tool commands, 15s (15000ms) for GraphQL introspection
+- [Phase 06-03]: Skills grouped into 4 categories in README: Setup and configuration, Daily workflow, Tool management, Help and feedback
 
 ### Pending Todos
 
@@ -85,5 +86,5 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-27T16:00:00.000Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-27T19:06:31.521Z
+Stopped at: Completed 06-03-PLAN.md
