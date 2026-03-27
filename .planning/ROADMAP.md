@@ -84,7 +84,7 @@ Plans:
 **Goal:** Remove all `timeout` binary usage from Donna workflows and replace with the Bash tool's native timeout parameter for cross-platform compatibility (ref: #18)
 **Requirements**: TBD
 **Depends on:** Phase 4
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 05-01-PLAN.md — Remove timeout binary from workflows + update test assertions
+- [x] 05-01-PLAN.md — Remove timeout binary from workflows + update test assertions

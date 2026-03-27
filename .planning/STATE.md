@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone complete
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-27T15:16:44.773Z"
+status: In progress
+stopped_at: "Completed 05-01-PLAN.md"
+last_updated: "2026-03-27T16:00:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 16
+  completed_plans: 16
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-16)
 
 ## Current Position
 
-Phase: 04
-Plan: Not started
+Phase: 05
+Plan: 01 complete
 
 ## Accumulated Context
 
@@ -47,6 +47,8 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - [Phase 04-ingest-github-issues-into-gsd]: ingest-issues skill uses gsd-custom: prefix and inline workflow logic — not installed via Donna installer (D-13, D-14)
 - [Phase 04-ingest-github-issues-into-gsd]: ingested label applied as LAST step per issue for atomicity and safe retry on failure (D-05/pitfall 2)
 - [Phase 04-ingest-github-issues-into-gsd]: Skill stages TODO files with git add but does not commit — developer commits in main context (CLAUDE.md SSH signing constraint)
+- [Phase 05]: Use Bash tool native timeout parameter (ms) instead of external timeout binary — cross-platform, no coreutils required on macOS
+- [Phase 05]: Same timeout durations preserved: 10s (10000ms) for tool commands, 15s (15000ms) for GraphQL introspection
 
 ### Pending Todos
 
@@ -84,6 +86,5 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-27T15:16:44.771Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-fix-the-constant-timeout-warnings/05-CONTEXT.md
+Last session: 2026-03-27T16:00:00.000Z
+Stopped at: Completed 05-01-PLAN.md
