@@ -126,22 +126,49 @@ The storage repo is yours. Donna only writes to the `donna/` and `daily/` direct
 
 Most commands are safe to run again. Want to update your role? Run `/donna:set-role` again. Added a new tool mid-day? Run `/donna:begin-the-day` again to pull its data in. Re-running a command updates state rather than duplicating it.
 
+## Why not automate tool pulls?
+
+Donna intentionally does not support automated periodic invocations of `/donna:run-tools` (e.g., via cron or background timers). Each tool pull runs inside an AI coding assistant session, which means:
+
+- **Cost** -- every invocation consumes API tokens. A cron job running hourly would burn tokens even when you are not working.
+- **Context** -- tool data is most useful when you are actively looking at it. Pulling data while you are away produces stale results by the time you return.
+- **Conflicts** -- background runs could write to your daily file while you are editing it, causing git merge conflicts in your storage repo.
+
+Instead, run `/donna:run-tools` on demand when you want fresh data, or let `/donna:begin-the-day` handle it as part of your morning routine.
+
 ## All commands
+
+### Setup and configuration
 
 | Command | What it does |
 |---------|-------------|
 | `/donna:setup` | First-time configuration (storage repo, directories) |
 | `/donna:set-role` | Define your job role, get recurring task suggestions |
+| `/donna:add-tool` | Register an external tool (CLI, REST API, GraphQL API, MCP server) |
+| `/donna:adjust-tool` | Edit a tool's configuration (scope, capabilities, auth, command) |
+
+### Daily workflow
+
+| Command | What it does |
+|---------|-------------|
 | `/donna:begin-the-day` | Morning brief with carry-forward, recurring tasks, tool data |
 | `/donna:add-task` | Capture a task instantly |
 | `/donna:done` | Mark a task complete |
-| `/donna:add-tool` | Register an external tool (CLI, REST API, GraphQL API, MCP server) |
-| `/donna:adjust-tool` | Edit a tool's configuration (scope, capabilities, auth, command) |
+| `/donna:focus` | Distill today's tasks into a short prioritized focus list |
+
+### Tool management
+
+| Command | What it does |
+|---------|-------------|
 | `/donna:run-tools` | Refresh tool data mid-day |
 | `/donna:relearn-tools` | Update CLI tool knowledge after upgrades |
+
+### Help and feedback
+
+| Command | What it does |
+|---------|-------------|
 | `/donna:help` | Conversational troubleshooting for config, storage, or skill issues |
 | `/donna:contribute-idea` | Submit a feature idea or bug report via GitHub Issues |
-| `/donna:focus` | Distill today's tasks into a short prioritized focus list |
 
 ## License
 

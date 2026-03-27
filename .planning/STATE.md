@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 06-01-PLAN.md
+stopped_at: Completed 06-03-PLAN.md
 last_updated: "2026-03-27T19:08:29.241Z"
 progress:
   total_phases: 6
@@ -51,6 +51,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - [Phase 05]: Same timeout durations preserved: 10s (10000ms) for tool commands, 15s (15000ms) for GraphQL introspection
 - [Phase 06]: donna-tools.cjs exports named handlers (runInit/runCommit/runDailyPath/runResolveSecret) for direct unit testing without subprocess spawning
 - [Phase 06]: fetchLatestVersion is injectable in runInit — tests mock the registry call without hitting the real npm registry
+- [Phase 06-03]: Skills grouped into 4 categories in README: Setup and configuration, Daily workflow, Tool management, Help and feedback
 
 ### Pending Todos
 
@@ -89,4 +90,4 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 ## Session Continuity
 
 Last session: 2026-03-27T19:08:29.239Z
-Stopped at: Completed 06-01-PLAN.md
+Stopped at: Completed 06-03-PLAN.md
