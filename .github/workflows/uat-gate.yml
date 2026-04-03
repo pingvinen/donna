@@ -16,46 +16,57 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Extract phase number from branch
+        id: phase
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          # Extract phase number from branch name (e.g., gsd/phase-06-... → 06)
+          PHASE_NUM=$(echo "$BRANCH" | sed -n 's|^gsd/phase-\([0-9]\{2,\}\)-.*|\1|p')
+          if [ -z "$PHASE_NUM" ]; then
+            echo "Could not extract phase number from branch: $BRANCH"
+            echo "Expected format: gsd/phase-XX-..."
+            exit 1
+          fi
+          echo "phase_num=$PHASE_NUM" >> "$GITHUB_OUTPUT"
+          echo "Phase: $PHASE_NUM"
+
       - name: Check UAT completion
         run: |
-          # Find all UAT files (HUMAN-UAT and RETEST-UAT)
-          UAT_FILES=$(find .planning/phases -name "*-HUMAN-UAT.md" -o -name "*-RETEST-UAT.md" -type f 2>/dev/null | sort)
+          PHASE_NUM="${{ steps.phase.outputs.phase_num }}"
+
+          # Find UAT files for this phase only (HUMAN-UAT and RETEST-UAT)
+          PHASE_DIR=$(find .planning/phases -maxdepth 1 -type d -name "${PHASE_NUM}-*" | head -1)
+
+          if [ -z "$PHASE_DIR" ]; then
+            echo "No phase directory found for phase $PHASE_NUM"
+            exit 1
+          fi
+
+          UAT_FILES=$(find "$PHASE_DIR" -name "*-HUMAN-UAT.md" -o -name "*-RETEST-UAT.md" 2>/dev/null | sort)
 
           if [ -z "$UAT_FILES" ]; then
-            echo "No UAT files found in .planning/phases/"
+            echo "No UAT files found in $PHASE_DIR"
             echo "Complete human UAT with /gsd:verify-work before merging."
             exit 1
           fi
 
-          # Group by phase dir — use the latest UAT file per phase
-          declare -A LATEST_UAT
-          for f in $UAT_FILES; do
-            PHASE_DIR=$(dirname "$f")
-            LATEST_UAT["$PHASE_DIR"]="$f"
-          done
+          # Use the latest UAT file (last in sorted order)
+          LATEST=$(echo "$UAT_FILES" | tail -1)
+          STATUS=$(head -10 "$LATEST" | grep '^status:' | awk '{print $2}')
+          ISSUES=$(grep '^issues:' "$LATEST" | head -1 | awk '{print $2}')
+          echo "Checking: $LATEST — status: $STATUS, issues: ${ISSUES:-unknown}"
 
-          GATE_PASS=true
-          for PHASE_DIR in "${!LATEST_UAT[@]}"; do
-            f="${LATEST_UAT[$PHASE_DIR]}"
-            STATUS=$(head -10 "$f" | grep '^status:' | awk '{print $2}')
-            ISSUES=$(grep '^issues:' "$f" | head -1 | awk '{print $2}')
-            echo "Found: $f — status: $STATUS, issues: ${ISSUES:-unknown}"
-
-            if [ "$STATUS" != "complete" ]; then
-              echo "  FAIL: status is not complete"
-              GATE_PASS=false
-            elif [ "${ISSUES:-1}" != "0" ]; then
-              echo "  FAIL: latest UAT found $ISSUES issue(s) — retest needed after fixes"
-              GATE_PASS=false
-            fi
-          done
-
-          if [ "$GATE_PASS" = true ]; then
-            echo ""
-            echo "All UAT sessions complete with 0 issues."
-          else
-            echo ""
-            echo "UAT gate failed. Ensure the latest UAT run has status: complete and issues: 0."
-            echo "Run /gsd:verify-work to retest after fixing issues."
+          if [ "$STATUS" != "complete" ]; then
+            echo "FAIL: status is not complete"
+            echo "Run /gsd:verify-work to complete UAT."
             exit 1
           fi
+
+          if [ "${ISSUES:-1}" != "0" ]; then
+            echo "FAIL: latest UAT found $ISSUES issue(s) — retest needed after fixes"
+            echo "Run /gsd:verify-work to retest."
+            exit 1
+          fi
+
+          echo ""
+          echo "Phase $PHASE_NUM UAT passed: status complete, 0 issues."
