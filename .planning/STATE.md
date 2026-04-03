@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: "Phase 05 shipped — PR #35"
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-27T15:52:38.571Z"
+status: "Phase 06 shipped — PR #36"
+stopped_at: Completed 06-05-PLAN.md
+last_updated: "2026-03-27T20:19:54.511Z"
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 16
-  completed_plans: 16
+  total_phases: 6
+  completed_phases: 6
+  total_plans: 21
+  completed_plans: 21
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-16)
 
 **Core value:** Never forget an important task again -- the assistant knows your role, surfaces what needs attention each day, and captures everything that falls through the cracks outside your ticketing system.
-**Current focus:** Phase 05 — fix-the-constant-timeout-warnings
+**Current focus:** Phase 06 — polish-and-harden-version-check-skip-setup-guard-simplify-adjust-tool-uat-merge-gate-docs-and-readme-improvements-enhance-tool-learning-refactor-skill-bootstrap
 
 ## Current Position
 
-Phase: 05
+Phase: 06
 Plan: Not started
 
 ## Accumulated Context
@@ -49,6 +49,10 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - [Phase 04-ingest-github-issues-into-gsd]: Skill stages TODO files with git add but does not commit — developer commits in main context (CLAUDE.md SSH signing constraint)
 - [Phase 05]: Use Bash tool native timeout parameter (ms) instead of external timeout binary — cross-platform, no coreutils required on macOS
 - [Phase 05]: Same timeout durations preserved: 10s (10000ms) for tool commands, 15s (15000ms) for GraphQL introspection
+- [Phase 06]: donna-tools.cjs exports named handlers (runInit/runCommit/runDailyPath/runResolveSecret) for direct unit testing without subprocess spawning
+- [Phase 06]: fetchLatestVersion is injectable in runInit — tests mock the registry call without hitting the real npm registry
+- [Phase 06-03]: Skills grouped into 4 categories in README: Setup and configuration, Daily workflow, Tool management, Help and feedback
+- [Phase 06]: Tests updated from checking config/donna/config.md presence to checking donna-tools.cjs init — tests verify the refactored bootstrap contract
 
 ### Pending Todos
 
@@ -76,6 +80,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Phase 3 added: Prioritized now view — distill daily file to focus items
 - Phase 4 added: Ingest GitHub issues into GSD (ref: #21)
 - Phase 5 added: Fix the constant timeout warnings
+- Phase 6 added: Polish and harden — version check, skip-setup guard, simplify adjust-tool, UAT merge gate, docs/README improvements, enhance tool learning, refactor skill bootstrap
 
 ### Quick Tasks Completed
 
@@ -85,5 +90,5 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-03-27T16:00:00.000Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-27T20:07:55.189Z
+Stopped at: Completed 06-05-PLAN.md

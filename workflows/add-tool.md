@@ -4,82 +4,25 @@
 Declare an external tool (CLI, REST API, GraphQL API, or MCP server), verify its connectivity, learn its capabilities, and persist the result to tools.md in the storage repo.
 </objective>
 
-<step name="read-config">
-Read `~/.config/donna/config.md`.
-
-If the file does not exist, print:
+<step name="init">
+Run via Bash:
+```bash
+INIT=$(node ~/.donna/donna-tools.cjs init)
 ```
-✗ Donna is not configured. Run /donna:setup first.
+
+Parse the JSON response. If the `error` field is `"not_configured"`, print:
+```
+x Donna is not configured. Run /donna:setup first.
 ```
 Stop.
 
-Extract the `storage_repo`, `daily_folder` (default: `daily`), and `auto_push` (default: false) fields from the YAML frontmatter.
+Extract `storage_repo`, `daily_folder`, `auto_push` from the JSON.
 
-**Obsidian sync:** Check if `<storage_repo>/.obsidian/daily-notes.json` exists.
-- If it exists and has a `folder` field that differs from `<daily_folder>`: update `<daily_folder>` to match Obsidian's value, and update `~/.config/donna/config.md` with the new `daily_folder`. Print `✓ Synced daily folder with Obsidian: <daily_folder>`.
-- If `<storage_repo>/.obsidian/` exists but `daily-notes.json` does not exist or has no `folder` field: write `<storage_repo>/.obsidian/daily-notes.json` with `{"folder":"<daily_folder>"}`. Print `✓ Configured Obsidian daily notes to use <daily_folder>/`.
-- Otherwise: do nothing.
-</step>
-
-<step name="check-pending-migrations">
-Read `~/.donna/state.md` with the Read tool. If the file does not exist or has no `pending_migrations` field in its YAML frontmatter, skip this step.
-
-For each entry in `pending_migrations`:
-
-**`move-standing-files`:** Move standing files from storage repo root to donna/ subfolder.
-
-Run via Bash:
-```bash
-STORAGE_REPO="<storage_repo>"
-DONNA_DIR="$STORAGE_REPO/donna"
-MOVED=0
-
-mkdir -p "$DONNA_DIR"
-for FILE in role.md recurring.md role-research.md; do
-    if [ -f "$STORAGE_REPO/$FILE" ] && [ ! -f "$DONNA_DIR/$FILE" ]; then
-        mv "$STORAGE_REPO/$FILE" "$DONNA_DIR/$FILE"
-        echo "Moved $FILE to donna/$FILE"
-        MOVED=$((MOVED + 1))
-    fi
-done
-
-echo "MOVED=$MOVED"
+If `update_available` is non-null, print:
 ```
-
-If MOVED > 0, commit the move:
-```bash
-git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): move standing files to donna/ subfolder"
+Donna v<update_available> available -- run npx @pingvinen/donna-assistant to update
 ```
-
-If `auto_push` is true in config, also push.
-
-**`backfill-tool-type`:** Backfill `type` on existing tool sections in tools.md using heuristic detection.
-
-Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not exist or has no tool sections, skip this handler.
-
-For each tool section (starting with `## <tool_name>`), check if a `- type:` line already exists. If the `- type:` line is missing, detect the correct type:
-
-1. If the tool section contains a `- command:` line where the value starts with `mcp:` (e.g., `- command: mcp:linear`), insert `- type: mcp` immediately after the `- command:` line.
-2. Else, if the tool section contains a `- base_url:` line:
-   - If the capabilities section contains entries that look like GraphQL queries (contain `query {` or `mutation {`), insert `- type: graphql` immediately after `## <tool_name>` (REST/GraphQL tools have no `- command:` line).
-   - Otherwise, insert `- type: rest` immediately after `## <tool_name>`.
-3. Else (no `mcp:` prefix, no `base_url` field), insert `- type: cli` immediately after the `- command:` line.
-
-Write the updated file back with the Write tool. If any changes were made, commit:
-```bash
-git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill tool types on existing tools"
-```
-
-If `auto_push` is true in config, also push.
-
-After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
-```markdown
----
-pending_migrations: []
----
-```
+Continue normally.
 </step>
 
 <step name="detect-noted-tools">
@@ -219,7 +162,7 @@ Write the updated secrets.md.
 Read `<storage_repo>/.gitignore` with the Read tool. If the file does not exist or does not contain `donna/secrets.md`, append `donna/secrets.md` to `.gitignore` and write back. If `.gitignore` does not exist, create it with `donna/secrets.md` as its sole content.
 
 **Validate API connectivity:**
-Read `<storage_repo>/donna/secrets.md` to get the current value for `<auth_secret>`. If the value is `REPLACE_WITH_YOUR_SECRET` or the key is absent, print:
+Resolve the secret via Bash: `node ~/.donna/donna-tools.cjs resolve-secret <auth_secret>`. Parse the JSON response. If `error` is `"key_not_found"` or `"placeholder_value"`, print:
 ```
 ! No secret set for <auth_secret> — edit donna/secrets.md before testing connectivity.
 ```
@@ -300,7 +243,48 @@ If `<scope>` is set, replace `--all-namespaces` with `-n <namespace>` for each n
 - list-pods: `kubectl get pods --all-namespaces --field-selector=status.phase!=Succeeded -o wide`
 - list-failing: `kubectl get pods --all-namespaces --field-selector=status.phase=Failed -o wide`
 
-For **unknown tools**, run `<command> --help 2>&1 | head -80` via Bash and use Claude's understanding to identify 3–5 capabilities relevant to daily task management. If `<scope>` is set, incorporate the scope into the CLI invocations where appropriate. Format each as `name: <cli invocation>`.
+For **unknown tools**, use a cascading approach to learn capabilities. Each stage builds on the previous. Stop when 3-5 relevant capabilities have been identified.
+
+**Stage 1 — Local docs:**
+Attempt to find local documentation for the tool:
+```bash
+TOOL_PATH=$(which <command> 2>/dev/null)
+```
+If found, check for README or docs in the tool's package directory:
+```bash
+TOOL_DIR=$(dirname "$(dirname "$TOOL_PATH")")
+ls "$TOOL_DIR"/README* "$TOOL_DIR"/doc* "$TOOL_DIR"/docs* 2>/dev/null | head -5
+```
+If doc files exist, read the entry-point doc (prefer README, then docs/index or equivalent). Then follow internal links, references, or "see also" pointers to the sections most relevant to daily task management. Use Claude's understanding to navigate — don't stop at a fixed line count.
+
+**Stage 2 — CLI help (baseline):**
+Run `<command> --help 2>&1 | head -80` via Bash. If the help output lists subcommands, also run `<command> <subcommand> --help` for the 3-5 most relevant-looking subcommands. Combine with any Stage 1 findings. Use Claude's understanding to identify 3-5 capabilities relevant to daily task management. If `<scope>` is set, incorporate the scope into CLI invocations.
+
+**Stage 3 — Web docs (if stages 1-2 found fewer than 3 capabilities):**
+If fewer than 3 capabilities identified so far, attempt to fetch the tool's documentation from the web. Use WebFetch on common doc URLs:
+- `https://<command>.dev` or `https://<command>.io`
+- The homepage URL from `<command> --help` output if one was printed
+
+If a docs page is found, follow links to CLI reference, commands, or API sections rather than reading only the landing page. Extract additional capabilities from those deeper pages.
+
+**Stage 4 — Source code analysis (user opt-in per D-09):**
+After stages 1-3, if the tool path was found in Stage 1, print the number of capabilities discovered and ask the user:
+
+Use AskUserQuestion:
+```
+Found <N> capabilities from docs and help output. Want me to analyze <command>'s source code for more?
+```
+
+If the user says yes:
+- Read the main entry point (e.g., bin/<command>, cli.js, main.py)
+- Follow imports/requires to command registration, subcommand definitions, or handler modules
+- Navigate into the files that define actual commands and actions — don't stop at the entry point
+- Identify additional capabilities from function names, subcommands, or API surface
+- Add any new relevant capabilities to the list
+
+If the user says no, continue with what was found.
+
+Format each capability as `name: <cli invocation>`.
 
 **If `<tool_type>` is `rest`:**
 
@@ -433,24 +417,7 @@ If a section for this tool already exists in tools.md, replace it entirely. Writ
 <step name="git-commit">
 Run via Bash:
 ```bash
-git -C <storage_repo> add -A
-```
-
-Check whether there is anything to commit:
-```bash
-git -C <storage_repo> status --porcelain
-```
-
-If the output is empty, skip the commit and continue.
-
-Otherwise, run:
-```bash
-git -C <storage_repo> commit -m "donna(add-tool): added <tool_name>"
-```
-
-If `auto_push` is true in config, also run:
-```bash
-git -C <storage_repo> push
+node ~/.donna/donna-tools.cjs commit "donna(add-tool): registered <tool_name>" --files donna/tools.md
 ```
 </step>
 

@@ -1,85 +1,28 @@
 # Donna Adjust-Tool Workflow
 
 <objective>
-Edit an existing registered tool's configuration — scope, capabilities, auth/secrets, command, or type.
+Edit an existing registered tool's configuration — scope, capabilities, auth/secrets, or command.
 </objective>
 
-<step name="read-config">
-Read `~/.config/donna/config.md`.
-
-If the file does not exist, print:
+<step name="init">
+Run via Bash:
+```bash
+INIT=$(node ~/.donna/donna-tools.cjs init)
 ```
-✗ Donna is not configured. Run /donna:setup first.
+
+Parse the JSON response. If the `error` field is `"not_configured"`, print:
+```
+x Donna is not configured. Run /donna:setup first.
 ```
 Stop.
 
-Extract the `storage_repo`, `daily_folder` (default: `daily`), and `auto_push` (default: false) fields from the YAML frontmatter.
+Extract `storage_repo`, `daily_folder`, `auto_push` from the JSON.
 
-**Obsidian sync:** Check if `<storage_repo>/.obsidian/daily-notes.json` exists.
-- If it exists and has a `folder` field that differs from `<daily_folder>`: update `<daily_folder>` to match Obsidian's value, and update `~/.config/donna/config.md` with the new `daily_folder`. Print `✓ Synced daily folder with Obsidian: <daily_folder>`.
-- If `<storage_repo>/.obsidian/` exists but `daily-notes.json` does not exist or has no `folder` field: write `<storage_repo>/.obsidian/daily-notes.json` with `{"folder":"<daily_folder>"}`. Print `✓ Configured Obsidian daily notes to use <daily_folder>/`.
-- Otherwise: do nothing.
-</step>
-
-<step name="check-pending-migrations">
-Read `~/.donna/state.md` with the Read tool. If the file does not exist or has no `pending_migrations` field in its YAML frontmatter, skip this step.
-
-For each entry in `pending_migrations`:
-
-**`move-standing-files`:** Move standing files from storage repo root to donna/ subfolder.
-
-Run via Bash:
-```bash
-STORAGE_REPO="<storage_repo>"
-DONNA_DIR="$STORAGE_REPO/donna"
-MOVED=0
-
-mkdir -p "$DONNA_DIR"
-for FILE in role.md recurring.md role-research.md; do
-    if [ -f "$STORAGE_REPO/$FILE" ] && [ ! -f "$DONNA_DIR/$FILE" ]; then
-        mv "$STORAGE_REPO/$FILE" "$DONNA_DIR/$FILE"
-        echo "Moved $FILE to donna/$FILE"
-        MOVED=$((MOVED + 1))
-    fi
-done
-
-echo "MOVED=$MOVED"
+If `update_available` is non-null, print:
 ```
-
-If MOVED > 0, commit the move:
-```bash
-git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): move standing files to donna/ subfolder"
+Donna v<update_available> available -- run npx @pingvinen/donna-assistant to update
 ```
-
-If `auto_push` is true in config, also push.
-
-**`backfill-tool-type`:** Backfill `type` on existing tool sections in tools.md using heuristic detection.
-
-Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not exist or has no tool sections, skip this handler.
-
-For each tool section (starting with `## <tool_name>`), check if a `- type:` line already exists. If the `- type:` line is missing, detect the correct type:
-
-1. If the tool section contains a `- command:` line where the value starts with `mcp:` (e.g., `- command: mcp:linear`), insert `- type: mcp` immediately after the `- command:` line.
-2. Else, if the tool section contains a `- base_url:` line:
-   - If the capabilities section contains entries that look like GraphQL queries (contain `query {` or `mutation {`), insert `- type: graphql` immediately after `## <tool_name>` (REST/GraphQL tools have no `- command:` line).
-   - Otherwise, insert `- type: rest` immediately after `## <tool_name>`.
-3. Else (no `mcp:` prefix, no `base_url` field), insert `- type: cli` immediately after the `- command:` line.
-
-Write the updated file back with the Write tool. If any changes were made, commit:
-```bash
-git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill tool types on existing tools"
-```
-
-If `auto_push` is true in config, also push.
-
-After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
-```markdown
----
-pending_migrations: []
----
-```
+Continue normally.
 </step>
 
 <step name="read-tools-md">
@@ -133,9 +76,18 @@ What would you like to change?
 2. capabilities — add, remove, or modify capability commands
 3. command — the CLI command or base URL
 4. auth — auth test command or API secrets
-5. type — tool type (cli, rest, graphql, mcp)
 ```
 Store as `<change_choice>`.
+
+**If the user asks to change the type** (response mentions "type", "change type", "switch type", etc.):
+Print:
+```
+Tool type cannot be changed in-place — it affects how capabilities are learned and how the tool is invoked. To change a tool's type, remove and re-add:
+
+1. /donna:remove-tool <tool_name>
+2. /donna:add-tool <tool_name>
+```
+Stop — do not proceed to apply-change.
 </step>
 
 <step name="apply-change">
@@ -166,51 +118,6 @@ For type=cli: Use AskUserQuestion to update auth_test command.
 For type=rest|graphql: Print `Edit your secrets in <storage_repo>/donna/secrets.md directly. The auth_secret field references the key name in that file.` Use AskUserQuestion to update `auth_secret` field name if needed.
 For type=mcp: Print `MCP server auth is managed in Claude Code settings, not in Donna.`
 
-**5. type:**
-Use AskUserQuestion:
-```
-What is the correct type for <tool_name>? (cli, rest, graphql, mcp) Current: <type>
-```
-Store new value as `<new_type>`.
-
-If `<new_type>` differs from `<type>`, check for capability format mismatches:
-
-**Detect format mismatches:**
-For each capability line (`- <name>: <invocation>`), check if the invocation matches the expected format for `<new_type>`:
-- `cli`: invocation should be a shell command (no `mcp:` prefix, no `GET /` or `POST /` pattern, no `query {` pattern)
-- `rest`: invocation should match `<METHOD> /path` pattern (e.g., `GET /repos/...`)
-- `graphql`: invocation should contain `query {` or `mutation {`
-- `mcp`: invocation should match `mcp:<server>/<tool>` pattern
-
-If ANY capability does not match the expected format for `<new_type>`, print:
-
-```
-⚠ Capability format mismatch detected. Current capabilities are in <type> format but type is changing to <new_type>.
-
-Mismatched capabilities:
-<list each mismatched capability with its current invocation>
-```
-
-Use AskUserQuestion:
-```
-How would you like to fix the capabilities?
-```
-Suggest these options:
-1. Re-enter capabilities manually (interactive editor)
-2. Clear all capabilities (start fresh with adjust-tool later)
-3. Keep as-is (may cause runtime errors)
-
-If option 1: Present the same interactive capabilities editing loop (show numbered list, accept "remove N", "add name: invocation", "edit N new_invocation", "done"). Pre-populate with existing capability NAMES but empty invocations so the user only needs to type the new format.
-
-If option 2: Clear the capabilities section entirely. Print `✓ Capabilities cleared. Run /donna:adjust-tool <tool_name> to add new capabilities.`
-
-If option 3: Print `⚠ Keeping mismatched capabilities — runtime errors may occur.`
-
-**Update structural fields when type changes:**
-- Changing TO rest/graphql: ensure `base_url`, `auth_header`, `auth_secret` fields exist. If missing, prompt for them (same prompts as add-tool).
-- Changing TO mcp: remove `command`, `version`, `base_url`, `auth_header`, `auth_secret` fields if present.
-- Changing TO cli: ensure `command`, `version` fields exist. If missing, prompt for command and run version check.
-- Changing FROM rest/graphql: remove `base_url`, `auth_header`, `auth_secret` fields.
 </step>
 
 <step name="write-tools-md">
@@ -220,24 +127,7 @@ Read `<storage_repo>/donna/tools.md`. Update only the `<selected_tool>` section 
 <step name="git-commit">
 Run via Bash:
 ```bash
-git -C <storage_repo> add -A
-```
-
-Check whether there is anything to commit:
-```bash
-git -C <storage_repo> status --porcelain
-```
-
-If the output is empty, skip the commit and continue.
-
-Otherwise, run:
-```bash
-git -C <storage_repo> commit -m "donna(adjust-tool): updated <tool_name> (<change_description>)"
-```
-
-If `auto_push` is true in config, also run:
-```bash
-git -C <storage_repo> push
+node ~/.donna/donna-tools.cjs commit "donna(adjust-tool): updated <tool_name> (<change_description>)" --files donna/tools.md
 ```
 </step>
 

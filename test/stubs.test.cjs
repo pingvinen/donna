@@ -28,6 +28,14 @@ const adjustToolStubPath = path.join(
     "adjust-tool.md",
 );
 const adjustToolWorkflowPath = path.join(projectRoot, "workflows", "adjust-tool.md");
+const removeToolStubPath = path.join(
+    projectRoot,
+    "stubs",
+    "claude-code",
+    "donna",
+    "remove-tool.md",
+);
+const removeToolWorkflowPath = path.join(projectRoot, "workflows", "remove-tool.md");
 const focusStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "focus.md");
 const focusWorkflowPath = path.join(projectRoot, "workflows", "focus.md");
 
@@ -152,11 +160,11 @@ describe("workflow: workflows/add-task.md", () => {
         assert.ok(fs.existsSync(addTaskWorkflowPath), "add-task workflow should exist");
     });
 
-    it("references config/donna/config.md", () => {
+    it("calls donna-tools init for bootstrap", () => {
         const content = fs.readFileSync(addTaskWorkflowPath, "utf8");
         assert.ok(
-            content.includes("config/donna/config.md"),
-            "Should reference config/donna/config.md",
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 
@@ -235,11 +243,11 @@ describe("workflow: workflows/done.md", () => {
         assert.ok(fs.existsSync(doneWorkflowPath), "done workflow should exist");
     });
 
-    it("references config/donna/config.md", () => {
+    it("calls donna-tools init for bootstrap", () => {
         const content = fs.readFileSync(doneWorkflowPath, "utf8");
         assert.ok(
-            content.includes("config/donna/config.md"),
-            "Should reference config/donna/config.md",
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 
@@ -321,11 +329,11 @@ describe("workflow: workflows/set-role.md", () => {
         assert.ok(fs.existsSync(setRoleWorkflowPath), "set-role workflow should exist");
     });
 
-    it("references config/donna/config.md", () => {
+    it("calls donna-tools init for bootstrap", () => {
         const content = fs.readFileSync(setRoleWorkflowPath, "utf8");
         assert.ok(
-            content.includes("config/donna/config.md"),
-            "Should reference config/donna/config.md",
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 
@@ -427,11 +435,11 @@ describe("workflow: workflows/begin-the-day.md", () => {
         assert.ok(fs.existsSync(beginTheDayWorkflowPath), "begin-the-day workflow should exist");
     });
 
-    it("references config/donna/config.md", () => {
+    it("calls donna-tools init for bootstrap", () => {
         const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
         assert.ok(
-            content.includes("config/donna/config.md"),
-            "Should reference config/donna/config.md",
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 
@@ -555,19 +563,19 @@ describe("workflow: workflows/add-tool.md", () => {
         assert.ok(fs.existsSync(addToolWorkflowPath), "add-tool workflow should exist");
     });
 
-    it("references config/donna/config.md", () => {
+    it("calls donna-tools init for bootstrap", () => {
         const content = fs.readFileSync(addToolWorkflowPath, "utf8");
         assert.ok(
-            content.includes("config/donna/config.md"),
-            "Should reference config/donna/config.md",
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 
-    it("contains check-pending-migrations step", () => {
+    it("contains init step replacing read-config and check-pending-migrations", () => {
         const content = fs.readFileSync(addToolWorkflowPath, "utf8");
         assert.ok(
-            content.includes("check-pending-migrations"),
-            "Should contain check-pending-migrations step",
+            content.includes('step name="init"'),
+            "Should contain init step (replaces read-config + check-pending-migrations)",
         );
     });
 
@@ -686,19 +694,19 @@ describe("workflow: workflows/relearn-tools.md", () => {
         assert.ok(fs.existsSync(relearnToolsWorkflowPath), "relearn-tools workflow should exist");
     });
 
-    it("references config/donna/config.md", () => {
+    it("calls donna-tools init for bootstrap", () => {
         const content = fs.readFileSync(relearnToolsWorkflowPath, "utf8");
         assert.ok(
-            content.includes("config/donna/config.md"),
-            "Should reference config/donna/config.md",
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 
-    it("contains check-pending-migrations step", () => {
+    it("contains init step replacing read-config and check-pending-migrations", () => {
         const content = fs.readFileSync(relearnToolsWorkflowPath, "utf8");
         assert.ok(
-            content.includes("check-pending-migrations"),
-            "Should contain check-pending-migrations step",
+            content.includes('step name="init"'),
+            "Should contain init step (replaces read-config + check-pending-migrations)",
         );
     });
 
@@ -785,19 +793,19 @@ describe("workflow: workflows/run-tools.md", () => {
         assert.ok(fs.existsSync(runToolsWorkflowPath), "run-tools workflow should exist");
     });
 
-    it("references config/donna/config.md", () => {
+    it("calls donna-tools init for bootstrap", () => {
         const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
-            content.includes("config/donna/config.md"),
-            "Should reference config/donna/config.md",
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 
-    it("contains check-pending-migrations step", () => {
+    it("contains init step replacing read-config and check-pending-migrations", () => {
         const content = fs.readFileSync(runToolsWorkflowPath, "utf8");
         assert.ok(
-            content.includes("check-pending-migrations"),
-            "Should contain check-pending-migrations step",
+            content.includes('step name="init"'),
+            "Should contain init step (replaces read-config + check-pending-migrations)",
         );
     });
 
@@ -1267,11 +1275,63 @@ describe("workflow: workflows/adjust-tool.md", () => {
 
     it("has step structure", () => {
         const content = fs.readFileSync(adjustToolWorkflowPath, "utf8");
-        assert.ok(content.includes('step name="read-config"'), "Should have read-config step");
+        assert.ok(content.includes('step name="init"'), "Should have init step");
         assert.ok(content.includes('step name="select-tool"'), "Should have select-tool step");
         assert.ok(
             content.includes('step name="ask-what-to-change"'),
             "Should have ask-what-to-change step",
+        );
+    });
+});
+
+describe("stub: stubs/claude-code/donna/remove-tool.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(removeToolStubPath), "Stub file should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:remove-tool"', () => {
+        const content = fs.readFileSync(removeToolStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:remove-tool"),
+            "Should have name: donna:remove-tool in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(removeToolStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field in frontmatter");
+    });
+
+    it("contains @~/.donna/workflows/remove-tool.md reference", () => {
+        const content = fs.readFileSync(removeToolStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/remove-tool.md"),
+            "Should reference @~/.donna/workflows/remove-tool.md",
+        );
+    });
+});
+
+describe("workflow: workflows/remove-tool.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(removeToolWorkflowPath), "Workflow file should exist");
+    });
+
+    it("has step structure", () => {
+        const content = fs.readFileSync(removeToolWorkflowPath, "utf8");
+        assert.ok(content.includes('step name="init"'), "Should have init step");
+        assert.ok(content.includes('step name="select-tool"'), "Should have select-tool step");
+        assert.ok(
+            content.includes('step name="confirm-removal"'),
+            "Should have confirm-removal step",
+        );
+    });
+
+    it("calls donna-tools init for bootstrap", () => {
+        const content = fs.readFileSync(removeToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 });
@@ -1313,7 +1373,7 @@ describe("workflow: workflows/focus.md", () => {
 
     it("has step structure", () => {
         const content = fs.readFileSync(focusWorkflowPath, "utf8");
-        assert.ok(content.includes('step name="read-config"'), "Should have read-config step");
+        assert.ok(content.includes('step name="init"'), "Should have init step");
         assert.ok(
             content.includes('step name="read-daily-file"'),
             "Should have read-daily-file step",

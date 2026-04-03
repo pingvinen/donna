@@ -4,82 +4,25 @@
 Carry forward open tasks from the previous day, surface recurring tasks due today, deduplicate, and present a concise daily brief.
 </objective>
 
-<step name="read-config">
-Read `~/.config/donna/config.md`.
-
-If the file does not exist, print:
+<step name="init">
+Run via Bash:
+```bash
+INIT=$(node ~/.donna/donna-tools.cjs init)
 ```
-✗ Donna is not configured. Run /donna:setup first.
+
+Parse the JSON response. If the `error` field is `"not_configured"`, print:
+```
+x Donna is not configured. Run /donna:setup first.
 ```
 Stop.
 
-Extract the `storage_repo`, `daily_folder` (default: `daily`), and `auto_push` (default: false) fields from the YAML frontmatter.
+Extract `storage_repo`, `daily_folder`, `auto_push` from the JSON.
 
-**Obsidian sync:** Check if `<storage_repo>/.obsidian/daily-notes.json` exists.
-- If it exists and has a `folder` field that differs from `<daily_folder>`: update `<daily_folder>` to match Obsidian's value, and update `~/.config/donna/config.md` with the new `daily_folder`. Print `✓ Synced daily folder with Obsidian: <daily_folder>`.
-- If `<storage_repo>/.obsidian/` exists but `daily-notes.json` does not exist or has no `folder` field: write `<storage_repo>/.obsidian/daily-notes.json` with `{"folder":"<daily_folder>"}`. Print `✓ Configured Obsidian daily notes to use <daily_folder>/`.
-- Otherwise: do nothing.
-</step>
-
-<step name="check-pending-migrations">
-Read `~/.donna/state.md` with the Read tool. If the file does not exist or has no `pending_migrations` field in its YAML frontmatter, skip this step.
-
-For each entry in `pending_migrations`:
-
-**`move-standing-files`:** Move standing files from storage repo root to donna/ subfolder.
-
-Run via Bash:
-```bash
-STORAGE_REPO="<storage_repo>"
-DONNA_DIR="$STORAGE_REPO/donna"
-MOVED=0
-
-mkdir -p "$DONNA_DIR"
-for FILE in role.md recurring.md role-research.md; do
-    if [ -f "$STORAGE_REPO/$FILE" ] && [ ! -f "$DONNA_DIR/$FILE" ]; then
-        mv "$STORAGE_REPO/$FILE" "$DONNA_DIR/$FILE"
-        echo "Moved $FILE to donna/$FILE"
-        MOVED=$((MOVED + 1))
-    fi
-done
-
-echo "MOVED=$MOVED"
+If `update_available` is non-null, print:
 ```
-
-If MOVED > 0, commit the move:
-```bash
-git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): move standing files to donna/ subfolder"
+Donna v<update_available> available -- run npx @pingvinen/donna-assistant to update
 ```
-
-If `auto_push` is true in config, also push.
-
-**`backfill-tool-type`:** Backfill `type` on existing tool sections in tools.md using heuristic detection.
-
-Read `<storage_repo>/donna/tools.md` with the Read tool. If the file does not exist or has no tool sections, skip this handler.
-
-For each tool section (starting with `## <tool_name>`), check if a `- type:` line already exists. If the `- type:` line is missing, detect the correct type:
-
-1. If the tool section contains a `- command:` line where the value starts with `mcp:` (e.g., `- command: mcp:linear`), insert `- type: mcp` immediately after the `- command:` line.
-2. Else, if the tool section contains a `- base_url:` line:
-   - If the capabilities section contains entries that look like GraphQL queries (contain `query {` or `mutation {`), insert `- type: graphql` immediately after `## <tool_name>` (REST/GraphQL tools have no `- command:` line).
-   - Otherwise, insert `- type: rest` immediately after `## <tool_name>`.
-3. Else (no `mcp:` prefix, no `base_url` field), insert `- type: cli` immediately after the `- command:` line.
-
-Write the updated file back with the Write tool. If any changes were made, commit:
-```bash
-git -C <storage_repo> add -A
-git -C <storage_repo> diff --cached --quiet || git -C <storage_repo> commit -m "donna(migrate): backfill tool types on existing tools"
-```
-
-If `auto_push` is true in config, also push.
-
-After processing all pending migrations, update `~/.donna/state.md` with the Write tool: remove the completed entries from `pending_migrations`. If no entries remain, write:
-```markdown
----
-pending_migrations: []
----
-```
+Continue normally.
 </step>
 
 <step name="get-today">
@@ -99,7 +42,11 @@ date +%-d
 ```
 Store the result as `<day_of_month>` (e.g., "1" for the 1st).
 
-Construct the daily file path: `<storage_repo>/<daily_folder>/<today>.md`.
+Get the daily file path via donna-tools:
+```bash
+DAILY_PATH=$(node ~/.donna/donna-tools.cjs daily-path | node -e "process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).path))")
+```
+Store the result as `<daily_file_path>`.
 </step>
 
 <step name="find-previous-file">
@@ -320,24 +267,7 @@ If no "every other" recurring tasks were added, skip this step.
 <step name="git-commit">
 Run via Bash:
 ```bash
-git -C <storage_repo> add -A
-```
-
-Check whether there is anything to commit:
-```bash
-git -C <storage_repo> status --porcelain
-```
-
-If the output is empty, skip the commit and continue.
-
-Otherwise, run:
-```bash
-git -C <storage_repo> commit -m "donna(begin-the-day): daily brief for <today>"
-```
-
-If `auto_push` is true in config, also run:
-```bash
-git -C <storage_repo> push
+node ~/.donna/donna-tools.cjs commit "donna(daily): <today> daily brief" --files <daily_folder>/<today>.md
 ```
 </step>
 

@@ -79,7 +79,7 @@ async function run(options = {}) {
         for (const provider of detected) {
             fs.cpSync(provider.stubSource, provider.stubTarget, { recursive: true });
             output.success(
-                `Copied donna skills (setup, add-task, done, set-role, begin-the-day, add-tool, relearn-tools, run-tools, help, contribute-idea, adjust-tool, focus) to ${provider.stubTarget}`,
+                `Copied donna skills (setup, add-task, done, set-role, begin-the-day, add-tool, remove-tool, relearn-tools, run-tools, help, contribute-idea, adjust-tool, focus) to ${provider.stubTarget}`,
             );
         }
     } else {
@@ -93,13 +93,35 @@ async function run(options = {}) {
     fs.cpSync(workflowsSource, workflowsTarget, { recursive: true });
     output.success("Installed workflows to ~/.donna/workflows/");
 
+    // Copy donna-tools.cjs and its dependencies to donnaDir for workflow access
+    const toolFiles = [
+        "donna-tools.cjs",
+        "version.cjs",
+        "migrator.cjs",
+        "changelog.cjs",
+        "output.cjs",
+    ];
+    for (const file of toolFiles) {
+        const src = path.join(__dirname, file);
+        if (fs.existsSync(src)) {
+            fs.copyFileSync(src, path.join(donnaDir, file));
+        }
+    }
+    output.success("Installed donna-tools.cjs + dependencies to ~/.donna/");
+
     // Write version.md
     version.writeVersion(donnaDir, packageVersion, lastSuccessful);
     output.success(`Version ${packageVersion} installed`);
 
-    // Final message
-    console.log("");
-    output.info("Run /donna:setup in Claude Code to get started.");
+    // Final message — suppress setup prompt if already configured (D-04)
+    const configPath = path.join(homeDir, ".config", "donna", "config.md");
+    const isConfigured =
+        fs.existsSync(configPath) && fs.readFileSync(configPath, "utf8").includes("storage_repo:");
+
+    if (!isConfigured) {
+        console.log("");
+        output.info("Run /donna:setup in Claude Code to get started.");
+    }
 }
 
 module.exports = { run };
