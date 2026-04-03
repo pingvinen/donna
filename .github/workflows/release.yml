@@ -26,6 +26,9 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Check for orphaned issue-linked TODOs
+        run: node scripts/pre-release-check.cjs
+
       - name: Determine version bump
         id: bump
         run: node scripts/determine-bump.cjs

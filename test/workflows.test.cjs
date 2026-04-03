@@ -61,6 +61,13 @@ describe("release.yml", () => {
         assert.ok(content.includes("contents: write"));
     });
 
+    it("runs pre-release-check before version bump", () => {
+        const checkIdx = content.indexOf("node scripts/pre-release-check.cjs");
+        const bumpIdx = content.indexOf("node scripts/determine-bump.cjs");
+        assert.ok(checkIdx > -1, "pre-release-check step exists");
+        assert.ok(checkIdx < bumpIdx, "pre-release-check runs before determine-bump");
+    });
+
     it("runs determine-bump.cjs script", () => {
         assert.ok(content.includes("node scripts/determine-bump.cjs"));
     });
