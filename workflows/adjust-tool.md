@@ -78,6 +78,17 @@ What would you like to change?
 4. auth — auth test command or API secrets
 ```
 Store as `<change_choice>`.
+
+**If the user asks to change the type** (response mentions "type", "change type", "switch type", etc.):
+Print:
+```
+Tool type cannot be changed in-place — it affects how capabilities are learned and how the tool is invoked. To change a tool's type, remove it and re-add it:
+
+1. Note the tool's current scope and capabilities
+2. Remove the tool's section from <storage_repo>/donna/tools.md
+3. Run /donna:add-tool <tool_name> to re-add with the correct type
+```
+Stop — do not proceed to apply-change.
 </step>
 
 <step name="apply-change">
