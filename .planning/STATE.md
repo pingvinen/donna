@@ -64,7 +64,6 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Skip setup prompt when Donna is already configured (tooling)
 - Simplify adjust-tool — remove type change support (tooling)
 - Add ASCII art branding to Donna's output banners (general, ref: #13)
-- Add GitHub workflow that blocks merging if UAT not finalized (ci, ref: #27)
 - Document why automated periodic run-tools invocations are not supported (docs, ref: #23)
 - Extract possible tasks from meeting notes and transcripts (tooling, ref: #25)
 - Make the skills list in README easier to comprehend with grouping (docs, ref: #22)
