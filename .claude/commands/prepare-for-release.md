@@ -1,6 +1,6 @@
 ---
 name: prepare-for-release
-description: Review pending TODOs before release — move completed ones to done/ and stamp review marker
+description: Pre-release housekeeping — review TODOs, reconcile STATE.md, clean up debug sessions, stamp review marker
 allowed-tools:
   - Bash
   - Skill
@@ -27,11 +27,15 @@ If the check already passes, tell the user and stop — no review needed.
 </step>
 
 <step name="review">
-**Review pending TODOs using GSD:**
+**Review pending TODOs and reconcile GSD state:**
 
 Invoke the Skill tool:
 - skill: `gsd:fast`
-- args: `Review all pending TODOs in .planning/todos/pending/. For each one, check whether the described work has been implemented in the codebase. Move any completed TODOs to .planning/todos/done/ and update the Pending Todos list in .planning/STATE.md. Do not commit — only stage changes.`
+- args: `Prepare for release — do all of the following, staging changes but NOT committing:
+  1. Review all pending TODOs in .planning/todos/pending/. For each one, check whether the described work has been implemented in the codebase. Move any completed TODOs to .planning/todos/done/.
+  2. Update the Pending Todos list in .planning/STATE.md to match the actual files in todos/pending/.
+  3. Move any debug sessions in .planning/debug/ whose status is "resolved" or "diagnosed" (research-only) to .planning/debug/resolved/.
+  4. Fix stale fields in STATE.md: update Current Position and Current focus to reflect actual project state (e.g. if all phases are complete, say so). Update Session Continuity with today's date.`
 </step>
 
 <step name="stamp">
