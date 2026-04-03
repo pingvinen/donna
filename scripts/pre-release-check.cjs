@@ -2,24 +2,60 @@
 "use strict";
 
 /**
- * Pre-release check: warns if any pending TODOs have github_issue fields.
+ * Pre-release gate: blocks the release unless pending TODOs have been
+ * reviewed after the last phase was completed.
  *
- * These TODOs reference GitHub issues that won't be auto-closed by the
- * release script (which only scans done/). This is expected for genuinely
- * pending work — the warning is informational so the releaser can verify
- * no resolved TODOs were accidentally left in pending/.
+ * The release script auto-closes GitHub issues by scanning done/ TODOs.
+ * If a resolved TODO is accidentally left in pending/, the linked issue
+ * won't be closed. This check ensures someone has reviewed the TODO state
+ * since the last phase shipped.
  *
- * Always exits 0 (warning only, never blocks the release).
+ * Review marker: .planning/todos/.last-reviewed (ISO timestamp)
+ * Phase timestamp: last_updated in .planning/STATE.md frontmatter
+ *
+ * Exits 1 if:
+ *   - No review marker exists, or
+ *   - The review is older than the last phase completion
  */
 
 const fs = require("node:fs");
 const path = require("node:path");
 
 /**
+ * Reads the last-reviewed timestamp from the marker file.
+ * @param {string} markerPath
+ * @returns {Date|null}
+ */
+function readReviewTimestamp(markerPath) {
+    try {
+        const content = fs.readFileSync(markerPath, "utf8").trim();
+        const date = new Date(content);
+        return Number.isNaN(date.getTime()) ? null : date;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Reads the last_updated timestamp from STATE.md frontmatter.
+ * @param {string} statePath
+ * @returns {Date|null}
+ */
+function readStateTimestamp(statePath) {
+    try {
+        const content = fs.readFileSync(statePath, "utf8");
+        const match = content.match(/^last_updated:\s*"?([^"\n]+)"?/m);
+        if (!match) return null;
+        const date = new Date(match[1]);
+        return Number.isNaN(date.getTime()) ? null : date;
+    } catch {
+        return null;
+    }
+}
+
+/**
  * Scans a directory for .md files with github_issue frontmatter.
- * Returns an array of { file, issue } objects.
- *
- * @param {string} dir - Path to scan
+ * @param {string} dir
  * @returns {{ file: string, issue: number }[]}
  */
 function scanForIssueLinks(dir) {
@@ -53,22 +89,48 @@ function scanForIssueLinks(dir) {
 
 // CLI entry point
 if (require.main === module) {
-    const pendingDir = path.join(process.cwd(), ".planning", "todos", "pending");
-    const orphaned = scanForIssueLinks(pendingDir);
+    const planningDir = path.join(process.cwd(), ".planning");
+    const pendingDir = path.join(planningDir, "todos", "pending");
+    const markerPath = path.join(planningDir, "todos", ".last-reviewed");
+    const statePath = path.join(planningDir, "STATE.md");
 
-    if (orphaned.length === 0) {
-        console.log("Pre-release check passed: no orphaned issue-linked TODOs in pending/");
+    // If no pending TODOs have github_issue fields, nothing can go wrong — pass
+    const issueLinked = scanForIssueLinks(pendingDir);
+    if (issueLinked.length === 0) {
+        console.log("Pre-release check passed: no issue-linked TODOs in pending/");
         process.exit(0);
     }
 
-    console.warn("⚠ Pre-release WARNING: found pending TODOs with github_issue fields.");
-    console.warn("These issues will NOT be auto-closed by the release script.\n");
+    const reviewDate = readReviewTimestamp(markerPath);
+    const stateDate = readStateTimestamp(statePath);
 
-    for (const { file, issue } of orphaned) {
-        console.warn(`  #${issue}  ${file}`);
+    if (!reviewDate) {
+        console.error("Pre-release check FAILED: pending TODOs have never been reviewed.");
+        console.error(`Found ${issueLinked.length} pending TODO(s) with github_issue fields:\n`);
+        for (const { file, issue } of issueLinked) {
+            console.error(`  #${issue}  ${file}`);
+        }
+        console.error("\nRun 'node scripts/review-todos.cjs' to review and confirm.");
+        process.exit(1);
     }
 
-    console.warn("\nIf any of these are resolved, move them to done/ before releasing.");
+    if (stateDate && reviewDate < stateDate) {
+        console.error("Pre-release check FAILED: TODO review is stale.");
+        console.error(`  Last reviewed:        ${reviewDate.toISOString()}`);
+        console.error(`  Last phase completed: ${stateDate.toISOString()}`);
+        console.error(`\nFound ${issueLinked.length} pending TODO(s) with github_issue fields:\n`);
+        for (const { file, issue } of issueLinked) {
+            console.error(`  #${issue}  ${file}`);
+        }
+        console.error("\nRun 'node scripts/review-todos.cjs' to review and confirm.");
+        process.exit(1);
+    }
+
+    console.log("Pre-release check passed: TODO review is current");
+    console.log(`  Last reviewed:        ${reviewDate.toISOString()}`);
+    if (stateDate) {
+        console.log(`  Last phase completed: ${stateDate.toISOString()}`);
+    }
 }
 
-module.exports = { scanForIssueLinks };
+module.exports = { readReviewTimestamp, readStateTimestamp, scanForIssueLinks };
