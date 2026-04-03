@@ -30,7 +30,7 @@ If the check already passes, tell the user and stop — no review needed.
 **Review pending TODOs using GSD:**
 
 Invoke the Skill tool:
-- skill: `gsd:do`
+- skill: `gsd:fast`
 - args: `Review all pending TODOs in .planning/todos/pending/. For each one, check whether the described work has been implemented in the codebase. Move any completed TODOs to .planning/todos/done/ and update the Pending Todos list in .planning/STATE.md. Do not commit — only stage changes.`
 </step>
 

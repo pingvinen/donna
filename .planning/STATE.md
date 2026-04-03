@@ -60,16 +60,9 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Evaluate natural language input as alternative to slash commands (general)
 - Handle timezone changes in daily files (general)
 - Add task priority and sorting configuration for daily briefs (general)
-- Check for new Donna version once per day (tooling)
-- Skip setup prompt when Donna is already configured (tooling)
-- Simplify adjust-tool — remove type change support (tooling)
 - Add ASCII art branding to Donna's output banners (general, ref: #13)
-- Document why automated periodic run-tools invocations are not supported (docs, ref: #23)
 - Extract possible tasks from meeting notes and transcripts (tooling, ref: #25)
-- Make the skills list in README easier to comprehend with grouping (docs, ref: #22)
-- Enhance tool learning to read source code, docs, and API schemas (tooling, ref: #20)
 - Make UAT easier with sandbox environment and test tools (testing, ref: #19)
-- Refactor skill bootstrap (config, migrations) into reusable module (tooling, ref: #30)
 
 ### Roadmap Evolution
 
