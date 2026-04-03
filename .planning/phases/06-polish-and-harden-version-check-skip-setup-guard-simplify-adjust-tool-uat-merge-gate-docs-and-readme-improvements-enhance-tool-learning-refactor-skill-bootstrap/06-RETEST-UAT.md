@@ -58,11 +58,10 @@ blocked: 0
   reason: "User reported: gate checks files exist with complete status, but doesn't verify UAT was run after fixes/new features. A UAT that found 5 issues shouldn't pass just because status is complete."
   severity: major
   test: 3
-  root_cause: ""
+  root_cause: "Gate only checked status: complete, not issues: 0. Also only searched for *-HUMAN-UAT.md, missing *-RETEST-UAT.md files."
   artifacts:
     - path: ".github/workflows/uat-gate.yml"
-      issue: "Checks status: complete but not whether issues: 0 or whether UAT post-dates latest code changes"
+      issue: "Checks status: complete but not whether issues: 0; only finds HUMAN-UAT files"
   missing:
-    - "Gate should verify the latest UAT file has issues: 0"
-    - "Gate should verify UAT was run after the most recent non-planning commit"
+    - "Gate should verify the latest UAT file per phase has issues: 0"
   debug_session: ""

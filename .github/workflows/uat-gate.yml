@@ -18,29 +18,44 @@ jobs:
 
       - name: Check UAT completion
         run: |
-          # Find HUMAN-UAT files in .planning/phases/
-          UAT_FILES=$(find .planning/phases -name "*-HUMAN-UAT.md" -type f 2>/dev/null)
+          # Find all UAT files (HUMAN-UAT and RETEST-UAT)
+          UAT_FILES=$(find .planning/phases -name "*-HUMAN-UAT.md" -o -name "*-RETEST-UAT.md" -type f 2>/dev/null | sort)
 
           if [ -z "$UAT_FILES" ]; then
-            echo "No HUMAN-UAT files found in .planning/phases/"
+            echo "No UAT files found in .planning/phases/"
             echo "Complete human UAT with /gsd:verify-work before merging."
             exit 1
           fi
 
-          ALL_COMPLETE=true
+          # Group by phase dir — use the latest UAT file per phase
+          declare -A LATEST_UAT
           for f in $UAT_FILES; do
+            PHASE_DIR=$(dirname "$f")
+            LATEST_UAT["$PHASE_DIR"]="$f"
+          done
+
+          GATE_PASS=true
+          for PHASE_DIR in "${!LATEST_UAT[@]}"; do
+            f="${LATEST_UAT[$PHASE_DIR]}"
             STATUS=$(head -10 "$f" | grep '^status:' | awk '{print $2}')
-            echo "Found: $f — status: $STATUS"
+            ISSUES=$(grep '^issues:' "$f" | head -1 | awk '{print $2}')
+            echo "Found: $f — status: $STATUS, issues: ${ISSUES:-unknown}"
+
             if [ "$STATUS" != "complete" ]; then
-              ALL_COMPLETE=false
+              echo "  FAIL: status is not complete"
+              GATE_PASS=false
+            elif [ "${ISSUES:-1}" != "0" ]; then
+              echo "  FAIL: latest UAT found $ISSUES issue(s) — retest needed after fixes"
+              GATE_PASS=false
             fi
           done
 
-          if [ "$ALL_COMPLETE" = true ]; then
-            echo "All HUMAN-UAT files have status: complete"
+          if [ "$GATE_PASS" = true ]; then
+            echo ""
+            echo "All UAT sessions complete with 0 issues."
           else
             echo ""
-            echo "Not all HUMAN-UAT sessions are complete."
-            echo "Finish UAT with /gsd:verify-work before merging."
+            echo "UAT gate failed. Ensure the latest UAT run has status: complete and issues: 0."
+            echo "Run /gsd:verify-work to retest after fixing issues."
             exit 1
           fi
