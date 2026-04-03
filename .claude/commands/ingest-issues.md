@@ -1,5 +1,5 @@
 ---
-name: gsd-custom:ingest-issues
+name: ingest-issues
 description: Ingest open GitHub issues into GSD as TODOs with provenance tracking
 allowed-tools:
   - Read
