@@ -21,10 +21,9 @@ expected: After install, run a workflow that uses donna-tools.cjs init (e.g., `/
 result: pass
 
 ### 3. UAT gate checks GSD state files
-expected: Review `.github/workflows/uat-gate.yml`. The gate should inspect actual GSD state files (*-UAT.md or *-HUMAN-UAT.md status fields) to verify UAT completion — not just check for a label.
-result: issue
-reported: "It now checks the files, but failed to identify that we needed to retest after having fixed previously found issues and added new features. Should the requirement be that the latest UAT run found 0 issues?"
-severity: major
+expected: Review `.github/workflows/uat-gate.yml`. The gate should find all UAT file types, use the latest per phase, and require both status: complete and issues: 0.
+result: pass
+note: Fixed in b7efaf4 — gate now checks issues: 0 and finds both HUMAN-UAT and RETEST-UAT files. Confirmed blocking PR in GitHub.
 
 ### 4. README tool grouping
 expected: Open README.md. All tool commands (add-tool, adjust-tool, remove-tool, run-tools, relearn-tools) should be grouped together under "Tool management" — not split across categories.
@@ -45,23 +44,12 @@ result: pass
 ## Summary
 
 total: 7
-passed: 6
-issues: 1
+passed: 7
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
 
-- truth: "UAT gate should verify UAT was run after latest changes and found 0 issues, not just that status is complete"
-  status: failed
-  reason: "User reported: gate checks files exist with complete status, but doesn't verify UAT was run after fixes/new features. A UAT that found 5 issues shouldn't pass just because status is complete."
-  severity: major
-  test: 3
-  root_cause: "Gate only checked status: complete, not issues: 0. Also only searched for *-HUMAN-UAT.md, missing *-RETEST-UAT.md files."
-  artifacts:
-    - path: ".github/workflows/uat-gate.yml"
-      issue: "Checks status: complete but not whether issues: 0; only finds HUMAN-UAT files"
-  missing:
-    - "Gate should verify the latest UAT file per phase has issues: 0"
-  debug_session: ""
+[none]
