@@ -54,7 +54,7 @@ If you want to help out and _get shit done_, you can do something like:
 
 GSD is pretty good at telling you what the next steps are, so just follow those!
 
-Note that **it is important to run the verification and UAT steps**.
+Note that **it is important to run the verification and UAT steps** (there is a PR gate that checks this).
 
 
 ### GSD deviation

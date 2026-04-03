@@ -21,9 +21,7 @@ Work flows through a pipeline: **TODO → Phase → Execute → Ship**.
 6. **Create a PR** — with `--assignee @me` and conventional commit title.
 7. **UAT** — verify the work meets acceptance criteria before merging. UAT must pass before merge.
 8. **Merge** — merge the PR.
-9. **Clean up state** — move completed TODOs to `done/`, record decisions, and update STATE.md.
-
-When TODOs are added or removed, always update the "Pending Todos" list in `.planning/STATE.md` to match.
+9. **Clean up state** — use `/prepare-for-release`. When TODOs are added or removed, always update the "Pending Todos" list in `.planning/STATE.md` to match.
 10. *(Optional)* **Release** — trigger a release by running the "Create Release" workflow in GitHub Actions. The release workflow scans `done/` TODOs for `github_issue` fields to auto-close resolved issues.
 
 Releases happen organically when enough value has accumulated — there are no formal milestones.
@@ -37,7 +35,6 @@ Releases happen organically when enough value has accumulated — there are no f
 
 ## Git & CI
 - **Stage early, commit often:** Stage changes with `git add` frequently. Commit at natural checkpoints throughout a task — not only at the end. This protects against token exhaustion mid-work.
-- **No git commit/push from subagents:** Git operations that require signing (commit, push) must run in the main conversation context. Subagents can stage files but must leave committing to the orchestrator. (Commit signing tools like 1Password require interactive approval that hangs in subprocesses.)
-- **Push main before phase execution:** Planning/research artifacts are committed on main. Before creating a feature branch for execution, ensure main is pushed to origin so metadata is available remotely.
+- **Commit and push main before phase execution:** Planning/research artifacts are committed on main. Before creating a feature branch for execution, ensure main is pushed to origin so metadata is available remotely.
 - **PR assignment:** Always include `--assignee @me` when creating pull requests with `gh pr create`.
 - **PR titles:** Must follow conventional commits with `<type>(<scope>): <description>` where `scope` is the GSD phase number.
