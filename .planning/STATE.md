@@ -63,6 +63,8 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Add ASCII art branding to Donna's output banners (general, ref: #13)
 - Extract possible tasks from meeting notes and transcripts (tooling, ref: #25)
 - Make UAT easier with sandbox environment and test tools (testing, ref: #19)
+- MacOS desktop widget for Donna (tooling, ref: #34)
+- Configurable communication tone for Donna (general, ref: #33)
 
 ### Roadmap Evolution
 
