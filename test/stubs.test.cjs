@@ -28,6 +28,14 @@ const adjustToolStubPath = path.join(
     "adjust-tool.md",
 );
 const adjustToolWorkflowPath = path.join(projectRoot, "workflows", "adjust-tool.md");
+const removeToolStubPath = path.join(
+    projectRoot,
+    "stubs",
+    "claude-code",
+    "donna",
+    "remove-tool.md",
+);
+const removeToolWorkflowPath = path.join(projectRoot, "workflows", "remove-tool.md");
 const focusStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "focus.md");
 const focusWorkflowPath = path.join(projectRoot, "workflows", "focus.md");
 
@@ -1272,6 +1280,58 @@ describe("workflow: workflows/adjust-tool.md", () => {
         assert.ok(
             content.includes('step name="ask-what-to-change"'),
             "Should have ask-what-to-change step",
+        );
+    });
+});
+
+describe("stub: stubs/claude-code/donna/remove-tool.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(removeToolStubPath), "Stub file should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:remove-tool"', () => {
+        const content = fs.readFileSync(removeToolStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:remove-tool"),
+            "Should have name: donna:remove-tool in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(removeToolStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field in frontmatter");
+    });
+
+    it("contains @~/.donna/workflows/remove-tool.md reference", () => {
+        const content = fs.readFileSync(removeToolStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/remove-tool.md"),
+            "Should reference @~/.donna/workflows/remove-tool.md",
+        );
+    });
+});
+
+describe("workflow: workflows/remove-tool.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(removeToolWorkflowPath), "Workflow file should exist");
+    });
+
+    it("has step structure", () => {
+        const content = fs.readFileSync(removeToolWorkflowPath, "utf8");
+        assert.ok(content.includes('step name="init"'), "Should have init step");
+        assert.ok(content.includes('step name="select-tool"'), "Should have select-tool step");
+        assert.ok(
+            content.includes('step name="confirm-removal"'),
+            "Should have confirm-removal step",
+        );
+    });
+
+    it("calls donna-tools init for bootstrap", () => {
+        const content = fs.readFileSync(removeToolWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
         );
     });
 });

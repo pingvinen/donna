@@ -160,6 +160,7 @@ Instead, run `/donna:run-tools` on demand when you want fresh data, or let `/don
 |---------|-------------|
 | `/donna:add-tool` | Register an external tool (CLI, REST API, GraphQL API, MCP server) |
 | `/donna:adjust-tool` | Edit a tool's configuration (scope, capabilities, auth, command) |
+| `/donna:remove-tool` | Remove a registered tool from tools.md |
 | `/donna:run-tools` | Refresh tool data mid-day |
 | `/donna:relearn-tools` | Update CLI tool knowledge after upgrades |
 
