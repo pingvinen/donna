@@ -93,12 +93,21 @@ async function run(options = {}) {
     fs.cpSync(workflowsSource, workflowsTarget, { recursive: true });
     output.success("Installed workflows to ~/.donna/workflows/");
 
-    // Copy donna-tools.cjs to donnaDir for workflow access
-    const donnaToolsSource = path.join(__dirname, "donna-tools.cjs");
-    if (fs.existsSync(donnaToolsSource)) {
-        fs.copyFileSync(donnaToolsSource, path.join(donnaDir, "donna-tools.cjs"));
-        output.success("Installed donna-tools.cjs to ~/.donna/");
+    // Copy donna-tools.cjs and its dependencies to donnaDir for workflow access
+    const toolFiles = [
+        "donna-tools.cjs",
+        "version.cjs",
+        "migrator.cjs",
+        "changelog.cjs",
+        "output.cjs",
+    ];
+    for (const file of toolFiles) {
+        const src = path.join(__dirname, file);
+        if (fs.existsSync(src)) {
+            fs.copyFileSync(src, path.join(donnaDir, file));
+        }
     }
+    output.success("Installed donna-tools.cjs + dependencies to ~/.donna/");
 
     // Write version.md
     version.writeVersion(donnaDir, packageVersion, lastSuccessful);

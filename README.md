@@ -144,8 +144,6 @@ Instead, run `/donna:run-tools` on demand when you want fresh data, or let `/don
 |---------|-------------|
 | `/donna:setup` | First-time configuration (storage repo, directories) |
 | `/donna:set-role` | Define your job role, get recurring task suggestions |
-| `/donna:add-tool` | Register an external tool (CLI, REST API, GraphQL API, MCP server) |
-| `/donna:adjust-tool` | Edit a tool's configuration (scope, capabilities, auth, command) |
 
 ### Daily workflow
 
@@ -160,6 +158,8 @@ Instead, run `/donna:run-tools` on demand when you want fresh data, or let `/don
 
 | Command | What it does |
 |---------|-------------|
+| `/donna:add-tool` | Register an external tool (CLI, REST API, GraphQL API, MCP server) |
+| `/donna:adjust-tool` | Edit a tool's configuration (scope, capabilities, auth, command) |
 | `/donna:run-tools` | Refresh tool data mid-day |
 | `/donna:relearn-tools` | Update CLI tool knowledge after upgrades |
 

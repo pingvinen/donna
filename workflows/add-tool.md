@@ -255,17 +255,17 @@ If found, check for README or docs in the tool's package directory:
 TOOL_DIR=$(dirname "$(dirname "$TOOL_PATH")")
 ls "$TOOL_DIR"/README* "$TOOL_DIR"/doc* "$TOOL_DIR"/docs* 2>/dev/null | head -5
 ```
-If doc files exist, read up to 200 lines from the most relevant one (prefer README, then docs/). Use Claude's understanding to identify capabilities relevant to daily task management.
+If doc files exist, read the entry-point doc (prefer README, then docs/index or equivalent). Then follow internal links, references, or "see also" pointers to the sections most relevant to daily task management. Use Claude's understanding to navigate — don't stop at a fixed line count.
 
 **Stage 2 — CLI help (baseline):**
-Run `<command> --help 2>&1 | head -80` via Bash. Combine with any Stage 1 findings. Use Claude's understanding to identify 3-5 capabilities relevant to daily task management. If `<scope>` is set, incorporate the scope into CLI invocations.
+Run `<command> --help 2>&1 | head -80` via Bash. If the help output lists subcommands, also run `<command> <subcommand> --help` for the 3-5 most relevant-looking subcommands. Combine with any Stage 1 findings. Use Claude's understanding to identify 3-5 capabilities relevant to daily task management. If `<scope>` is set, incorporate the scope into CLI invocations.
 
 **Stage 3 — Web docs (if stages 1-2 found fewer than 3 capabilities):**
 If fewer than 3 capabilities identified so far, attempt to fetch the tool's documentation from the web. Use WebFetch on common doc URLs:
 - `https://<command>.dev` or `https://<command>.io`
 - The homepage URL from `<command> --help` output if one was printed
 
-If a docs page is found, extract additional capabilities.
+If a docs page is found, follow links to CLI reference, commands, or API sections rather than reading only the landing page. Extract additional capabilities from those deeper pages.
 
 **Stage 4 — Source code analysis (user opt-in per D-09):**
 After stages 1-3, if the tool path was found in Stage 1, print the number of capabilities discovered and ask the user:
@@ -276,7 +276,9 @@ Found <N> capabilities from docs and help output. Want me to analyze <command>'s
 ```
 
 If the user says yes:
-- Read up to 500 lines from the main entry point or lib/ directory of the tool
+- Read the main entry point (e.g., bin/<command>, cli.js, main.py)
+- Follow imports/requires to command registration, subcommand definitions, or handler modules
+- Navigate into the files that define actual commands and actions — don't stop at the entry point
 - Identify additional capabilities from function names, subcommands, or API surface
 - Add any new relevant capabilities to the list
 
