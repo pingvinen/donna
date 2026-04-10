@@ -12,4 +12,19 @@ There is no visual, always-on-screen way to interact with Donna outside the term
 
 ## Solution
 
-Investigate macOS WidgetKit (for widgets) or Control Center extensions. The widget should display the focused list and basic stats from the current daily file, with buttons to invoke key Donna skills. Needs research into distribution (standalone app wrapper vs. CLI companion) and whether headless invocation is feasible given signing/auth constraints.
+A **macOS menu bar app** is the best fit — always visible, lightweight, and can use its icon to nudge the user (e.g. dot/color change when data is stale).
+
+### Approach: Menu Bar App
+
+- **Tech stack:** SwiftUI `MenuBarExtra` (macOS 13+) gives native menu bar presence with minimal code. Alternatives: Rumps (Python), Electron tray — but Swift gives best native feel and icon control.
+- **Data source:** Reads the daily markdown file directly from the storage repo. Focus list, task counts, and file timestamps are all available without an API.
+- **Staleness signal:** Compare daily file date or `mtime` against current time. If no file for today or last `run-tools` was hours ago, change the icon appearance to signal "hey, run an update."
+- **Triggering skills:** Opens a terminal session to run skills (same constraint as #23 — headless invocation blocked by SSH signing/auth). Could use `open -a Terminal "donna run-tools"` or iTerm2/Warp integration.
+- **Distribution:** Separate repo, distributed as `.dmg` or Homebrew cask. Not part of the npm package.
+
+### Alternatives Considered
+
+- **WidgetKit:** Requires a full native app bundle to host the widget. Too heavyweight for what's needed.
+- **Raycast extension:** React-based, low barrier, but not "always visible" — still requires invoking Raycast.
+- **Übersicht:** Desktop widgets via JS/HTML/CSS. Niche audience, no icon badge capability.
+- **Terminal dashboard (`donna watch`):** Ships via npm but too "out of the way" — user wants something that's right there without opening a terminal.
