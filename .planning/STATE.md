@@ -81,6 +81,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260326-ux1 | move completed todos to done | 2026-03-26 | dce26bf | [260326-ux1-move-completed-todos-to-done](./quick/260326-ux1-move-completed-todos-to-done/) |
+| 140626-fa1 | sync new TODOs into STATE.md in ingest-issues command | 2026-06-14 | 451f18b | — |
 
 ## Session Continuity
 
