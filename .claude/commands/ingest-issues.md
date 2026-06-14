@@ -147,13 +147,39 @@ gh issue edit <number> --add-label "ingested" --repo pingvinen/donna
 This MUST be the last step for each issue. The `ingested` label signals that the issue has been fully processed. If this step is skipped or fails, the issue will be retried on the next run (which is correct behavior — the TODO files are idempotent via the duplicate check).
 
 Print: "Ingested issue #<number> '<title>' — created <N> TODO(s)."
+
+**Track for STATE.md sync:** Keep a running list of `(title, area, github_issue)` tuples for every TODO file created or merged during this run. This list is consumed by the `update-state-md` step below.
+</step>
+
+<step name="update-state-md">
+After all issues have been processed, update `.planning/STATE.md` so its "Pending Todos" section reflects the newly created TODO files. Per the project workflow in CLAUDE.md: "When TODOs are added or removed, always update the 'Pending Todos' list in `.planning/STATE.md` to match."
+
+Skip this step if no new TODOs were created (e.g., all issues were classified as `not-for-ingestion` or skipped via duplicate check).
+
+**Procedure:**
+
+1. Read `.planning/STATE.md` and locate the `### Pending Todos` section (it ends at the next `### ` heading, typically `### Roadmap Evolution`).
+
+2. For each tracked TODO tuple, build a bullet line matching the existing format:
+   - With issue ref: `- <title> (<area>, ref: #<issue_number>)`
+   - Without issue ref: `- <title> (<area>)`
+
+   The `<title>` here is the human-readable title (without the `(ref: #N)` suffix that already lives in the TODO file's frontmatter — the bullet's own `ref: #N` covers that).
+
+3. Append each new bullet line to the end of the existing list inside `### Pending Todos` (immediately before the blank line that precedes `### Roadmap Evolution`). Preserve existing entries — do not reorder or deduplicate them; the developer manages cleanup separately.
+
+4. If a bullet for the same `github_issue` number already exists in the section (e.g., a re-run after partial failure), skip it instead of adding a duplicate.
+
+5. Use the Edit tool to write the updated section back to STATE.md.
+
+Print: "STATE.md updated — added <N> pending TODO(s)."
 </step>
 
 <step name="stage-and-summarize">
-Stage all new TODO files so they are ready to commit:
+Stage all new TODO files and the STATE.md update so they are ready to commit:
 
 ```bash
-git add .planning/todos/pending/
+git add .planning/todos/pending/ .planning/STATE.md
 ```
 
 Print a final summary:
@@ -164,7 +190,7 @@ Ingestion complete.
   Issues skipped (not-for-ingestion): Z
   Issues skipped (duplicate/user): W
 
-TODO files staged — ready to save. Create a commit in your main terminal to persist the new TODO files.
+TODO files and STATE.md staged — ready to save. Create a commit in your main terminal to persist the new TODO files and STATE.md update.
 ```
 
 Do NOT invoke a VCS commit from this skill. The developer must commit manually in the main conversation context due to SSH signing requirements (1Password).
