@@ -100,19 +100,10 @@ Read `<storage_repo>/donna/follow-ups.md` with the Read tool. If the file does n
 Parse each line matching the pattern `- [ ] <description> | due: YYYY-MM-DD`. For each matching entry:
 
 - Parse the `due` date (YYYY-MM-DD).
-- If `due < <today>`: task is past due. Calculate the number of overdue days using macOS-compatible date arithmetic:
-  ```bash
-  DUE="<YYYY-MM-DD>"
-  TODAY="<today>"
-  due_epoch=$(date -j -f "%Y-%m-%d" "$DUE" "+%s")
-  today_epoch=$(date -j -f "%Y-%m-%d" "$TODAY" "+%s")
-  echo $(( (today_epoch - due_epoch) / 86400 ))
-  ```
-  Add to `<follow_up_tasks>` as: `- [ ] <description> (overdue N days)` where N is the calculated days.
-- If `due == <today>`: task is due today. Add to `<follow_up_tasks>` as: `- [ ] <description>` (no annotation).
+- If `due <= <today>`: add to `<follow_up_tasks>` as: `- [ ] <description>` (no annotation).
 - If `due > <today>`: task is future — leave the line in follow-ups.md. Do not add to `<follow_up_tasks>`.
 
-After collecting all due/overdue tasks, remove those matched lines from follow-ups.md (the matched lines are NOT written back — only future lines remain). Write the updated file back with the Write tool. If lines were removed, set `<follow_ups_modified>` to `true`. If no lines were removed, set `<follow_ups_modified>` to `false` and skip the file write. Per D-03: items are removed, not checked off or left with a marker.
+After collecting all due/past-due tasks, remove those matched lines from follow-ups.md (the matched lines are NOT written back — only future lines remain). Write the updated file back with the Write tool. If lines were removed, set `<follow_ups_modified>` to `true`. If no lines were removed, set `<follow_ups_modified>` to `false` and skip the file write. Per D-03: items are removed, not checked off or left with a marker.
 
 Store `<follow_up_tasks>` for use in the deduplicate step.
 
@@ -233,7 +224,7 @@ If the file does not exist, `<existing_tasks>` is an empty list.
 <step name="deduplicate">
 Assemble the full task list using a single-pass deduplication to ensure idempotency:
 
-**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any leading `(<tool>) ` prefix (tool tag, matching the pattern `\(\w+\) `), strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` (overdue N days)` suffix (where N is any integer), strip any trailing ` [<text>](<url>)` suffix (tool source link, matching the pattern ` \[[^\]]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
+**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any leading `(<tool>) ` prefix (tool tag, matching the pattern `\(\w+\) `), strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` [<text>](<url>)` suffix (tool source link, matching the pattern ` \[[^\]]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
 
 1. Start with `<existing_tasks>` — both open and closed tasks take priority. Add them all to the final list.
 
@@ -241,7 +232,7 @@ Assemble the full task list using a single-pass deduplication to ensure idempote
 
 3. Add `<recurring_tasks>` as `- [ ] <description>` — for each recurring task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it.
 
-4. Add `<follow_up_tasks>` as-is — for each follow-up task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it. The `(overdue N days)` suffix is stripped during normalization (same as `(N times)`), so an overdue follow-up `- [ ] Review design doc (overdue 3 days)` does not duplicate a manually-added `- [ ] Review design doc`.
+4. Add `<follow_up_tasks>` as-is — for each follow-up task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it.
 
 5. Add `<tool_tasks>` as-is — for each tool task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it.
 
@@ -336,7 +327,7 @@ If there are follow-up tasks (tasks from `<follow_up_tasks>` that were added to 
 ```
 ## Follow-ups
 - [ ] Review design doc
-- [ ] Submit expense report (overdue 3 days)
+- [ ] Submit expense report
 ```
 
 If there are tool tasks (tasks from `<tool_tasks>` that were added to the final list), print:
