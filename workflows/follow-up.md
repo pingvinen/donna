@@ -40,6 +40,13 @@ Examples:
 - "/donna:follow-up schedule 1:1 with Sarah next Tuesday at 2pm" → description: "schedule 1:1 with Sarah", due_expression: "next Tuesday"
 
 **If no argument was provided:**
+CRITICAL: Both AskUserQuestion prompts must use free-text input mode — do NOT use a picker with predefined options.
+
+Print the following as prose (before asking any questions):
+```
+Time expression examples: "in 2 months", "on 2026-09-15", "next Tuesday", "in 3 weeks", or leave blank for today.
+```
+
 Use AskUserQuestion to ask two questions:
 
 First question:
@@ -50,11 +57,9 @@ Store the free-text response as `<description>`.
 
 Second question:
 ```
-When is it due? (e.g. "in 2 months", "on 2026-09-15", or leave blank for today)
+When is it due?
 ```
 Store the free-text response as `<due_expression>`. If the user leaves it blank or says "today", set `<due_expression>` to null.
-
-CRITICAL: Use free-text input mode for both questions — do NOT use a picker with predefined options.
 </step>
 
 <step name="resolve-date">
