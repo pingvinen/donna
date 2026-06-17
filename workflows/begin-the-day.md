@@ -94,6 +94,35 @@ For each task, determine if it is due today using this logic:
 Store the descriptions of all due tasks as `<recurring_tasks>` (just the description text, without the interval suffix).
 </step>
 
+<step name="check-follow-ups">
+Read `<storage_repo>/donna/follow-ups.md` with the Read tool. If the file does not exist, set `<follow_up_tasks>` to an empty list, set `<follow_ups_modified>` to `false`, and continue (follow-ups are optional).
+
+Parse each line matching the pattern `- [ ] <description> | due: YYYY-MM-DD`. For each matching entry:
+
+- Parse the `due` date (YYYY-MM-DD).
+- If `due < <today>`: task is past due. Calculate the number of overdue days using macOS-compatible date arithmetic:
+  ```bash
+  DUE="<YYYY-MM-DD>"
+  TODAY="<today>"
+  due_epoch=$(date -j -f "%Y-%m-%d" "$DUE" "+%s")
+  today_epoch=$(date -j -f "%Y-%m-%d" "$TODAY" "+%s")
+  echo $(( (today_epoch - due_epoch) / 86400 ))
+  ```
+  Add to `<follow_up_tasks>` as: `- [ ] <description> (overdue N days)` where N is the calculated days.
+- If `due == <today>`: task is due today. Add to `<follow_up_tasks>` as: `- [ ] <description>` (no annotation).
+- If `due > <today>`: task is future — leave the line in follow-ups.md. Do not add to `<follow_up_tasks>`.
+
+After collecting all due/overdue tasks, remove those matched lines from follow-ups.md (the matched lines are NOT written back — only future lines remain). Write the updated file back with the Write tool. If lines were removed, set `<follow_ups_modified>` to `true`. If no lines were removed, set `<follow_ups_modified>` to `false` and skip the file write. Per D-03: items are removed, not checked off or left with a marker.
+
+Store `<follow_up_tasks>` for use in the deduplicate step.
+
+CRITICAL constraints:
+- The step reads only one specific named file (`donna/follow-ups.md`) — no glob, no ls
+- File existence check is done via the Read tool (handle missing file gracefully)
+- macOS date command uses the exact same `date -j` pattern as the existing check-recurring step
+- Invalid date strings caught by `date -j`; skip the entry (do not surface, do not remove)
+</step>
+
 <step name="pull-tool-data">
 Read `<storage_repo>/donna/tools.md` with the Read tool.
 
