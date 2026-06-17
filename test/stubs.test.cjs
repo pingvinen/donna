@@ -38,7 +38,7 @@ const removeToolStubPath = path.join(
 const removeToolWorkflowPath = path.join(projectRoot, "workflows", "remove-tool.md");
 const focusStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "focus.md");
 const focusWorkflowPath = path.join(projectRoot, "workflows", "focus.md");
-const followUpStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "follow-up.md");
+const followUpStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "add-follow-up-task.md");
 const followUpWorkflowPath = path.join(projectRoot, "workflows", "follow-up.md");
 
 describe("stub: stubs/claude-code/donna/setup.md", () => {
@@ -1241,11 +1241,11 @@ describe("cross-cutting: installer skill list", () => {
         );
     });
 
-    it('success message includes "follow-up"', () => {
+    it('success message includes "add-follow-up-task"', () => {
         const content = fs.readFileSync(installerPath, "utf8");
         assert.ok(
-            content.includes("follow-up"),
-            "Installer success message should include follow-up skill",
+            content.includes("add-follow-up-task"),
+            "Installer success message should include add-follow-up-task skill",
         );
     });
 });
@@ -1401,17 +1401,17 @@ describe("workflow: workflows/focus.md", () => {
 
 // ─── follow-up stub ──────────────────────────────────────────────────────────
 
-describe("stub: stubs/claude-code/donna/follow-up.md", () => {
+describe("stub: stubs/claude-code/donna/add-follow-up-task.md", () => {
     it("exists", () => {
         assert.ok(fs.existsSync(followUpStubPath), "follow-up stub should exist");
     });
 
-    it('has YAML frontmatter with name "donna:follow-up"', () => {
+    it('has YAML frontmatter with name "donna:add-follow-up-task"', () => {
         const content = fs.readFileSync(followUpStubPath, "utf8");
         assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
         assert.ok(
-            content.includes("name: donna:follow-up"),
-            "Should have name: donna:follow-up in frontmatter",
+            content.includes("name: donna:add-follow-up-task"),
+            "Should have name: donna:add-follow-up-task in frontmatter",
         );
     });
 
