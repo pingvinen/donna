@@ -3,13 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: "Phase 06 shipped — PR #36"
-stopped_at: Completed 06-05-PLAN.md
-last_updated: "2026-03-27T20:19:54.511Z"
+stopped_at: Phase 07 context gathered
+last_updated: "2026-06-17T15:15:48.850Z"
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 6
   total_plans: 21
   completed_plans: 21
+  percent: 86
 ---
 
 # Project State
@@ -75,6 +76,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Phase 4 added: Ingest GitHub issues into GSD (ref: #21)
 - Phase 5 added: Fix the constant timeout warnings
 - Phase 6 added: Polish and harden — version check, skip-setup guard, simplify adjust-tool, UAT merge gate, docs/README improvements, enhance tool learning, refactor skill bootstrap
+- Phase 7 added: Add list of follow-ups i.e. todos in the future
 
 ### Quick Tasks Completed
 
@@ -85,5 +87,5 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 
 ## Session Continuity
 
-Last session: 2026-04-03
-Stopped at: All phases complete, capturing TODOs for future work
+Last session: 2026-06-17T15:15:48.842Z
+Stopped at: Phase 07 context gathered
