@@ -233,7 +233,7 @@ If the file does not exist, `<existing_tasks>` is an empty list.
 <step name="deduplicate">
 Assemble the full task list using a single-pass deduplication to ensure idempotency:
 
-**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any leading `(<tool>) ` prefix (tool tag, matching the pattern `\(\w+\) `), strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` [<text>](<url>)` suffix (tool source link, matching the pattern ` \[[^\]]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
+**Normalization for comparison:** strip `- [ ] ` or `- [x] ` prefix, strip any leading `(<tool>) ` prefix (tool tag, matching the pattern `\(\w+\) `), strip any trailing ` (N times)` suffix (where N is any integer), strip any trailing ` (overdue N days)` suffix (where N is any integer), strip any trailing ` [<text>](<url>)` suffix (tool source link, matching the pattern ` \[[^\]]+\]\([^\)]+\)`), strip any trailing ` (<reason>)` suffix (e.g. `(merged)`, `(closed)`), lowercase all text, trim whitespace.
 
 1. Start with `<existing_tasks>` — both open and closed tasks take priority. Add them all to the final list.
 
@@ -241,7 +241,9 @@ Assemble the full task list using a single-pass deduplication to ensure idempote
 
 3. Add `<recurring_tasks>` as `- [ ] <description>` — for each recurring task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it.
 
-4. Add `<tool_tasks>` as-is — for each tool task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it.
+4. Add `<follow_up_tasks>` as-is — for each follow-up task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it. The `(overdue N days)` suffix is stripped during normalization (same as `(N times)`), so an overdue follow-up `- [ ] Review design doc (overdue 3 days)` does not duplicate a manually-added `- [ ] Review design doc`.
+
+5. Add `<tool_tasks>` as-is — for each tool task, normalize its description and check whether any task already in the final list normalizes to the same value. If no match, add it. If a match exists, skip it.
 
 CRITICAL: A closed task `- [x] Review PRs` must block a recurring `- [ ] Review PRs` from being re-added. Both open AND closed existing tasks count for deduplication.
 
@@ -268,6 +270,7 @@ date: <today>
 <existing tasks, preserving their original order and open/closed state>
 <carried-forward tasks not already in existing>
 <recurring tasks not already in existing>
+<follow-up tasks not already in existing>
 
 ## From Tools
 <tool tasks not already in existing — only if there are tool tasks>
@@ -279,7 +282,7 @@ date: <today>
 <tool warnings — only if there are warnings>
 ```
 
-Tasks are written in this order: existing tasks first (preserving their original order and state), then carried-forward tasks, then recurring tasks.
+Tasks are written in this order: existing tasks first (preserving their original order and state), then carried-forward tasks, then recurring tasks, then follow-up tasks.
 
 If `<tool_tasks>` is empty and there are no resolved items, omit the `## From Tools` and `## Resolved` sections entirely.
 If `<tool_warnings>` is empty, omit the `## Warnings` section entirely. Each warning is written as-is (e.g., `! jira: command not found — install jira first`).
@@ -294,10 +297,17 @@ If no "every other" recurring tasks were added, skip this step.
 </step>
 
 <step name="git-commit">
-Run via Bash:
+If `<follow_ups_modified>` is `true` (the check-follow-ups step modified follow-ups.md), run via Bash:
+```bash
+node ~/.donna/donna-tools.cjs commit "donna(daily): <today> daily brief" --files <daily_folder>/<today>.md donna/follow-ups.md
+```
+
+Otherwise (follow-ups.md was not modified), run via Bash:
 ```bash
 node ~/.donna/donna-tools.cjs commit "donna(daily): <today> daily brief" --files <daily_folder>/<today>.md
 ```
+
+Per D-07: follow-ups.md is included in the commit when items were surfaced and removed from the standing file.
 </step>
 
 <step name="print-brief">
@@ -322,6 +332,13 @@ If there are recurring tasks due today (tasks from `<recurring_tasks>` that were
 - [ ] Review sprint backlog
 ```
 
+If there are follow-up tasks (tasks from `<follow_up_tasks>` that were added to the final list), print:
+```
+## Follow-ups
+- [ ] Review design doc
+- [ ] Submit expense report (overdue 3 days)
+```
+
 If there are tool tasks (tasks from `<tool_tasks>` that were added to the final list), print:
 ```
 ## From Tools
@@ -340,7 +357,7 @@ Always end with:
 ══════════════════════════════════════
 ```
 
-Show ALL tasks — never truncate. If no carried-forward tasks, omit the "## Carried Forward" section. If no recurring tasks due today, omit the "## Due Today" section. If no tool tasks, omit the "## From Tools" section. If no tool warnings, omit the "## Warnings" section. If carried-forward, recurring, AND tool tasks are all empty and there are no existing tasks, print:
+Show ALL tasks — never truncate. If no carried-forward tasks, omit the "## Carried Forward" section. If no recurring tasks due today, omit the "## Due Today" section. If no follow-up tasks, omit the "## Follow-ups" section. If no tool tasks, omit the "## From Tools" section. If no tool warnings, omit the "## Warnings" section. If carried-forward, recurring, follow-up, AND tool tasks are all empty and there are no existing tasks, print:
 ```
 No tasks for today — enjoy your day!
 ```
