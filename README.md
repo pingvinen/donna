@@ -111,7 +111,7 @@ If a CLI tool version is newer than what the AI model knows, Donna will re-learn
   donna/
     role.md          # your job role definition
     recurring.md     # recurring task schedule
-    follow-ups.md   # scheduled follow-up tasks with due dates
+    follow-ups.md    # scheduled follow-up tasks with due dates
     tools.md         # registered tool configurations
   daily/
     2026-03-16.md    # today's tasks, tool data, notes
