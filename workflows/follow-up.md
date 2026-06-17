@@ -112,9 +112,13 @@ node -e "const d=new Date();d.setDate(d.getDate()+21);const y=d.getFullYear();co
 
 CRITICAL: Always use local date component extraction (`getFullYear()`, `getMonth() + 1`, `getDate()`) with padding. NEVER use `toISOString()` — it returns UTC which can produce off-by-one dates for users in timezones ahead of UTC.
 
-If the resolved date is NaN or invalid (check by verifying the output matches YYYY-MM-DD format), fall back to today's date (re-run Case 1).
+If the resolved date is NaN or invalid (check by verifying the output matches YYYY-MM-DD format), print:
+```
+x Invalid date expression: <due_expression>. Use formats like "tomorrow", "next friday", "in 3 days", or YYYY-MM-DD.
+```
+Then stop the workflow. Do NOT fall back to today — the user must correct their date expression.
 
-Store the output as `<due_date>`.
+If the date resolved successfully, store the output as `<due_date>`.
 </step>
 
 <step name="ensure-file">
