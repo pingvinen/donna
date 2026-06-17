@@ -1501,11 +1501,11 @@ describe("cross-cutting: begin-the-day follow-up integration", () => {
         );
     });
 
-    it("contains overdue annotation logic", () => {
+    it("does NOT contain overdue annotation logic", () => {
         const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
         assert.ok(
-            content.includes("overdue"),
-            "begin-the-day should contain overdue annotation logic",
+            !content.includes("overdue"),
+            "begin-the-day should NOT contain overdue annotation logic — removed per UAT test 6",
         );
     });
 
