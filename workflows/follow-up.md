@@ -26,7 +26,7 @@ Continue normally.
 </step>
 
 <step name="parse-input">
-The argument is the full user text (e.g., "/donna:follow-up remind team about Q3 planning in 2 months").
+The argument is the full user text (e.g., "/donna:add-follow-up-task remind team about Q3 planning in 2 months").
 
 **If an argument was provided:**
 Use language understanding to extract two things from the argument:
@@ -37,7 +37,7 @@ Examples:
 - "remind team about Q3 planning in 2 months" → description: "remind team about Q3 planning", due_expression: "in 2 months"
 - "call dentist on 2026-09-15" → description: "call dentist", due_expression: "on 2026-09-15"
 - "review the design doc" → description: "review the design doc", due_expression: null
-- "/donna:follow-up schedule 1:1 with Sarah next Tuesday at 2pm" → description: "schedule 1:1 with Sarah", due_expression: "next Tuesday"
+- "/donna:add-follow-up-task schedule 1:1 with Sarah next Tuesday at 2pm" → description: "schedule 1:1 with Sarah", due_expression: "next Tuesday"
 
 **If no argument was provided:**
 CRITICAL: Both AskUserQuestion prompts must use free-text input mode — do NOT use a picker with predefined options.
