@@ -38,7 +38,13 @@ const removeToolStubPath = path.join(
 const removeToolWorkflowPath = path.join(projectRoot, "workflows", "remove-tool.md");
 const focusStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "focus.md");
 const focusWorkflowPath = path.join(projectRoot, "workflows", "focus.md");
-const followUpStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "add-follow-up-task.md");
+const followUpStubPath = path.join(
+    projectRoot,
+    "stubs",
+    "claude-code",
+    "donna",
+    "add-follow-up-task.md",
+);
 const followUpWorkflowPath = path.join(projectRoot, "workflows", "follow-up.md");
 
 describe("stub: stubs/claude-code/donna/setup.md", () => {
@@ -1467,10 +1473,7 @@ describe("workflow: workflows/follow-up.md", () => {
 
     it("references donna/follow-ups.md", () => {
         const content = fs.readFileSync(followUpWorkflowPath, "utf8");
-        assert.ok(
-            content.includes("donna/follow-ups.md"),
-            "Should reference donna/follow-ups.md",
-        );
+        assert.ok(content.includes("donna/follow-ups.md"), "Should reference donna/follow-ups.md");
     });
 
     it("contains git commit step", () => {

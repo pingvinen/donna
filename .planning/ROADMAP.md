@@ -114,7 +114,7 @@ Plans:
 **Goal:** Add a follow-up system that lets users schedule tasks for a future date with `/donna:add-follow-up-task`, stores entries in `donna/follow-ups.md` with resolved YYYY-MM-DD dates, and surfaces due/past-due follow-ups during begin-the-day
 **Requirements**: TBD
 **Depends on:** Phase 6
-**Plans:** 6 plans (3 execution + 3 gap closure)
+**Plans:** 6/6 plans complete
 Plans:
 **Wave 1**
 
@@ -127,9 +127,9 @@ Plans:
 
 **Gap closure — Wave 1**
 
-- [ ] 07-04-PLAN.md — Fix interactive prompts (picker mode) + invalid date error handling in follow-up workflow
-- [ ] 07-05-PLAN.md — Remove overdue annotation from begin-the-day + flip test assertion
+- [x] 07-04-PLAN.md — Fix interactive prompts (picker mode) + invalid date error handling in follow-up workflow
+- [x] 07-05-PLAN.md — Remove overdue annotation from begin-the-day + flip test assertion
 
 **Gap closure — Wave 2** *(blocked on 07-04, 07-05)*
 
-- [ ] 07-06-PLAN.md — Rename skill to add-follow-up-task for discoverability
+- [x] 07-06-PLAN.md — Rename skill to add-follow-up-task for discoverability
