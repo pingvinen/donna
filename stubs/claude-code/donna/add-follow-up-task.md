@@ -1,5 +1,5 @@
 ---
-name: donna:follow-up
+name: donna:add-follow-up-task
 description: Schedule a follow-up task for a future date
 allowed-tools:
   - Read
