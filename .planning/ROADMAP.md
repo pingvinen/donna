@@ -123,4 +123,4 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 07-03-PLAN.md — Installer registration, README docs, and test coverage
+- [x] 07-03-PLAN.md — Installer registration, README docs, and test coverage
