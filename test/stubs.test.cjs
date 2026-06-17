@@ -38,6 +38,8 @@ const removeToolStubPath = path.join(
 const removeToolWorkflowPath = path.join(projectRoot, "workflows", "remove-tool.md");
 const focusStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "focus.md");
 const focusWorkflowPath = path.join(projectRoot, "workflows", "focus.md");
+const followUpStubPath = path.join(projectRoot, "stubs", "claude-code", "donna", "follow-up.md");
+const followUpWorkflowPath = path.join(projectRoot, "workflows", "follow-up.md");
 
 describe("stub: stubs/claude-code/donna/setup.md", () => {
     it("exists", () => {
@@ -1238,6 +1240,14 @@ describe("cross-cutting: installer skill list", () => {
             "Installer success message should include focus skill",
         );
     });
+
+    it('success message includes "follow-up"', () => {
+        const content = fs.readFileSync(installerPath, "utf8");
+        assert.ok(
+            content.includes("follow-up"),
+            "Installer success message should include follow-up skill",
+        );
+    });
 });
 
 describe("stub: stubs/claude-code/donna/adjust-tool.md", () => {
@@ -1386,5 +1396,126 @@ describe("workflow: workflows/focus.md", () => {
             content.includes('step name="write-focus-file"'),
             "Should have write-focus-file step",
         );
+    });
+});
+
+// ─── follow-up stub ──────────────────────────────────────────────────────────
+
+describe("stub: stubs/claude-code/donna/follow-up.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(followUpStubPath), "follow-up stub should exist");
+    });
+
+    it('has YAML frontmatter with name "donna:follow-up"', () => {
+        const content = fs.readFileSync(followUpStubPath, "utf8");
+        assert.ok(content.startsWith("---"), "Should start with YAML frontmatter delimiter");
+        assert.ok(
+            content.includes("name: donna:follow-up"),
+            "Should have name: donna:follow-up in frontmatter",
+        );
+    });
+
+    it("has description field in frontmatter", () => {
+        const content = fs.readFileSync(followUpStubPath, "utf8");
+        assert.ok(content.includes("description:"), "Should have description field");
+    });
+
+    it("has Read in allowed-tools", () => {
+        const content = fs.readFileSync(followUpStubPath, "utf8");
+        assert.ok(content.includes("- Read"), "Should have Read in allowed-tools");
+    });
+
+    it("has Write in allowed-tools", () => {
+        const content = fs.readFileSync(followUpStubPath, "utf8");
+        assert.ok(content.includes("- Write"), "Should have Write in allowed-tools");
+    });
+
+    it("has Bash in allowed-tools", () => {
+        const content = fs.readFileSync(followUpStubPath, "utf8");
+        assert.ok(content.includes("- Bash"), "Should have Bash in allowed-tools");
+    });
+
+    it("has AskUserQuestion in allowed-tools", () => {
+        const content = fs.readFileSync(followUpStubPath, "utf8");
+        assert.ok(
+            content.includes("- AskUserQuestion"),
+            "Should have AskUserQuestion in allowed-tools",
+        );
+    });
+
+    it("contains @~/.donna/workflows/follow-up.md reference", () => {
+        const content = fs.readFileSync(followUpStubPath, "utf8");
+        assert.ok(
+            content.includes("@~/.donna/workflows/follow-up.md"),
+            "Should reference @~/.donna/workflows/follow-up.md",
+        );
+    });
+});
+
+describe("workflow: workflows/follow-up.md", () => {
+    it("exists", () => {
+        assert.ok(fs.existsSync(followUpWorkflowPath), "follow-up workflow should exist");
+    });
+
+    it("calls donna-tools init for bootstrap", () => {
+        const content = fs.readFileSync(followUpWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("donna-tools.cjs init"),
+            "Should call donna-tools.cjs init for bootstrap",
+        );
+    });
+
+    it("references donna/follow-ups.md", () => {
+        const content = fs.readFileSync(followUpWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("donna/follow-ups.md"),
+            "Should reference donna/follow-ups.md",
+        );
+    });
+
+    it("contains git commit step", () => {
+        const content = fs.readFileSync(followUpWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("git") && content.includes("commit"),
+            "Should contain git commit step",
+        );
+    });
+});
+
+// ─── cross-cutting: begin-the-day follow-up integration ─────────────────────
+
+describe("cross-cutting: begin-the-day follow-up integration", () => {
+    it("contains check-follow-ups step", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("check-follow-ups"),
+            "begin-the-day should contain check-follow-ups step",
+        );
+    });
+
+    it("references donna/follow-ups.md", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("donna/follow-ups.md"),
+            "begin-the-day should reference donna/follow-ups.md",
+        );
+    });
+
+    it("contains overdue annotation logic", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        assert.ok(
+            content.includes("overdue"),
+            "begin-the-day should contain overdue annotation logic",
+        );
+    });
+
+    it("git-commit references follow-ups.md", () => {
+        const content = fs.readFileSync(beginTheDayWorkflowPath, "utf8");
+        const hasFollowUpsMd =
+            content.includes("donna/follow-ups.md") ||
+            (content.includes("follow-ups.md") &&
+                content.includes("git") &&
+                content.includes("commit"));
+        assert.ok(hasFollowUpsMd, "git-commit step should include follow-ups.md");
     });
 });
