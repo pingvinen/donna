@@ -37,6 +37,7 @@ See: `.planning/milestones/v1.0-ROADMAP.md` for full details.
 **Plans:** 4/4 plans complete
 
 Plans:
+
 - [x] 01-01-PLAN.md — CONTRIBUTING.md and installer changelog system
 - [x] 01-02-PLAN.md — donna:help and donna:contribute-idea skills (stubs + workflows)
 - [x] 01-03-PLAN.md — Integration wiring (README, installer skill list, test coverage)
@@ -50,6 +51,7 @@ Plans:
 **Plans:** 6 plans (4 complete + 2 gap closure)
 
 Plans:
+
 - [x] 02-01-PLAN.md — Schema foundation: migration 003 + type field backfill handler in workflows
 - [x] 02-02-PLAN.md — adjust-tool skill: stub, workflow, installer registration, tests
 - [x] 02-03-PLAN.md — Non-CLI tool registration: REST/GraphQL/MCP in add-tool + secrets.md
@@ -65,6 +67,7 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
+
 - [x] 03-01-PLAN.md — Core skill: stub, workflow, installer registration, README entry
 - [x] 03-02-PLAN.md — Test coverage for focus stub and workflow
 
@@ -76,6 +79,7 @@ Plans:
 **Plans:** 1/2 plans executed
 
 Plans:
+
 - [x] 04-01-PLAN.md — Ingestion skill: gsd-custom:ingest-issues command file + tests
 - [x] 04-02-PLAN.md — Release-time closure: post-release-comments.cjs script + release.yml step + tests
 
@@ -87,6 +91,7 @@ Plans:
 **Plans:** 1/1 plans complete
 
 Plans:
+
 - [x] 05-01-PLAN.md — Remove timeout binary from workflows + update test assertions
 
 ### Phase 6: Polish and harden — version check, skip-setup guard, simplify adjust-tool, UAT merge gate, docs and README improvements, enhance tool learning, refactor skill bootstrap
@@ -97,8 +102,22 @@ Plans:
 **Plans:** 5/5 plans executed
 
 Plans:
+
 - [x] 06-01-PLAN.md — donna-tools.cjs: centralized CLI utility with init, commit, daily-path, resolve-secret subcommands + version check
 - [x] 06-02-PLAN.md — UAT merge gate, skip-setup guard, simplify adjust-tool
 - [x] 06-03-PLAN.md — README improvements: grouped skills list + automation docs
 - [x] 06-04-PLAN.md — Enhanced tool learning cascade in add-tool and relearn-tools
 - [x] 06-05-PLAN.md — Workflow bootstrap refactor: replace inline bootstrap with donna-tools calls in all 9 workflows
+
+### Phase 7: Add list of follow-ups i.e. todos in the future
+
+**Goal:** Add a follow-up system that lets users schedule tasks for a future date with `/donna:follow-up`, stores entries in `donna/follow-ups.md` with resolved YYYY-MM-DD dates, and surfaces due/past-due follow-ups during begin-the-day with overdue annotations
+**Requirements**: TBD
+**Depends on:** Phase 6
+**Plans:** 3 plans
+
+Plans:
+
+- [ ] 07-01-PLAN.md — Capture skill: stub (donna:follow-up) + workflow with date resolution
+- [ ] 07-02-PLAN.md — begin-the-day integration: check-follow-ups step, dedup wiring, commit, print-brief
+- [ ] 07-03-PLAN.md — Installer registration, README docs, and test coverage
