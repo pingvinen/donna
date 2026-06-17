@@ -115,9 +115,12 @@ Plans:
 **Requirements**: TBD
 **Depends on:** Phase 6
 **Plans:** 3 plans
-
 Plans:
+**Wave 1**
 
 - [ ] 07-01-PLAN.md — Capture skill: stub (donna:follow-up) + workflow with date resolution
 - [ ] 07-02-PLAN.md — begin-the-day integration: check-follow-ups step, dedup wiring, commit, print-brief
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 07-03-PLAN.md — Installer registration, README docs, and test coverage

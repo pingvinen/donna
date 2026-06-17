@@ -513,7 +513,7 @@ echo $(( (today_epoch - due_epoch) / 86400 ))
 
 **If this table is empty:** All claims in this research were verified or cited — no user confirmation needed.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **End-of-month clamping for setMonth overflow**
    - What we know: `setMonth(1)` on Jan 31 yields Mar 3 (spec behavior). The CONTEXT.md leaves this to the agent's discretion.

@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: "Phase 06 shipped — PR #36"
 stopped_at: Phase 07 context gathered
-last_updated: "2026-06-17T15:15:48.850Z"
+last_updated: "2026-06-17T15:41:48.035Z"
 progress:
   total_phases: 7
   completed_phases: 6
@@ -66,6 +66,7 @@ Decisions are logged in PROJECT.md Key Decisions table (17 decisions, all ✓ Go
 - Make UAT easier with sandbox environment and test tools (testing, ref: #19)
 - MacOS desktop widget for Donna (tooling, ref: #34)
 - Configurable communication tone for Donna (general, ref: #33)
+- Add list of future-dated follow-ups / scheduled reminders (general, ref: #37)
 
 ### Roadmap Evolution
 
