@@ -108,7 +108,7 @@ After collecting all due/past-due tasks, remove those matched lines from follow-
 Store `<follow_up_tasks>` for use in the deduplicate step.
 
 CRITICAL constraints:
-- The step reads only one specific named file (`donna/follow-ups.md`) — no glob, no ls
+- The step reads only one specific named file (`donna/follow-ups.md`) — no directory scan, no wildcard listing
 - File existence check is done via the Read tool (handle missing file gracefully)
 - macOS date command uses the exact same `date -j` pattern as the existing check-recurring step
 - Invalid date strings caught by `date -j`; skip the entry (do not surface, do not remove)

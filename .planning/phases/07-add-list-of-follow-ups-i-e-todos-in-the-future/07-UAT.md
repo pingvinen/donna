@@ -1,14 +1,38 @@
 ---
-status: diagnosed
+status: complete
 phase: 07-add-list-of-follow-ups-i-e-todos-in-the-future
-source: 07-01-SUMMARY.md, 07-02-SUMMARY.md, 07-03-SUMMARY.md
+source: 07-01-SUMMARY.md, 07-02-SUMMARY.md, 07-03-SUMMARY.md, 07-04-SUMMARY.md, 07-05-SUMMARY.md, 07-06-SUMMARY.md
 started: 2026-06-17T18:01:05+02:00
-updated: 2026-06-17T22:05:00+02:00
+updated: 2026-06-27T00:00:00+02:00
 ---
 
 ## Current Test
 
 [testing complete]
+
+## Re-verification (2026-06-27)
+
+The 4 issues below (tests 2, 4, 6, 10) were diagnosed and closed by gap-closure plans
+07-04/05/06. Re-verified via code inspection + automated test suite (per project preference:
+fixes confirmed by automated checks rather than manual re-testing):
+
+- **Test 2** (interactive prompts) — `workflows/follow-up.md` now prints examples as prose
+  before asking and marks both AskUserQuestion prompts free-text only (no picker). ✓
+- **Test 4** (invalid date) — `workflows/follow-up.md:115-119` now prints an explicit error
+  and halts; no silent fall-back to today. ✓
+- **Test 6** (overdue annotation) — removed from `workflows/begin-the-day.md`; test asserts
+  it is absent. ✓
+- **Test 10** (skill rename) — stub renamed to `add-follow-up-task.md`, frontmatter,
+  installer, and README updated to `donna:add-follow-up-task`. ✓
+
+Regression found and fixed during re-verification:
+- STORE-03 guard (`test/stubs.test.cjs:495`) failed because the check-follow-ups note added
+  in 07-02 used the literal word "glob". Reworded the note (behavior was always correct);
+  test now passes.
+
+Full suite: 338 pass / 0 fail (exit 0). The `gsd-custom:ingest-issues` error is a pre-existing
+environment artifact (missing installed `.claude/commands/` file, Phase 04 scope) and does not
+fail the run.
 
 ## Tests
 
@@ -18,9 +42,8 @@ result: pass
 
 ### 2. Schedule a follow-up interactively
 expected: Running `/donna:follow-up` with no arguments prompts for description and time expression via AskUserQuestion, then schedules the follow-up the same as CLI mode.
-result: issue
-reported: "It prompts, but it says 'Type your task' with a description of 'Use the other option below to enter...'. But there is no 'other' option. There is a type your answer, but then the question+X options thing does not make any sense. Then a 'describe your task' and then freetext input would be better. The same thing happens for the due date."
-severity: major
+result: pass
+resolved_by: 07-04 (free-text prompts, examples moved to prose) — re-verified 2026-06-27
 
 ### 3. Relative date resolution
 expected: Time expressions like "tomorrow", "next monday", "in 3 days" resolve to correct YYYY-MM-DD dates using local timezone (not UTC), with no `toISOString` usage.
@@ -28,9 +51,8 @@ result: pass
 
 ### 4. Invalid date falls back to today
 expected: An unparseable or NaN date expression shows an error message telling the user the date is invalid, instead of silently falling back to today.
-result: issue
-reported: "I do not agree that it should 'fall back'. It should tell the user what is wrong with the date, otherwise the user will think everything was fine and will then be annoyed tomorrow when it pops up"
-severity: major
+result: pass
+resolved_by: 07-04 (invalid date prints error and halts, no silent fallback) — re-verified 2026-06-27
 
 ### 5. Follow-ups surface in begin-the-day
 expected: Running `/donna:begin-the-day` surfaces follow-up items due today or past-due in the Tasks section of the daily file.
@@ -38,9 +60,8 @@ result: pass
 
 ### 6. Past-due follow-ups show overdue annotation
 expected: Past-due follow-ups display with `(overdue N days)` annotation in the daily Tasks section.
-result: issue
-reported: "That annotation is a bit dangerous. If I do not finish the task that day and it is carried forward, it would have to be updated. I think that complexity is unnecessary, so I think we should remove the '(overdue N days)'. As long as it hits my task list, I am fine."
-severity: minor
+result: pass
+resolved_by: 07-05 (overdue annotation removed from begin-the-day) — re-verified 2026-06-27
 
 ### 7. Surfaced follow-ups removed from standing file
 expected: After begin-the-day surfaces a follow-up, the entry is removed from `donna/follow-ups.md` (not checked off, not left with marker).
@@ -56,20 +77,22 @@ result: pass
 
 ### 10. README documents follow-up skill
 expected: README.md contains `/donna:follow-up` in the Daily workflow commands table; `follow-ups.md` appears in the directory tree.
-result: issue
-reported: "It does. However, I am wondering if it would be better to rename it to 'add-follow-up-task' as that will allow a user thinking 'I need to add something' to find it simply by writing '/add' and they might even see it and notice while just using the regular 'add-task'."
-severity: minor
+result: pass
+resolved_by: 07-06 (skill renamed to donna:add-follow-up-task) — re-verified 2026-06-27
 
 ## Summary
 
 total: 10
-passed: 6
-issues: 4
+passed: 10
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
 
 ## Gaps
+
+All gaps below were closed by gap-closure plans 07-04/05/06 and re-verified 2026-06-27.
+Retained for provenance.
 
 - truth: "Interactive follow-up prompts are clear and usable"
   status: failed
