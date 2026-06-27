@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const gsdCustomDir = path.join(__dirname, "..", ".claude", "commands", "gsd-custom");
+const gsdCustomDir = path.join(__dirname, "..", ".claude", "commands");
 
 function readCommand(name) {
     return fs.readFileSync(path.join(gsdCustomDir, name), "utf8");
@@ -18,8 +18,8 @@ describe("gsd-custom:ingest-issues", () => {
         assert.ok(content.length > 0);
     });
 
-    it("has name: gsd-custom:ingest-issues in frontmatter", () => {
-        assert.ok(content.includes("name: gsd-custom:ingest-issues"));
+    it("has name: ingest-issues in frontmatter", () => {
+        assert.ok(content.includes("name: ingest-issues"));
     });
 
     it("lists AskUserQuestion in allowed-tools", () => {
