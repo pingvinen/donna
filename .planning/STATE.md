@@ -2,8 +2,8 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: All phases complete — ready for release
-stopped_at: Phase 07 verified (UAT complete, 10/10 pass); all 7 phases done
+status: Phase 07 shipped — PR #38 open, awaiting merge
+stopped_at: Phase 07 shipped (PR #38); all 7 phases done, ready for release after merge
 last_updated: "2026-06-27T00:00:00.000Z"
 progress:
   total_phases: 7
