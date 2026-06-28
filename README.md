@@ -111,6 +111,7 @@ If a CLI tool version is newer than what the AI model knows, Donna will re-learn
   donna/
     role.md          # your job role definition
     recurring.md     # recurring task schedule
+    follow-ups.md    # scheduled follow-up tasks with due dates
     tools.md         # registered tool configurations
   daily/
     2026-03-16.md    # today's tasks, tool data, notes
@@ -152,6 +153,7 @@ Instead, run `/donna:run-tools` on demand when you want fresh data, or let `/don
 | `/donna:begin-the-day` | Morning brief with carry-forward, recurring tasks, tool data |
 | `/donna:add-task` | Capture a task instantly |
 | `/donna:done` | Mark a task complete |
+| `/donna:add-follow-up-task` | Schedule a task for a future date -- Donna reminds you when it is due |
 | `/donna:focus` | Distill today's tasks into a short prioritized focus list |
 
 ### Tool management

@@ -1,6 +1,6 @@
 ---
 created: 2026-06-14T12:00:00.000Z
-title: Add list of future-dated follow-ups / scheduled reminders (ref: #37)
+title: "Add list of future-dated follow-ups / scheduled reminders (ref: #37)"
 area: general
 github_issue: 37
 files: []
